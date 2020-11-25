@@ -1,0 +1,121 @@
+spec BusBoss_sprint01
+
+define NUM_BUSSES := 4;
+define MAX_PEOPLE_ON_BUS := 50;
+define MAX_STATIONS_TO_GAS_STATION := 10;
+define BOARD_SIZE := 30; //change!!
+define MAX_UNSTOPPED_STATIONS := 2;
+
+type Line = {A, B, C, G_W, G_E};
+type Dim = Int(0..BOARD_SIZE);
+
+env boolean isRaining;//TODO: think how to implement. (If it is raining, than the bus should wait 2 steps in each station it stops at)
+
+//Busses
+sys Dim[2] coorBus1;
+sys Dim[2] coorBus2;
+sys Dim[2] coorBus3;
+sys Dim[2] coorBus4;
+
+sys Int(0..MAX_PEOPLE_ON_BUS) freeSeatsBus1;
+sys Int(0..MAX_PEOPLE_ON_BUS) freeSeatsBus2;
+sys Int(0..MAX_PEOPLE_ON_BUS) freeSeatsBus3;
+sys Int(0..MAX_PEOPLE_ON_BUS) freeSeatsBus4;
+
+env boolean isStopPressed1;
+env boolean isStopPressed2;
+env boolean isStopPressed3;
+env boolean isStopPressed4;
+
+sys Line lineOfBus1;
+sys Line lineOfBus2;
+sys Line lineOfBus3;
+sys Line lineOfBus4;
+
+sys boolean atGasStationBus1;
+sys boolean atGasStationBus2;
+sys boolean atGasStationBus3;
+sys boolean atGasStationBus4;
+
+sys boolean inStationCoordinateBus1;
+sys boolean inStationCoordinateBus2;
+sys boolean inStationCoordinateBus3;
+sys boolean inStationCoordinateBus4;
+
+sys boolean stopAtNextStationBus1;
+sys boolean stopAtNextStationBus2;
+sys boolean stopAtNextStationBus3;
+sys boolean stopAtNextStationBus4;
+
+//TODO:
+//Add a guarantee that the system will not change a bus's line in the middle of a route.
+//Optional: For the general lines, all people must leave the bus at the last station. 
+
+
+//TODO:
+//counter numOfPeopleOnBus1(0..MAX_PEOPLE_ON_BUS){
+//	numOfPeopleOnBus1 = 0;
+//	inc : 	forall i in Int(0..(7));
+//
+//}
+
+
+
+sys boolean shouldGoToGasStationBus1;
+sys boolean shouldGoToGasStationBus2;
+sys boolean shouldGoToGasStationBus3;
+sys boolean shouldGoToGasStationBus4;
+
+
+
+counter numOfStopsPassedBus1 (0..MAX_STATIONS_TO_GAS_STATION){
+	numOfStopsPassedBus1 = 0;
+	inc: inStationCoordinateBus1;
+	reset: atGasStationBus1;
+	overflow: false;
+}
+
+counter numOfStopsPassedBus2 (0..MAX_STATIONS_TO_GAS_STATION){
+	numOfStopsPassedBus2 = 0;
+	inc: inStationCoordinateBus2;
+	reset: atGasStationBus2;
+	overflow: false;
+}
+
+counter numOfStopsPassedBus3 (0..MAX_STATIONS_TO_GAS_STATION){
+	numOfStopsPassedBus3 = 0;
+	inc: inStationCoordinateBus3;
+	reset: atGasStationBus3;
+	overflow: false;
+}
+
+counter numOfStopsPassedBus4 (0..MAX_STATIONS_TO_GAS_STATION){
+	numOfStopsPassedBus4 = 0;
+	inc: inStationCoordinateBus4;
+	reset: atGasStationBus4;
+	overflow: false;
+}
+
+//TODO:
+//Add a guarantee that if numOfStopsPassedBus4=MAX_STATIONS_TO_GAS_STATION, than the bus shouldGoToGasStationBus4
+//Add a guarantee that if shouldGoToGasStationBus4 is true, than the bus must go to the gas station
+//if shouldGoToGasStationBus4, the next coordinate will be determined by the route from the current coordinate to the gas station.
+
+//Add a guarantee that there is always at least one bus in each line
+
+//If there are people waiting at a station and the bus didn't stop, than in next there will also be the same amount of people at this station
+
+
+
+//If the bus stopped at a station and there were people waiting in this station and the bus had enough free seats, than people go on the bus
+//Otherwise, the bus should inc its counter for unstopped stations. 
+
+//TODO: find out if we can do the counter unlimited
+counter unstoppedStationsBus1 (0..MAX_UNSTOPPED_STATIONS){
+	unstoppedStationsBus1 = 0;
+	inc: atStationAndPassengersDidNotHaveSeats;
+	reset: 
+}
+
+
+
