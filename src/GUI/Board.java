@@ -17,60 +17,20 @@ import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
 public class Board extends JFrame {
-	final int x = 80;
-	final int y = 50;
+	final int x = 50;
+	final int y = 80;
 	final int dim = 10;
-	int[] monkey = new int[] { 0, 0 };
-	int[] banana = new int[] { -1, -1 };
-	int[] bed = new int[] { 0, 0 };
-	int[] tv = new int[] { 2, 2 };
-	int[] shower = new int[] { 2, 0 };
-	BufferedImage m;
-
-//	ControllerExecutor executor;
-//	Map<String,String> inputs = new HashMap<String, String>();
 
 	public void run() throws Exception {
-
-		//executor = new ControllerExecutor(new BasicJitController(), "out");
-		m = ImageIO.read(new File("img/monkey.jpg"));
-
-		Random rand = new Random();
-		banana[0] = rand.nextInt(8);
-		banana[1] = rand.nextInt(8);
-
-		//inputs.put("banana[0]", Integer.toString(banana[0]));
-		//inputs.put("banana[1]", Integer.toString(banana[1]));
-		//executor.initState(inputs);
-
-		//Map<String, String> sysValues = executor.getCurrOutputs();
-
-		//monkey[0] = Integer.parseInt(sysValues.get("monkey[0]"));
-		//monkey[1] = Integer.parseInt(sysValues.get("monkey[1]"));
-
 		paint(this.getGraphics());
+		//TODO: init city here and move all the draw methods into the respective classes, so that each object will draw itself
+		//city = new city (g, neighbourhoods_borders)
 		Thread.sleep(1000);
 
-		while (true) {
-
-			if (monkey[0] == banana[0] & monkey[1] == banana[1]) {
-				banana[0] = rand.nextInt(8);
-				banana[1] = rand.nextInt(8);
-			}
-
-			//inputs.put("banana[0]", Integer.toString(banana[0]));
-			//inputs.put("banana[1]", Integer.toString(banana[1]));
-
-			//executor.updateState(inputs);
-
-			//sysValues = executor.getCurrOutputs();
-
-			//monkey[0] = Integer.parseInt(sysValues.get("monkey[0]"));
-			//monkey[1] = Integer.parseInt(sysValues.get("monkey[1]"));
-
-			paint(this.getGraphics());
-			Thread.sleep(1000);
-		}
+//		while (true) {
+//			paint(this.getGraphics());
+//			Thread.sleep(1000);
+//		}
 	}
 
 	private void draw_borders(Graphics g, int[] top_left,int [] top_right, int[] bottom_left, int[] bottom_right, String type) {
@@ -153,25 +113,60 @@ public class Board extends JFrame {
 	}
 
 	private void draw_local_stations(Graphics g, int[] top_left,int [] top_right, int[] bottom_left, int[] bottom_right) {
+		g.setColor(Color.PINK);
 		int height = ((bottom_left[0]-1) - (top_left[0]+1))/2;
 		int width = ((top_right[1]-1) - (top_left[1]+1))/2;
 		int[] station1 = new int[2];
+
+		// draw left local station
 		station1[0] = top_left[0] + 1 + height;
 		station1[1] = top_left[1] + 1;
-
-		g.setColor(Color.PINK);
 		g.fillRect(station1[1] * dim, station1[0] * dim, dim, dim);
 
+		// draw right local station
+		station1[0] = top_left[0] + 1 + height;
+		station1[1] = top_right[1] - 1;
+		g.fillRect(station1[1] * dim, station1[0] * dim, dim, dim);
 
-		dict local_stations_locations = {a1: [0,7]};
-		dict general_stations_locations = {g1: [0,7]};
+		// draw top local station
+		station1[0] = top_left[0] + 1;
+		station1[1] = top_left[1] + 1 + width;
+		g.fillRect(station1[1] * dim, station1[0] * dim, dim, dim);
 
-
+		// draw bottom local station
+		station1[0] = bottom_left[0] - 1;
+		station1[1] = bottom_left[1] + 1 + width;
+		g.fillRect(station1[1] * dim, station1[0] * dim, dim, dim);
 	}
 
-	private void draw_neighbourhood(Graphics g, int[] top_left,int [] top_right, int[] bottom_left, int[] bottom_right) {
-		// neighbourhood borders
-		draw_borders(g, top_left, top_right, bottom_left, bottom_right, "neighbourhood");
+	private void draw_general_stations(Graphics g, int[] top_left,int [] top_right, int[] bottom_left, int[] bottom_right) {
+		g.setColor(Color.MAGENTA);
+		int height = ((bottom_left[0]-1) - (top_left[0]+1))/2;
+		int width = ((top_right[1]-1) - (top_left[1]+1))/2;
+		int[] station1 = new int[2];
+
+		// draw left east general station
+		station1[0] = top_left[0] + 1 + height -1;
+		station1[1] = top_left[1] + 1;
+		g.fillRect(station1[1] * dim, station1[0] * dim, dim, dim);
+
+		// draw left west general station
+		station1[0] = top_left[0] + 1 + height -1;
+		station1[1] = top_left[1] + 1 + 3;
+		g.fillRect(station1[1] * dim, station1[0] * dim, dim, dim);
+
+		// draw right east general station
+		station1[0] = top_left[0] + 1 + height -1;
+		station1[1] = top_right[1] - 1;
+		g.fillRect(station1[1] * dim, station1[0] * dim, dim, dim);
+
+		// draw right west general station
+		station1[0] = top_left[0] + 1 + height -1;
+		station1[1] = top_right[1] - 1 -3;
+		g.fillRect(station1[1] * dim, station1[0] * dim, dim, dim);
+	}
+
+	private void draw_roads(Graphics g, int[] top_left,int [] top_right, int[] bottom_left, int[] bottom_right){
 		int[] start = new int[2];
 		int[] end = new int[2];
 
@@ -199,16 +194,17 @@ public class Board extends JFrame {
 		start[1] = bottom_left[1]+2;
 		end[0] = bottom_right[0]-2 -1;
 		draw_horizontal_road(g, start, end);
+	}
 
-
-		// draw local stations
+	private void draw_neighbourhood(Graphics g, int[] top_left,int [] top_right, int[] bottom_left, int[] bottom_right) {
+		draw_borders(g, top_left, top_right, bottom_left, bottom_right, "neighbourhood");
+		draw_roads(g, top_left, top_right, bottom_left, bottom_right);
 		draw_local_stations(g, top_left, top_right, bottom_left, bottom_right);
-
-		// draw general line stations
+		draw_general_stations(g, top_left, top_right, bottom_left, bottom_right);
 
 	}
 
-//	neighbourhood1 = init (); //TODO: create city, neighbourhood, station,  classes.
+
 
 
 	@Override
@@ -217,46 +213,52 @@ public class Board extends JFrame {
 		int col;
 
 		g.setColor(Color.WHITE);
-		for (row = 0; row < y; row++) {
-			for (col = 0; col < x; col++) {
+		for (row = 0; row < x; row++) {
+			for (col = 0; col < y; col++) {
 				g.fillRect(col * dim, row * dim, dim, dim);
 			}
 		}
 
-		int[] top_left = {6, 20};
-		int [] top_right = {6, 32};
-		int [] bottom_right = {27,32};
-		int [] bottom_left = {27, 20};
-
+		//neighbourhood A
+		int[] top_left = {5, 2};
+		int [] top_right = {5, 18};
+		int [] bottom_left = {35, 2};
+		int [] bottom_right = {35,18};
 		draw_neighbourhood(g, top_left, top_right, bottom_left, bottom_right);
 
-		g.setColor(Color.BLACK);
-		g.drawString("BED", bed[0] * dim + 40, bed[1] * dim + 50);
-		g.drawString("SHOWER", shower[0] * dim + 20, shower[1] * dim + 50);
-		g.drawString("TV", tv[0] * dim + 40, tv[1] * dim + 50);
+		//neighbourhood c
+		int[] top_left_c = {5, 62};
+		int [] top_right_c = {5, 78};
+		int [] bottom_left_c = {35, 62};
+		int [] bottom_right_c = {35,78};
+		draw_neighbourhood(g, top_left_c, top_right_c, bottom_left_c, bottom_right_c);
 
+		//neighbourhood b
+		int[] top_left_b = {15, 22};
+		int [] top_right_b = {15, 58};
+		int [] bottom_left_b = {35, 22};
+		int [] bottom_right_b = {35,58};
+		draw_neighbourhood(g, top_left_b, top_right_b, bottom_left_b, bottom_right_b);
 
+		// central station
+		int[] top_left_cs = {5, 30};
+		int [] top_right_cs = {5, 50};
+		int [] bottom_left_cs = {10, 30};
+		int [] bottom_right_cs = {10,50};
+		draw_borders(g, top_left_cs, top_right_cs, bottom_left_cs, bottom_right_cs, "central_station");
 
-		if (banana[0] != -1) {
-			g.setColor(Color.YELLOW);
-			g.fillRect(banana[0] * dim, banana[1] * dim, dim, dim);
-			g.setColor(Color.BLACK);
-			g.drawString("BANANA", banana[0] * dim + 30, banana[1] * dim + 50);
-		}
-		if (m != null) {
-			g.drawImage(m, monkey[0] * dim, monkey[1] * dim, null);
-		} else {
-			g.setColor(Color.BLUE);
-			g.fillRect(monkey[0] * dim, monkey[1] * dim, dim, dim);
-			g.setColor(Color.WHITE);
-			g.drawString("MONKEY", monkey[0] * dim + 20, monkey[1] * dim + 50);
-		}
+		// gas station
+		int[] top_left_gs = {40, 30};
+		int [] top_right_gs = {40, 50};
+		int [] bottom_left_gs = {45, 30};
+		int [] bottom_right_gs = {45,50};
+		draw_borders(g, top_left_gs, top_right_gs, bottom_left_gs, bottom_right_gs, "gas_station");
 	}
 
 	public static void main(String args[]) throws Exception {
 		Board check = new Board();
-		check.setTitle("monkey");
-		check.setSize(check.x * check.dim, check.y * check.dim);
+		check.setTitle("BusBoss");
+		check.setSize(check.y * check.dim, check.x * check.dim);
 		check.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		check.setVisible(true);
 		check.run();
