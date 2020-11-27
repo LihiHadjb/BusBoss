@@ -1,0 +1,15 @@
+Guarantees
+- If it is raining, than the bus should wait 2 steps in each station it stops at in order to help passengers get settled.
+- Add a guarantee that the system will not change a bus's line in the middle of a route.
+- Add a guarantee that there is always at least one bus in each line
+- Add a guarantee that if  the bus stopped at MAX_STATIONS_TO_GAS_STATION, than the bus shouldGoToGasStationBus will be true.
+- Add a guarantee that if the bus should go to the gas station, than the bus must go to the gas station and will not be in service.
+- Add a guarantee that sends one of the available busses when needed.
+
+Assumptions
+- If there are people waiting at a station and the bus didn't stop, than in next there will be also people at this station.
+- If the bus was not full, and the bus did not stop at some station, than it remains not full.
+
+
+
+

@@ -2,7 +2,7 @@ GUI
 1. Defined and created variables and objects of bus, station, line, board, neighborhood.
 2. Created a draft of the city's neighborhoods and stations (can be shown by running Board.java)
 
-
+Spectra
 1. Defined and created variables of bus, station, line,
 2. Added counters for the number of stations each bus stopped at (needed in order to know when to go to the gas station).
 3. Added counters for the number of stations each bus skipped (needed in order to know if an extra bus should be assigned to this line).
