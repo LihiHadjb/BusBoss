@@ -1,23 +1,24 @@
 package GUI;
 
 public class Station {
-    private boolean isPeopleWaiting;
+    private boolean are
+        PassengersWaiting;
     private int[] location;
     private StationType stationType;
 
 
-    public Station(boolean isPeopleWaiting, int[] location, StationType stationType) {
-        this.isPeopleWaiting = isPeopleWaiting;
+    public Station(boolean arePassengersWaiting, int[] location, StationType stationType) {
+        this.arePassengersWaiting = arePassengersWaiting;
         this.location = location;
         this.stationType = stationType;
     }
 
-    public boolean isPeopleWaiting() {
-        return isPeopleWaiting;
+    public boolean isArePassengersWaiting() {
+        return arePassengersWaiting;
     }
 
-    public void setPeopleWaiting(boolean peopleWaiting) {
-        isPeopleWaiting = peopleWaiting;
+    public void setArePassengersWaiting(boolean arePassengersWaiting) {
+        this.arePassengersWaiting = arePassengersWaiting;
     }
 
     public int[] getLocation() {

@@ -1,0 +1,28 @@
+GUI 
+- Init city in the run() method and move all the draw methods into the respective classes, so that each object will draw itself.
+- Add roads between neighborhoods.
+- Create the routes for the busses, and make the busses drive on them.
+- Create the mall in the central neighborhood.
+- Find pictures for the objects (bus, gas station, people, bus stations, mall…).
+- Make the unused busses visible in the central station + initialize all busses in the central station.
+
+Specification
+
+Guarantees
+- If it is raining, than the bus should wait 2 steps in each station it stops at in order to help passengers get settled.
+- Add a guarantee that the system will not change a bus's line in the middle of a route.
+- Add a guarantee that there is always at least one bus in each line
+- Add a guarantee that if  the bus stopped at MAX_STATIONS_TO_GAS_STATION, than the bus shouldGoToGasStationBus will be true.
+- Add a guarantee that if the bus should go to the gas station, than the bus must go to the gas station and will not be in service.
+- 
+
+Assumptions
+- If there are people waiting at a station and the bus didn't stop, than in next there will be also people at this station.
+- If the bus was not full, and the bus did not stop at some station, than it remains not full.
+
+
+- In each step each bus should update if it is at some station.
+- Optional: For the general lines, all people must leave the bus at the last station.
+- Optional: if the bus should go to the gas station, the next coordinate will be determined by the route from the current coordinate to the gas station.
+//Add a guarantee that sends one of the available busses when needed.
+- //Add to the extra busses a field that indicates if this bus is in use or not.
