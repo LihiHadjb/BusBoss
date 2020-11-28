@@ -7,4 +7,4 @@
 - In each step each bus should update if it is at some station.
 - Optional: For the general lines, all people must leave the bus at the last station.
 - Optional: if the bus should go to the gas station, the next coordinate will be determined by the route from the current coordinate to the gas station.
-
+- The realizability check takes more than an hour to finish running, and we could not figure out what causes this yet. 

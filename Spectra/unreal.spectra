@@ -112,7 +112,7 @@ env boolean[NUM_BUSSES] isStopPressed;
 
 sys Line[NUM_BUSSES] lineOfBus;
 
-//TODO: in each step each bus should update if it is at some station. 
+//TODO: in each step each bus should update if it is at some station.
 sys boolean[NUM_BUSSES] atGasStation;
 sys boolean [NUM_BUSSES] atStation;
 
@@ -121,7 +121,7 @@ sys boolean[NUM_BUSSES] inUse;
 
 //TODO:
 //Add a guarantee that the system will not change a bus's line in the middle of a route.
-//Optional: For the general lines, all people must leave the bus at the last station. 
+//Optional: For the general lines, all people must leave the bus at the last station.
 
 
 
@@ -169,13 +169,13 @@ counter numOfStopsPassedBus3 (0..MAX_STATIONS_TO_GAS_STATION){
 
 predicate atStationAndPassengersDidNotHaveSeats(Line line, Bus bus):
 	atStation[bus] & ((numPassengersAtStation[busCoordinates[bus][0]][busCoordinates[bus][1]]) > numFreeSeats[bus]);
-	
-	
-	
-	
+
+
+
+
 
 //If the bus stopped at a station and there were people waiting in this station and the bus had enough free seats, than people go on the bus
-//Otherwise, the bus should inc its counter for unstopped stations. 
+//Otherwise, the bus should inc its counter for unstopped stations.
 
 //TODO: find out if we can do the counter unlimited
 //TODO: find out if we can do an array of counters
@@ -204,41 +204,41 @@ counter unstoppedStationsBus3 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus3 = 0;
 	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[3], 3);
 	reset: extraBusSentLine[lineOfBus[3]];
-	overflow: keep;	
+	overflow: keep;
 }
 
 counter unstoppedStationsBus4 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus4 = 0;
 	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[4], 4);
 	reset: extraBusSentLine[lineOfBus[4]];
-	overflow: keep;	
+	overflow: keep;
 }
 
 counter unstoppedStationsBus5 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus5 = 0;
 	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[5], 5);
 	reset: extraBusSentLine[lineOfBus[5]];
-	overflow: keep;	
+	overflow: keep;
 }
 
 counter unstoppedStationsBus6 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus6 = 0;
 	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[6], 6);
 	reset: extraBusSentLine[lineOfBus[6]];
-	overflow: keep;	
+	overflow: keep;
 }
 
 counter unstoppedStationsBus7 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus7 = 0;
 	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[7], 7);
 	reset: extraBusSentLine[lineOfBus[7]];
-	overflow: keep;	
+	overflow: keep;
 }
 
 
 predicate haveAvailableBus():
 	!inUse[5] | !inUse[6] | !inUse[7];
-	
+
 
 gar G unstoppedStationsBus0=MAX_UNSTOPPED_STATIONS -> needExtraBusForLine[lineOfBus[0]]=true;
 gar G unstoppedStationsBus1=MAX_UNSTOPPED_STATIONS -> needExtraBusForLine[lineOfBus[1]]=true;
@@ -254,5 +254,3 @@ gar G forall line in Int(0..(NUM_LINES)). extraBusSentLine[line] -> needExtraBus
 gar G forall line in Int(0..(NUM_LINES)). needExtraBusForLine[line] & haveAvailableBus() -> next(extraBusSentLine[line])=true;
 //Add a guarantee that sends one of the available busses when needed, and haveAvailableBus
 //Add to the extra busses a field that indicates if this bus is in use or not.
-
-
