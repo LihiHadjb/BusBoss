@@ -1,12 +1,12 @@
 spec BusBoss_sprint01
 
-define NUM_BUSSES := 8;
+define NUM_BUSSES := 6;
 define MAX_STATIONS_TO_GAS_STATION := 10;
 define BOARD_WIDTH := 80;
 define BOARD_LENGTH := 50;
 define MAX_UNSTOPPED_STATIONS := 2;
-define NUM_STATIONS := 25;
-define NUM_LINES := 5;
+define NUM_STATIONS := 10;
+define NUM_LINES := 4;
 type Dim = Int(0..(BOARD_WIDTH-1));
 
 env boolean isRaining;//TODO: If it is raining, than the bus should wait 2 steps in each station it stops at in order to help passengers get settled
@@ -23,80 +23,47 @@ define G_E :=4;
 sys boolean[NUM_LINES] extraBusSentLine;
 sys boolean[NUM_LINES] needExtraBusForLine;
 
-//Stations
-//_____________Stations Locations__________________
-//TODO: these should be initialized by the program!!!!
-env Dim[2] a1_loc;
-env Dim[2] a2_loc;
-env Dim[2] a3_loc;
-env Dim[2] a4_loc;
-env Dim[2] b2_loc;
-env Dim[2] b3_loc;
-env Dim[2] b4_loc;
-env Dim[2] c1_loc;
-env Dim[2] c2_loc;
-env Dim[2] c3_loc;
-env Dim[2] c4_loc;
+//_______Stations________
 
-env Dim[2] g1_w_loc;
-env Dim[2] g2_w_loc;
-env Dim[2] g3_w_loc;
-env Dim[2] g4_w_loc;
-env Dim[2] g5_w_loc;
-env Dim[2] g6_w_loc;
+type Station = Int(0..(NUM_STATIONS - 1));
 
-env Dim[2] g1_e_loc;
-env Dim[2] g2_e_loc;
-env Dim[2] g3_e_loc;
-env Dim[2] g4_e_loc;
-env Dim[2] g5_e_loc;
-env Dim[2] g6_e_loc;
-
-env Dim[2] main_station_loc;
-env Dim[2] gas_station_loc;
+// Stations coordinates
+define stationX[NUM_STATIONS] := {0,0,0,0,0,0,0,0,0,0}; //TODO: update coordinates
+define stationY[NUM_STATIONS] := {0,0,0,0,0,0,0,0,0,0};
 
 //Local Stations
-type Stations = {a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4, g1_w, g2_w, g3_w, g4_w, g5_w, g6_w, g1_e, g2_e, g3_e, g4_e, g5_e, g6_e, main_station, gas_station};
-
-
 define a1 := 0;
 define a2 := 1;
-define a3 := 2;
-define a4 := 3;
-define b1 := 4;
-define b2 := 5;
-define b3 := 6;
-define b4 := 7;
-define c1 := 8;
-define c2 := 9;
-define c3 := 10;
-define c4 := 11;
 
-//General Line Stations
-define g1_w := 12;
-define g2_w := 13;
-define g3_w := 14;
-define g4_w := 15;
-define g5_w := 16;
-define g6_w := 17;
+define b1 := 2;
+define b2 := 3;
 
-define g1_e := 18;
-define g2_e := 19;
-define g3_e := 20;
-define g4_e := 21;
-define g5_e := 22;
-define g6_e := 23;
+// General Line Stations
+define g1_w := 4;
+define g2_w := 5;
 
+define g1_e := 6;
+define g2_e := 7;
 
 //Other Stations
-define main_station := 24;
-define gas_station := 25;
+define main_station := 8;
+define gas_station := 9;
 
-//env boolean [BOARD_LENGTH][BOARD_WIDTH] arePassengersWaiting;
-env boolean [BOARD_WIDTH][BOARD_WIDTH] arePassengersWaiting;
+env boolean [NUM_STATIONS] arePassengersWaiting;
+
+//define line_a_path = [mainStation, a1, a3, b4];
+//define line_b_path = [a1, a3, b4, mainStation];
+//define line_g_path = [a1, a3, b4, mainStation];
+//define path_from_stationx_to_gas_station = [x, bla, bla2, gasStation];
+//define path_from__gas_station_to_stationX = [x, bla, bla2, gasStation];
+// TODO: Every bus should have currPath. If shouldGoToGasStation is true --> set currPath to be the path from currStationToGasStation
+// currPath: If shouldGoToGasStation is true --> set currPath to be the path from currStationToGasStation.
+// If shouldGoToGasStation turned false, go back to mainStation and set currPath to be line_bus_path
+// TODO: Add guarantee - if 2 busses are in the same station, don't let their next station be the same.
+// TODO: Add guarantee - if some bus is in x station, then it's next station can be: next_station_of_bus_path OR wait (which means nextStation = currStation)
 
 
-//Busses
+//_______Busses________
 type Bus = Int(0..(NUM_BUSSES - 1));
 sys boolean[NUM_BUSSES] shouldGoToGasStation;
 
@@ -108,7 +75,7 @@ env boolean [NUM_BUSSES] isBusFull;
 
 env boolean[NUM_BUSSES] isStopPressed;
 
-sys Int(0..4)[NUM_BUSSES] lineOfBus;
+sys Int(0..3)[NUM_BUSSES] lineOfBus;
 
 //TODO: in each step each bus should update if it is at some station. 
 sys boolean[NUM_BUSSES] atGasStation;
@@ -116,6 +83,8 @@ sys boolean [NUM_BUSSES] atStation;
 
 sys boolean[NUM_BUSSES] stopAtNextStation;
 sys boolean[NUM_BUSSES] inUse;
+
+sys boolean[NUM_BUSSES] nextStation;
 
 //TODO:
 //Add a guarantee that the system will not change a bus's line in the middle of a route.
@@ -154,6 +123,20 @@ counter numOfStopsPassedBus3 (0..MAX_STATIONS_TO_GAS_STATION){
 	overflow: false;
 }
 
+counter numOfStopsPassedBus4 (0..MAX_STATIONS_TO_GAS_STATION){
+	numOfStopsPassedBus4 = 0;
+	inc: atStation[4];
+	reset: atGasStation[4];
+	overflow: false;
+}
+
+counter numOfStopsPassedBus5 (0..MAX_STATIONS_TO_GAS_STATION){
+	numOfStopsPassedBus5 = 0;
+	inc: atStation[5];
+	reset: atGasStation[5];
+	overflow: false;
+}
+
 //TODO:
 //Add a guarantee that if numOfStopsPassedBus4=MAX_STATIONS_TO_GAS_STATION, than the bus shouldGoToGasStationBus4
 //Add a guarantee that if shouldGoToGasStationBus4 is true, than the bus must go to the gas station
@@ -163,11 +146,12 @@ counter numOfStopsPassedBus3 (0..MAX_STATIONS_TO_GAS_STATION){
 
 //If there are people waiting at a station and the bus didn't stop, than in next there will also be the same amount of people at this station
 
-predicate atStationAndPassengersDidNotHaveSeats(Int(0..4) line, Bus bus):
-	atStation[bus] & (arePassengersWaiting[busCoordinates[bus][0]][busCoordinates[bus][1]]) & isBusFull[bus];
+
+predicate atStationAndPassengersDidNotHaveSeats(Bus bus):
+	exists i in Int(0..(NUM_STATIONS-1)). busAtStation(bus, i) & arePassengersWaiting[i] & isBusFull[bus];
 	
-	
-	
+predicate busAtStation(Bus bus, Int(0..(NUM_STATIONS-1)) station):
+	busCoordinates[bus][0] = stationX[station] & busCoordinates[bus][1] = stationY[station];
 	
 
 //If the bus stopped at a station and there were people waiting in this station and the bus had enough free seats, than people go on the bus
@@ -177,63 +161,48 @@ predicate atStationAndPassengersDidNotHaveSeats(Int(0..4) line, Bus bus):
 //TODO: find out if we can do an array of counters
 counter unstoppedStationsBus0 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus0 = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[0], 0);
+	inc: atStationAndPassengersDidNotHaveSeats(0);
 	reset: extraBusSentLine[lineOfBus[0]];
 	overflow: keep;
 }
 
 counter unstoppedStationsBus1 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus1 = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[1], 1);
+	inc: atStationAndPassengersDidNotHaveSeats(1);
 	reset: extraBusSentLine[lineOfBus[1]];
 	overflow: keep;
 }
 
 counter unstoppedStationsBus2 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus2 = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[2], 2);
+	inc: atStationAndPassengersDidNotHaveSeats(2);
 	reset: extraBusSentLine[lineOfBus[2]];
 	overflow: keep;
 }
 
 counter unstoppedStationsBus3 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus3 = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[3], 3);
+	inc: atStationAndPassengersDidNotHaveSeats(3);
 	reset: extraBusSentLine[lineOfBus[3]];
 	overflow: keep;	
 }
 
 counter unstoppedStationsBus4 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus4 = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[4], 4);
+	inc: atStationAndPassengersDidNotHaveSeats(4);
 	reset: extraBusSentLine[lineOfBus[4]];
 	overflow: keep;	
 }
 
 counter unstoppedStationsBus5 (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsBus5 = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[5], 5);
+	inc: atStationAndPassengersDidNotHaveSeats(5);
 	reset: extraBusSentLine[lineOfBus[5]];
 	overflow: keep;	
 }
 
-counter unstoppedStationsBus6 (0..MAX_UNSTOPPED_STATIONS){
-	unstoppedStationsBus6 = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[6], 6);
-	reset: extraBusSentLine[lineOfBus[6]];
-	overflow: keep;	
-}
-
-counter unstoppedStationsBus7 (0..MAX_UNSTOPPED_STATIONS){
-	unstoppedStationsBus7 = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(lineOfBus[7], 7);
-	reset: extraBusSentLine[lineOfBus[7]];
-	overflow: keep;	
-}
-
-
 predicate haveAvailableBus():
-	!inUse[5] | !inUse[6] | !inUse[7];
+	!inUse[4] | !inUse[5];
 	
 
 gar G unstoppedStationsBus0=MAX_UNSTOPPED_STATIONS -> needExtraBusForLine[lineOfBus[0]]=true;
@@ -242,12 +211,11 @@ gar G unstoppedStationsBus2=MAX_UNSTOPPED_STATIONS -> needExtraBusForLine[lineOf
 gar G unstoppedStationsBus3=MAX_UNSTOPPED_STATIONS -> needExtraBusForLine[lineOfBus[3]]=true;
 gar G unstoppedStationsBus4=MAX_UNSTOPPED_STATIONS -> needExtraBusForLine[lineOfBus[4]]=true;
 gar G unstoppedStationsBus5=MAX_UNSTOPPED_STATIONS -> needExtraBusForLine[lineOfBus[5]]=true;
-gar G unstoppedStationsBus6=MAX_UNSTOPPED_STATIONS -> needExtraBusForLine[lineOfBus[6]]=true;
-gar G unstoppedStationsBus7=MAX_UNSTOPPED_STATIONS -> needExtraBusForLine[lineOfBus[7]]=true;
 
 gar G forall line in Int(0..(NUM_LINES - 1)). extraBusSentLine[line] -> needExtraBusForLine[line]=false;
 
 gar G forall line in Int(0..(NUM_LINES - 1)). needExtraBusForLine[line] & haveAvailableBus() -> next(extraBusSentLine[line])=true;
+
 //Add a guarantee that sends one of the available busses when needed, and haveAvailableBus
 //Add to the extra busses a field that indicates if this bus is in use or not.
 
