@@ -1,3 +1,6 @@
+Changes in Sprint 1:
+---------------------------------
+
 GUI
 1. Defined and created variables and objects of bus, station, line, board, neighborhood.
 2. Created a draft of the city's neighborhoods and stations (can be shown by running Board.java)
@@ -8,3 +11,12 @@ Spectra
 3. Added counters for the number of stations each bus skipped (needed in order to know if an extra bus should be assigned to this line).
 4. Added guarantees for each line, in order to send an extra bus when needed.
 
+
+Changes from Sprint 1 to Sprint 2:
+---------------------------------
+
+1. Decreased the size of the problem in order to decrease the synthesization time.
+2. Made the spectra realizable
+3. Synthesized a controller for BusBossMain
+4. Added guarantees
+5. Added assumptions

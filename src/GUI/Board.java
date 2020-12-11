@@ -1,4 +1,4 @@
-package game;
+package GUI;
 
 import javax.swing.JFrame;
 

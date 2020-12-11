@@ -1,10 +1,42 @@
-- Init city in the run() method and move all the draw methods into the respective classes, so that each object will draw itself.
-- Add roads between neighborhoods.
-- Create the routes for the busses, and make the busses drive on them.
-- Create the mall in the central neighborhood.
-- Find pictures for the objects (bus, gas station, people, bus stations, mall…).
-- Make the unused busses visible in the central station + initialize all busses in the central station.
-- In each step each bus should update if it is at some station.
-- Optional: For the general lines, all people must leave the bus at the last station.
-- Optional: if the bus should go to the gas station, the next coordinate will be determined by the route from the current coordinate to the gas station.
-- The realizability check takes more than an hour to finish running, and we could not figure out what causes this yet. 
+Project Tasks
+-------------
+
+- GUI: 
+    - Init city in the run() method and move all the draw methods into the respective classes, so that each object will draw itself.
+    - Add roads between neighborhood, gas station and main station.
+	- Create the routes for the busses, and make the busses drive on them.
+	- Find pictures for the objects (bus, gas station, people, bus stations…).
+	- Make the unused busses visible in the central station
+- In each step each bus should update it's origin station and destination station.
+- Change the GUI to match the new size of the problem.
+- Add initialize guarantees for the busses (all busses first origin station should be the main station, reserve busses should not be in use, etc.)
+- Add guarantees
+- Add assumptions
+
+
+
+Delivered in Sprint 1
+---------------------
+
+GUI
+1. Defined and created variables and objects of bus, station, line, board, neighborhood.
+2. Created a draft of the city's neighborhoods and stations (can be shown by running Board.java)
+
+Spectra
+1. Defined and created variables of bus, station, line,
+2. Added counters for the number of stations each bus stopped at (needed in order to know when to go to the gas station).
+3. Added counters for the number of stations each bus skipped (needed in order to know if an extra bus should be assigned to this line).
+4. Added guarantees for each line, in order to send an extra bus when needed.
+
+
+
+Delivered in Sprint 2
+---------------------
+
+1. Decreased the size of the problem in order to decrease the synthesization time.
+2. Made the spectra realizable
+3. Synthesized a controller for BusBossMain
+4. Added guarantees
+5. Added assumptions
+
+
