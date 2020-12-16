@@ -20,3 +20,9 @@ Changes from Sprint 1 to Sprint 2:
 3. Synthesized a controller for BusBossMain
 4. Added guarantees
 5. Added assumptions
+
+Changes from Sprint 2 to Sprint 3:
+---------------------------------
+
+1. Added guarantees
+2. Added assumptions

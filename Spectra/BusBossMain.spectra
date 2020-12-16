@@ -1,4 +1,5 @@
-//TODO: CHANGE TO SPRINT 2
+import "DwyerPatterns.spectra"
+
 spec BusBoss_sprint02
 
 define NUM_BUSSES := 4; // 2 for each line (A and B) + 2 reserve
@@ -6,6 +7,7 @@ define MAX_STATIONS_TO_GAS_STATION := 10;
 define MAX_UNSTOPPED_STATIONS := 4;
 define NUM_STATIONS := 6;
 define NUM_LINES := 2;
+define NUM_ROUNDS_TO_FREE_RESERVE_BUS := 3;
 
 // ____scenarios_____
 //TODO: If it is raining, than the bus should wait 2 steps in each station it stops at in order to help passengers get settled
@@ -33,11 +35,10 @@ define b2 := 3;
 define main_station := 4;
 define gas_station := 5;
 
-// TODO: Add guarantee - if 2 busses are in the same station, only one of them can continue to destination station.
-// TODO: Add guarantee - if some bus is in x station, then it's next station can be: next_station_of_bus_path OR wait (which means nextStation = currStation)
-// TODO: Add guarantee - if some bus need to wait in the station, origin and destination should remain the same - think about it, maybe should be implemented in GUI
-// TODO: Add asm - if some bus need to wait in the station and not at destination station yet, next(atDestinationStation) = atDestinationStation
-// wait == stop ?
+// Assumption for each station: If there are people waiting at a station and the bus didn't stop, than in next there will still be people waiting.
+asm G forall station in Int(0..(NUM_STATIONS - 1)).
+	forall bus in Int(0..(NUM_BUSSES-1)). ( !atDestinationStation[bus] | !(destinationStation[bus] = station) | !stopAtNextStation[bus] ) ->
+	next(arePassengersWaiting[station]) = arePassengersWaiting[station];
 
 // ______Routes________
 
@@ -76,10 +77,13 @@ sys Int(0..(NUM_STATIONS - 1))[NUM_BUSSES] originStation;
 sys Int(0..(NUM_STATIONS - 1))[NUM_BUSSES] destinationStation;
 sys boolean[NUM_BUSSES] stopAtNextStation;
 sys boolean[NUM_BUSSES] shouldGoToGasStation;
-
+sys boolean[NUM_BUSSES] shouldStop;
 
 predicate atSpecificDestinationStation(Bus bus, Int(0..(NUM_STATIONS - 1)) station):
 	atDestinationStation[bus] & (destinationStation[bus] = station);
+
+// Assumption for each bus - if some bus needs to wait at current station and not at destination station yet, next(atDestinationStation) = atDestinationStation
+asm G forall bus in Int(0..(NUM_BUSSES - 1)). shouldStop[bus] -> next(atDestinationStation[bus]) = atDestinationStation[bus];
 
 // Initial guarantees
 
@@ -137,14 +141,31 @@ gar G forall bus in Int(0..(NUM_BUSSES - 1)).
 gar G forall bus in Int(0..(NUM_BUSSES - 1)).
 	( inUse[bus] & !(atDestinationStation[bus] & destinationStation[bus] = main_station) ) -> 
 	( next(lineOfBus[bus]) = lineOfBus[bus] );
+
+predicate bothBussesAtSomeStation(Bus bus1, Bus bus2):
+	exists station in Int(0..(NUM_STATIONS - 1)). atSpecificDestinationStation(bus1, station) & atSpecificDestinationStation(bus2, station);
+
+// Guarantee for each bus: while a the bus is on it's way to the gas station (meaning shouldGoToGasStation = true), it shouldn't stop (meaning next(shouldStop) = false),
+// except for the case there is a collision with another bus
+gar G forall bus in Int(0..(NUM_BUSSES - 1)). forall bus2 in Int(0..(NUM_BUSSES - 1)). 
+	shouldGoToGasStation[bus] & !bothBussesAtSomeStation(bus, bus2)
+	-> next(shouldStop[bus]) = false;
+
+// Guarantee for each bus: if the bus at destinationStation and isStopPressed OR that there are people waiting at next station but the bus isn't on it's way to the gas station, next(shouldStop) = true
+gar G forall bus in Int(0..(NUM_BUSSES - 1)). forall station in Int(0..(NUM_STATIONS - 1)). 
+	(atDestinationStation[bus] & destinationStation[bus] = station) & !shouldGoToGasStation[bus] & (isStopPressed[bus] | arePassengersWaiting[station])
+	-> next(shouldStop[bus]) = true;
 	
-
-// Guarantee for each bus: while a the bus is on it's way to the gas station (meaning shouldGoToGasStation = true), it shouldn't stop (meaning stopAtNextStation = false);
-gar G forall bus in Int(0..(NUM_BUSSES - 1)).
-	shouldGoToGasStation[bus] ->  
-	next(stopAtNextStation[bus]) = false;
-
-
+// Assumption for each bus: if isStopPressed and the bus didn't stop yet, isStopPressed should remain true
+//asm isStopPressedNotTurningFalseBeforeReachingDestination0:
+//  pBecomesTrue_betweenQandR(atDestinationStation[0], isStopPressed[0], !isStopPressed[0]);
+//asm isStopPressedNotTurningFalseBeforeReachingDestination1:
+//  pBecomesTrue_betweenQandR(atDestinationStation[1], isStopPressed[1], !isStopPressed[1]);
+//asm isStopPressedNotTurningFalseBeforeReachingDestination2:
+//  pBecomesTrue_betweenQandR(atDestinationStation[2], isStopPressed[2], !isStopPressed[2]);
+//asm isStopPressedNotTurningFalseBeforeReachingDestination3:
+//  pBecomesTrue_betweenQandR(atDestinationStation[3], isStopPressed[3], !isStopPressed[3]);
+  
 predicate atGasStation(Bus bus):
 	atDestinationStation[bus] & (destinationStation[bus] = gas_station);	
 	
@@ -187,11 +208,6 @@ gar G numOfStopsPassedBus3 = MAX_STATIONS_TO_GAS_STATION ->  next(shouldGoToGasS
 gar G forall line in Int(0..(NUM_LINES - 1)).
 	exists bus in Int(0..(NUM_BUSSES-1)). lineOfBus[bus] = line;
 
-// Assumption for each station: If there are people waiting at a station and the bus didn't stop, than in next there will still be people waiting.
-asm G forall station in Int(0..(NUM_STATIONS - 1)).
-	forall bus in Int(0..(NUM_BUSSES-1)). ( !atDestinationStation[bus] | !(destinationStation[bus] = station) | !stopAtNextStation[bus] ) ->
-	next(arePassengersWaiting[station]) = arePassengersWaiting[station];
-
 
 predicate atStationAndPassengersDidNotHaveSeats(Bus bus):
 	exists station in Int(0..(NUM_STATIONS-1)). (atDestinationStation[bus] & destinationStation[bus] = station) & arePassengersWaiting[station] & isBusFull[bus];
@@ -224,7 +240,26 @@ counter unstoppedStationsBus3 (0..MAX_UNSTOPPED_STATIONS){
 	overflow: keep;	
 }
 
-// TODO: for every reserve bus: add guarantees to make sure after X steps the reserve bus returns to the main station and to be !inUse
+
+// Counters for number of stations for every reserve bus
+counter numberStationsOfReserveBus2 (0..NUM_ROUNDS_TO_FREE_RESERVE_BUS){
+	numberStationsOfReserveBus2 = 0;
+	inc: inUse[2] & atSpecificDestinationStation(2, 4); // 4 is main_station
+	reset: !inUse[2];
+	overflow: keep;
+}
+
+counter numberStationsOfReserveBus3 (0..NUM_ROUNDS_TO_FREE_RESERVE_BUS){
+	numberStationsOfReserveBus3 = 0;
+	inc: inUse[3] & atSpecificDestinationStation(3, 4); // 4 is main_station
+	reset: !inUse[3];
+	overflow: keep;
+}
+
+// Guarantee for every reserve bus: after X steps the reserve bus should turn !inUse
+gar G numberStationsOfReserveBus2 = NUM_ROUNDS_TO_FREE_RESERVE_BUS -> !inUse[2]; // TODO: GUI should move the busses only id they're not in use
+gar G numberStationsOfReserveBus3 = NUM_ROUNDS_TO_FREE_RESERVE_BUS -> !inUse[3];
+
 	
 //Guarantee for each bus: if unstoppedStationsBus counter = MAX_UNSTOPPED_STATIONS, try to get extra bus
 // TODO : check why "Value 0 not in domain of lineOfBus" is printed. It seems like there is no problem.
@@ -246,3 +281,14 @@ gar G forall bus in Int (2..3). !inUse[bus] & (exists line in Int(0..(NUM_LINES 
 
 // Guarantee for each line: if an extra bus was sent to this line, needExtraBusForLine = false
 gar G forall line in Int(0..(NUM_LINES - 1)). extraBusSentLine[line] -> next(needExtraBusForLine[line]) = false;
+
+// Guarantee - if 2 busses are at the same station, only one of them can continue to destination station and the other one should stop (to avoid collision)
+gar G forall bus_i in Int(0..(NUM_BUSSES - 1)). forall bus_j in Int(0..(NUM_BUSSES - 1)). exists station in Int(0..(NUM_STATIONS - 1)). 
+	atSpecificDestinationStation(bus_i, station) & atSpecificDestinationStation(bus_j, station) -> 
+	!(next(shouldStop[bus_i]) & next(shouldStop[bus_j])) ;
+
+// Guarantee - if some bus (which is in Use) needs to wait at the station, it's origin and destination should remain the same
+gar G forall bus in Int(0..(NUM_BUSSES - 1)).  
+	shouldStop[bus] & inUse[bus] -> ( next(originStation[bus]) = originStation[bus] & next(destinationStation[bus]) = destinationStation[bus] );
+
+
