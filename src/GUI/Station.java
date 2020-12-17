@@ -1,8 +1,7 @@
 package GUI;
 
 public class Station {
-    private boolean are
-        PassengersWaiting;
+    private boolean arePassengersWaiting;
     private int[] location;
     private StationType stationType;
 
