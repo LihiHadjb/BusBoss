@@ -42,7 +42,6 @@ asm G forall station in Int(0..(NUM_STATIONS - 1)).
 
 // ______Routes________
 
-//TODO: set real stations
 // Routes lengths
 define line_A_length := 3;
 define line_B_length := 3;
@@ -157,14 +156,14 @@ gar G forall bus in Int(0..(NUM_BUSSES - 1)). forall station in Int(0..(NUM_STAT
 	-> next(shouldStop[bus]) = true;
 	
 // Assumption for each bus: if isStopPressed and the bus didn't stop yet, isStopPressed should remain true
-//asm isStopPressedNotTurningFalseBeforeReachingDestination0:
-//  pBecomesTrue_betweenQandR(atDestinationStation[0], isStopPressed[0], !isStopPressed[0]);
-//asm isStopPressedNotTurningFalseBeforeReachingDestination1:
-//  pBecomesTrue_betweenQandR(atDestinationStation[1], isStopPressed[1], !isStopPressed[1]);
-//asm isStopPressedNotTurningFalseBeforeReachingDestination2:
-//  pBecomesTrue_betweenQandR(atDestinationStation[2], isStopPressed[2], !isStopPressed[2]);
-//asm isStopPressedNotTurningFalseBeforeReachingDestination3:
-//  pBecomesTrue_betweenQandR(atDestinationStation[3], isStopPressed[3], !isStopPressed[3]);
+asm isStopPressedNotTurningFalseBeforeReachingDestination0:
+  pBecomesTrue_betweenQandR(atDestinationStation[0], isStopPressed[0], !isStopPressed[0]);
+asm isStopPressedNotTurningFalseBeforeReachingDestination1:
+  pBecomesTrue_betweenQandR(atDestinationStation[1], isStopPressed[1], !isStopPressed[1]);
+asm isStopPressedNotTurningFalseBeforeReachingDestination2:
+  pBecomesTrue_betweenQandR(atDestinationStation[2], isStopPressed[2], !isStopPressed[2]);
+asm isStopPressedNotTurningFalseBeforeReachingDestination3:
+  pBecomesTrue_betweenQandR(atDestinationStation[3], isStopPressed[3], !isStopPressed[3]);
   
 predicate atGasStation(Bus bus):
 	atDestinationStation[bus] & (destinationStation[bus] = gas_station);	

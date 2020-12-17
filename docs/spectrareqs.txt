@@ -20,14 +20,13 @@ Guarantees:
 - Add a guarantee for each bus: while a the bus is on it's way to the gas station (meaning shouldGoToGasStation = true), it shouldn't stop (meaning stopAtNextStation = false);
 - Add a guarantee for each bus: if numOfStopsPassedBus = MAX_STATIONS_TO_GAS_STATION, then the bus shouldGoToGasStation
 - Add a guarantee for each line: there is always at least one bus for each line
-- Add a guarantee for each station: If there are people waiting at a station and the bus didn't stop, than in next there will still be people waiting.
 - Add a guarantee for each reserve bus: after X steps the reserve bus returns to the main station and to be !inUse
 - Add a guarantee for each bus: if unstoppedStationsBus counter = MAX_UNSTOPPED_STATIONS, try to get extra bus
 - Add a guarantee for each line: if extra bus is needed for the this line, go through the reserve busses, if it's free allocate it to this line
 	- Think how to make sure that not both busses will turn to be in use in case there is only one line which need extra bus.
 	- Check how spectra works when inUse gets updated - in the middle of the loop or only at the end? (in order to make sure multiple busses will not allocate the same bus)
 - Add a guarantee for each reserve bus: if there are free busses and some line needs extra bus, one of them should turn to be in use
--Add a guarantee for each line: if an extra bus was sent to this line, needExtraBusForLine = false
+- Add a guarantee for each line: if an extra bus was sent to this line, needExtraBusForLine = false
 
 
 Assumptions:
