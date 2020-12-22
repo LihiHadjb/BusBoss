@@ -2,10 +2,12 @@ package GUI;
 
 import java.util.List;
 
-public class CentralStation {
+public class CentralStation extends Station {
     private int[] top_left;
     private int[] top_right;
     private int[] bottom_left;
+    private int[] bottom_right;
+    private List<Bus> busses;
 
     public int[] getTop_left() {
         return top_left;
@@ -39,14 +41,6 @@ public class CentralStation {
         this.bottom_right = bottom_right;
     }
 
-    public boolean isPeopleWaiting() {
-        return isPeopleWaiting;
-    }
-
-    public void setPeopleWaiting(boolean peopleWaiting) {
-        isPeopleWaiting = peopleWaiting;
-    }
-
     public List<Bus> getBusses() {
         return busses;
     }
@@ -55,16 +49,12 @@ public class CentralStation {
         this.busses = busses;
     }
 
-    private int[] bottom_right;
-    private boolean isPeopleWaiting;
-    private List<Bus> busses;
-
-    public CentralStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right, boolean isPeopleWaiting, List<Bus> busses) {
+    public CentralStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right, boolean isPeopleWaiting, List<Bus> busses, int[] loc) {
+        super(isPeopleWaiting, loc);
         this.top_left = top_left;
         this.top_right = top_right;
         this.bottom_left = bottom_left;
         this.bottom_right = bottom_right;
-        this.isPeopleWaiting = isPeopleWaiting;
         this.busses = busses;
     }
 }

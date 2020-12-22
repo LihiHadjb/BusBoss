@@ -5,12 +5,14 @@ public class GasStation {
     private int[] top_right;
     private int[] bottom_left;
     private int[] bottom_right;
+    private int[] location;
 
-    public GasStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right) {
+    public GasStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right, int[] loc) {
         this.top_left = top_left;
         this.top_right = top_right;
         this.bottom_left = bottom_left;
         this.bottom_right = bottom_right;
+        this.location = loc;
     }
 
 

@@ -1,14 +1,13 @@
 package GUI;
 
 public class Line {
+    private LineName lineName;
+    private boolean isExtraBusNeeded;
 
     public Line(LineName lineName, boolean isExtraBusNeeded) {
         this.lineName = lineName;
         this.isExtraBusNeeded = isExtraBusNeeded;
     }
-
-    private LineName lineName;
-    private boolean isExtraBusNeeded;
 
     public LineName getLineName() {
         return lineName;

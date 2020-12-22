@@ -14,7 +14,7 @@ import java.util.Map;
 public class Runner  {
 
     Board board;
-    //ControllerExecutor executor;
+//    ControllerExecutor executor;
     Map<String,String> inputs = new HashMap<String, String>();
 
     public Runner (Board board){
@@ -69,7 +69,8 @@ public class Runner  {
 
 
     public static void main(String args[]) throws Exception {
-        Board board = new Board();
+        City city = new City();
+        Board board = new Board(city.getX(), city.getY());
         Runner runner = new Runner(board);
         runner.run();
 

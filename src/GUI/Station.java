@@ -3,13 +3,11 @@ package GUI;
 public class Station {
     private boolean arePassengersWaiting;
     private int[] location;
-    private StationType stationType;
 
 
-    public Station(boolean arePassengersWaiting, int[] location, StationType stationType) {
+    public Station(boolean arePassengersWaiting, int[] location) {
         this.arePassengersWaiting = arePassengersWaiting;
         this.location = location;
-        this.stationType = stationType;
     }
 
     public boolean isArePassengersWaiting() {
@@ -26,14 +24,6 @@ public class Station {
 
     public void setLocation(int[] location) {
         this.location = location;
-    }
-
-    public StationType getStationType() {
-        return stationType;
-    }
-
-    public void setStationType(StationType stationType) {
-        this.stationType = stationType;
     }
 
 

@@ -10,6 +10,9 @@ public class Bus {
     private int numUnstoppedStations;
     private boolean isStopPressed;
     private boolean isFull;
+    private boolean shouldStop;
+    private Station destination;
+    private Station origin;
 
     public Bus(int id, int[] currCoordinate, Line line, boolean isInService, boolean isStopPressed, boolean isFull, boolean shouldGoToGasStation, int numOfStopsPassed, int numUnstoppedStations) {
         this.id = id;
@@ -21,6 +24,22 @@ public class Bus {
         this.shouldGoToGasStation = shouldGoToGasStation;
         this.numOfStopsPassed = numOfStopsPassed;
         this.numUnstoppedStations = numUnstoppedStations;
+    }
+
+    public Station getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Station destination) {
+        this.destination = destination;
+    }
+
+    public Station getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(Station origin) {
+        this.origin = origin;
     }
 
     public int getId() {
@@ -69,6 +88,14 @@ public class Bus {
 
     public void setFull(boolean full) {
         isFull = full;
+    }
+
+    public boolean shouldStop() {
+        return shouldStop;
+    }
+
+    public void setShouldStop(boolean shouldStop) {
+        shouldStop = shouldStop;
     }
 
     public boolean isShouldGoToGasStation() {

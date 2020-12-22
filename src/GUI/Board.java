@@ -12,8 +12,8 @@ import java.util.HashMap;
 
 @SuppressWarnings("serial")
 public class Board extends JFrame {
-	final int x = 16;
-	final int y = 20;
+	int x;
+	int y;
 	final int dim = 50;
 	BufferedImage busImage;
 	BufferedImage stationWithPeopleImage;
@@ -21,8 +21,10 @@ public class Board extends JFrame {
 	BufferedImage emptyStationImage;
 	HashMap<String, int[]> stationLoactions;
 
-
-	public Board(){
+//TODO: Lihi: I think the constructor here should get all the stations coordiantes (which will be calculated in City.java)
+	public Board(int x, int y){
+		this.x = x;
+		this.y = y;
 		this.setTitle("BusBoss");
 		this.setSize(this.y * this.dim, this.x * this.dim);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -130,14 +132,13 @@ public class Board extends JFrame {
 		station1[0] = top_left[0] + 1 + height;
 		station1[1] = top_left[1];
 		//g.fillRect(station1[1] * dim, station1[0] * dim, dim, dim);
-		g.drawImage(emptyStationImage, station1[1] * dim, station1[0] * dim, dim, dim, null);
+		g.drawImage(emptyStationImage, station1[1] * dim - dim, station1[0] * dim, dim*2, dim*2, null);
 		this.stationLoactions.put("a1", station1);
 
 		// draw right local station
 		station2[0] = top_left[0] + 1 + height;
-		station2[1] = top_right[1];
-		//g.fillRect(station2[1] * dim, station2[0] * dim, dim, dim);
-		g.drawImage(stationWithPeopleImage, station2[1] * dim, station2[0] * dim, dim, dim, null);
+		station2[1] = top_right[1];		//g.fillRect(station2[1] * dim, station2[0] * dim, dim, dim);
+		g.drawImage(stationWithPeopleImage, station2[1] * dim, station2[0] * dim, dim*2, dim*2, null);
 
 		this.stationLoactions.put("a2", station2);
 
@@ -216,7 +217,7 @@ public class Board extends JFrame {
 		for (String station : arePassengersWaiting.keySet()){
 			int[] stationLoc = this.stationLoactions.get(station);
 			if(arePassengersWaiting.get(station)){
-				g.drawImage(stationWithPeopleImage, stationLoc[0] * dim, stationLoc[1] * dim, null);
+				g.drawImage(stationWithPeopleImage, stationLoc[0] * dim * 2, stationLoc[1] * dim * 2, null);
 			}
 		}
 	}
