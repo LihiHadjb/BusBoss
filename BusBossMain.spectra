@@ -4,11 +4,11 @@ spec BusBoss_sprint02
 
 define NUM_BUSSES := 4; // 2 for each line (A and B) + 2 reserve
 define NUM_RESERVE_BUSSES := 2;
-define MAX_ROUNDS_TO_GAS_STATION := 10;
+define MAX_ROUNDS_TO_GAS_STATION := 4;
 define MAX_UNSTOPPED_STATIONS := 4;
 define NUM_STATIONS := 6;
 define NUM_LINES := 2;
-define NUM_ROUNDS_TO_FREE_RESERVE_BUS := 20;
+define NUM_ROUNDS_TO_FREE_RESERVE_BUS := 2;
 
 // ____scenarios_____
 //TODO: If it is raining, than the bus should wait 2 steps in each station it stops at in order to help passengers get settled
@@ -95,7 +95,7 @@ gar G forall bus in Int(0..(NUM_BUSSES - 1)).
 //asm isStopPressedNotTurningFalseBeforeReachingDestination3:
 //  pBecomesTrue_betweenQandR(atDestinationStation[3], isStopPressed[3], !isStopPressed[3]);
 
-//asm trig [true]*[isStopPressed[0]] |=> (([!atDestinationStation[0]]) & ([isStopPressed[0]]))*(([atDestinationStation[0]]) & ([isStopPressed[0]]))[!isStopPressed[0]];
+asm trig [true]*[!isStopPressed[0]][isStopPressed[0]] |=> (([!atDestinationStation[0]]) & ([isStopPressed[0]]))*(([atDestinationStation[0]]) & ([isStopPressed[0]]))[!isStopPressed[0]];
 //asm trig [true]*[isStopPressed[1]] |=> [!atDestinationStation[1] & isStopPressed[1]]*[atDestinationStation[1] & isStopPressed[1]][!isStopPressed[1]];
 //asm trig [true]*[isStopPressed[2]] |=> [!atDestinationStation[2] & isStopPressed[2]]*[atDestinationStation[2] & isStopPressed[2]][!isStopPressed[2]];
 //asm trig [true]*[isStopPressed[3]] |=> [!atDestinationStation[3] & isStopPressed[3]]*[atDestinationStation[3] & isStopPressed[3]][!isStopPressed[3]];
