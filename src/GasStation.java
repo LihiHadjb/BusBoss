@@ -46,7 +46,9 @@ public class GasStation {
     public void setBottom_right(int[] bottom_right) {
         this.bottom_right = bottom_right;
     }
-
-
+    
+    public int[] getLocation() {
+        return location;
+    }
 
 }

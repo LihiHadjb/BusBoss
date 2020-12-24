@@ -225,6 +225,15 @@ public class Board extends JFrame {
 			}
 		}
 	}
+	
+	public void drawRoadsOutsideTheNeighborhoood(){
+		// draw the road between neighborhood and main station
+		draw_horizontal_road(city.getRoadBetweenCityAndMainStation().getStart(), city.getRoadBetweenCityAndMainStation().getEnd());
+		
+		// draw the road between neighborhood and gas station
+		draw_horizontal_road(city.getRoadBetweenCityAndGasStation().getStart(), city.getRoadBetweenCityAndGasStation().getEnd());
+
+	}
 
 	private void draw_background(){
 		Graphics g = this.getGraphics();
@@ -237,6 +246,18 @@ public class Board extends JFrame {
 			}
 		}
 	}
+	
+	public void checkStationsLocations(){
+		Graphics g = this.getGraphics();
+		g.setColor(Color.RED);
+		int row;
+		int col;
+		for (int[] loc : this.city.getStationsLocationsForTheBus().values()) {
+			col = loc[1];
+			row = loc[0];
+			g.fillRect(col * dim, row * dim, dim, dim);
+		}
+	}
 
 	public void paint() {
 		draw_background();
@@ -245,6 +266,8 @@ public class Board extends JFrame {
 		draw_borders("gas_station");
 		drawBusses();
 		drawPassengerInStations();
+		drawRoadsOutsideTheNeighborhoood();
+		checkStationsLocations(); //TODO: Remove after!!!
 	}
 
 }
