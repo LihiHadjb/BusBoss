@@ -1,4 +1,4 @@
-public class GasStation {
+public class GasStation extends Station{
     private int[] top_left;
     private int[] top_right;
     private int[] bottom_left;
@@ -6,11 +6,11 @@ public class GasStation {
     private int[] location;
 
     public GasStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right, int[] loc) {
+    	super(loc);
         this.top_left = top_left;
         this.top_right = top_right;
         this.bottom_left = bottom_left;
         this.bottom_right = bottom_right;
-        this.location = loc;
     }
 
 

@@ -258,7 +258,33 @@ public class Board extends JFrame {
 			g.fillRect(col * dim, row * dim, dim, dim);
 		}
 	}
-
+	
+	public void checkRoutes(){
+		Graphics g = this.getGraphics();
+		IBus bus = city.getBusses().get(1);
+		bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(new int[]{2,3}));
+		g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
+		bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(new int[]{2,4}));	
+		g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
+		bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(new int[]{2,5}));	
+		g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
+		bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(new int[]{2,6}));	
+		g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
+		
+		
+//		for (String origin : this.city.getOriginRoutes().keySet()){
+//			
+//			bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(origin));				
+//			
+//			for (String destination : this.city.getOriginRoutes().get(origin).keySet()){
+//				g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
+//				Route curr_route_between_stations = this.city.getOriginRoutes().get(origin).get(destination);
+//				int[] next_coordinates = curr_route_between_stations.getNextCoordinate(bus.getCurrCoordinate());
+//				bus.setCurrCoordinate(next_coordinates);	
+//			}
+//		}
+	}
+		
 	public void paint() {
 		draw_background();
 		draw_neighbourhood();
@@ -268,6 +294,7 @@ public class Board extends JFrame {
 		drawPassengerInStations();
 		drawRoadsOutsideTheNeighborhoood();
 		checkStationsLocations(); //TODO: Remove after!!!
+		checkRoutes(); //TODO: Remove after!!!
 	}
 
 }
