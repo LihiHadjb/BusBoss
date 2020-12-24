@@ -1,4 +1,6 @@
-public class Bus {
+//import GUI.IBus;
+
+public class Bus implements IBus{
     private int id;
     private int[] currCoordinate;
     private Line line;
@@ -117,6 +119,38 @@ public class Bus {
     public void setNumUnstoppedStations(int numUnstoppedStations) {
         this.numUnstoppedStations = numUnstoppedStations;
     }
+
+
+
+	@Override
+	public boolean isAtMainStation() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean isAtGasStation() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean isAtDestinationStation() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public void updateNextDesitinationAndOriginStations() {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 

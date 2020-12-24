@@ -212,7 +212,7 @@ public class Board extends JFrame {
 
 	public void drawBusses(){
 		Graphics g = this.getGraphics();
-		for (Bus bus : city.getBusses().values()){
+		for (IBus bus : city.getBusses().values()){
 			g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
 		}
 	}
