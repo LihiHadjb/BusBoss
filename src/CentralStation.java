@@ -1,7 +1,5 @@
 
 
-import java.util.List;
-
 public class CentralStation extends Station {
     private int[] top_left;
     private int[] top_right;

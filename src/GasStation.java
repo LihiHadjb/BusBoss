@@ -1,5 +1,3 @@
-package GUI;
-
 public class GasStation {
     private int[] top_left;
     private int[] top_right;

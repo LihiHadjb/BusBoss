@@ -1,31 +1,38 @@
-package GUI;
 import java.util.HashMap;
-import java.util.List;
 
 public class City {
     final int x = 16;
     final int y = 20;
+    final int NUM_BUSSES = 4;
 
     private boolean isRaining;
     private CentralStation centralStation;
     private GasStation gasStation;
     private HashMap<String, Station > busStations;
+    private HashMap<Integer, Bus> busses;
     //private List<Route> routes;
 
 
     public HashMap<String, Station > getBusStations() {
         return busStations;
     }
+    
+    public HashMap<Integer, Bus> getBusses(){
+    	return busses;
+    }
 
     public City(){
         this.busStations = new HashMap<>();
+        this.busses = new HashMap<>();
         createLineABusStations();
         createLineBBusStations();
         createCentralStation();
         createGasStation();
+        createBusses();
         //this.isRaining = false;// TODO: make this initail guarantee
 
     }
+    
 
     public int[] top_left(){
         int[] result = {x/8, 2*y/8};
@@ -45,6 +52,12 @@ public class City {
     public int[] bottom_right(){
         int[] result = {7*x/8,6*y/8};
         return result;
+    }
+    
+    private void createBusses() {
+    	for(int i=0; i<NUM_BUSSES; i++) {
+    		busses.put(i, new Bus((Integer)i, centralStation.getLocation()));
+    	}
     }
 
     private void createGasStation(){

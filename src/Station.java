@@ -1,5 +1,3 @@
-package GUI;
-
 public class Station {
     boolean arePassengersWaiting;
     int[] location;

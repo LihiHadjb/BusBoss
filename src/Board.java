@@ -1,5 +1,3 @@
-package GUI;
-
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
@@ -14,18 +12,21 @@ import static java.lang.Thread.sleep;
 
 @SuppressWarnings("serial")
 public class Board extends JFrame {
+	final int dim = 40;
+	
 	int x;
 	int y;
-	final int dim = 50;
+	
 	BufferedImage busImage;
 	BufferedImage stationWithPeopleImage;
 	BufferedImage gasStationImage;
 	BufferedImage emptyStationImage;
-	HashMap<String, int[]> stationLoactions;
+	
 	int[] top_left;
 	int[] top_right;
 	int[] bottom_left;
 	int[] bottom_right;
+	
 	City city;
 
 	public Board(City city){
@@ -37,6 +38,8 @@ public class Board extends JFrame {
 		top_right = city.top_right();
 		bottom_left = city.bottom_left();
 		bottom_right = city.bottom_right();
+		
+		initImages();
 
 		this.setTitle("BusBoss");
 		this.setSize(this.y * this.dim, this.x * this.dim);
@@ -44,6 +47,10 @@ public class Board extends JFrame {
 		this.setVisible(true);
 		this.paint(this.getGraphics());
 
+	}
+
+	
+	private void initImages() {
 		try{
 			this.busImage = ImageIO.read(new File("images/bus.jpeg"));
 			this.stationWithPeopleImage =  ImageIO.read(new File("images/station_with_people.jpeg"));
@@ -53,12 +60,9 @@ public class Board extends JFrame {
 		catch (IOException e){
 			System.out.println("error in reading images!");
 			e.printStackTrace();
-		}
-		this.stationLoactions = new HashMap<>();
-
-
+		}	
 	}
-
+	
 	private void draw_borders(String type) {
 		int row, col;
 		Graphics g = this.getGraphics();
@@ -199,7 +203,6 @@ public class Board extends JFrame {
 	}
 
 	private void draw_neighbourhood() {
-		Graphics g = this.getGraphics();
 //		draw_borders(top_left, top_right, bottom_left, bottom_right, "neighbourhood");
 		draw_roads();
 		draw_A_stations();
@@ -207,19 +210,18 @@ public class Board extends JFrame {
 
 	}
 
-	public void drawBusses(HashMap<String, int[]> bussesLocations){
+	public void drawBusses(){
 		Graphics g = this.getGraphics();
-		for (String bus : bussesLocations.keySet()){
-			g.drawImage(busImage, bussesLocations.get(bus)[0] * dim, bussesLocations.get(bus)[1] * dim, null);
+		for (Bus bus : city.getBusses().values()){
+			g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
 		}
 	}
 
-	public void drawPassengerInStations(HashMap<String, Boolean> arePassengersWaiting){
+	public void drawPassengerInStations(){
 		Graphics g = this.getGraphics();
-		for (String station : arePassengersWaiting.keySet()){
-			int[] stationLoc = this.stationLoactions.get(station);
-			if(arePassengersWaiting.get(station)){
-				g.drawImage(stationWithPeopleImage, stationLoc[0] * dim * 2, stationLoc[1] * dim * 2, null);
+		for (Station station : city.getBusStations().values()){
+			if(station.arePassengersWaiting){
+				g.drawImage(stationWithPeopleImage, station.getLocation()[0] * dim * 2, station.getLocation()[1] * dim * 2, null);
 			}
 		}
 	}
@@ -236,15 +238,13 @@ public class Board extends JFrame {
 		}
 	}
 
-	public void paint(HashMap<String, int[]> bussesLocations, HashMap<String, Boolean> arePassengersWaiting) {
-		Graphics g = this.getGraphics();
+	public void paint() {
 		draw_background();
 		draw_neighbourhood();
 		draw_borders("central_station");
 		draw_borders("gas_station");
-		g.drawImage(busImage, 6 * dim, 5 * dim, dim, dim, null);
-		drawBusses(bussesLocations);
-		drawPassengerInStations(arePassengersWaiting);
+		drawBusses();
+		drawPassengerInStations();
 	}
 
 }

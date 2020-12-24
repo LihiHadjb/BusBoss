@@ -1,11 +1,3 @@
-package GUI;
-
-import GUI.Board;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 //import tau.smlab.syntech.controller.executor.ControllerExecutor;
@@ -14,20 +6,31 @@ import java.util.Map;
 public class Runner  {
 
     Board board;
+    City city;
     //ControllerExecutor executor;
     Map<String,String> inputs = new HashMap<String, String>();
 
-    public Runner (Board board){
+    public Runner (Board board, City city){
         this.board = board;
+        this.city = city;
+    }
+
+    private void updateCity2() {
+    	Bus bus0 = city.getBusses().get(0);
+    	bus0.setCurrCoordinate(city.top_left());
+    }
+    private void updateCity1() {
+    	Bus bus0 = city.getBusses().get(0);
+    	int[] newLoc = new int[2];
+    	
+    	newLoc[0] = city.top_left()[0] + 1;
+    	newLoc[1] = city.top_left()[1];
+    	bus0.setCurrCoordinate(newLoc);
     }
 
 
-
-
     public void run() throws Exception {
-        //executor = new ControllerExecutor(new BasicJitController(), "BusBoss/out");
-//        BufferedImage m = ImageIO.read(new File("img/monkey.jpg"));
-//
+        //executor = new ControllerExecutor(new BasicJitController(), "out");
 //        createEnvVars(); //initial states and random...
 //        updateEnvVars(); //put in "inputs"
 ////
@@ -40,10 +43,16 @@ public class Runner  {
 ////        monkey[0] = Integer.parseInt(sysValues.get("monkey[0]"));
 ////        monkey[1] = Integer.parseInt(sysValues.get("monkey[1]"));
 //        updateSysVars();
-        HashMap<String, int[]> bussesLocations = new HashMap<>();
-        HashMap<String, Boolean> arePassengersWaiting = new HashMap<>();
-        this.board.paint(bussesLocations, arePassengersWaiting);
         Thread.sleep(1000);
+    	updateCity1();
+        this.board.paint();
+        Thread.sleep(1000);
+        
+    	updateCity2();
+        this.board.paint();
+        Thread.sleep(1000);
+        
+        
 //
 //        while (true) {
 //
@@ -71,7 +80,7 @@ public class Runner  {
     public static void main(String args[]) throws Exception {
         City city = new City();
         Board board = new Board(city);
-        Runner runner = new Runner(board);
+        Runner runner = new Runner(board, city);
         runner.run();
 
     }

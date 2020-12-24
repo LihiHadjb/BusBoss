@@ -1,5 +1,3 @@
-package GUI;
-
 public class Line {
     private LineName lineName;
     private boolean isExtraBusNeeded;

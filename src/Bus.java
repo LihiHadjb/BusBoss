@@ -1,5 +1,3 @@
-package GUI;
-
 public class Bus {
     private int id;
     private int[] currCoordinate;
@@ -14,18 +12,16 @@ public class Bus {
     private Station destination;
     private Station origin;
 
-    public Bus(int id, int[] currCoordinate, Line line, boolean isInService, boolean isStopPressed, boolean isFull, boolean shouldGoToGasStation, int numOfStopsPassed, int numUnstoppedStations) {
+    public Bus(int id, int[] initialCoordinate) {
         this.id = id;
-        this.currCoordinate = currCoordinate;
-        this.line = line;
-        this.isInService = isInService;
-        this.isStopPressed = isStopPressed;
-        this.isFull = isFull;
-        this.shouldGoToGasStation = shouldGoToGasStation;
-        this.numOfStopsPassed = numOfStopsPassed;
-        this.numUnstoppedStations = numUnstoppedStations;
+        this.currCoordinate = initialCoordinate;
+        this.isStopPressed = false;//TODO: initial guarantee
+        this.isFull = false;//TODO: initial guarantee
+
     }
 
+    
+    
     public Station getDestination() {
         return destination;
     }
