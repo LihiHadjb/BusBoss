@@ -16,7 +16,17 @@ public class FullRoute {
 	
 	public String getNextDestination(String currDestination){
 		int curr_index = this.routeStations.indexOf(currDestination);
-		int next_index = (curr_index + 1)&this.length;
+		int next_index = (curr_index + 1)%this.length;
 		return this.routeStations.get(next_index);
 	}
+	
+	public Route getCurrRouteOfBus(Bus bus) {
+		String currOrigin = bus.getOrigin().getName();
+		String currDestination = bus.getDestination().getName();
+
+		HashMap<String, Route> busOriginRoute = originRoutes.get(currOrigin);
+		Route result = busOriginRoute.get(currDestination);
+		return result;
+	}
+	
 }

@@ -6,12 +6,14 @@ public class OutputsParser {
 	City city;
 	int NUM_BUSSES;
 	int NUM_RESERVE_BUSSES;
+	int NUM_LINES;
 	
 	public OutputsParser(City city) {
 		this.sysValues = new HashMap<>();
 		this.city = city;
 		this.NUM_BUSSES = city.NUM_BUSSES;
 		this.NUM_RESERVE_BUSSES = city.NUM_RESERVE_BUSSES;
+		this.NUM_LINES = city.NUM_LINES;
 	}
 
 	private boolean[] parseToArrayOfBooleans(String sysVarName, int numElements) {
@@ -35,64 +37,79 @@ public class OutputsParser {
 	private void updateLineOfReserveBus() {
 		int[] values = parseToArrayOfInts("lineOfReserveBus", NUM_RESERVE_BUSSES);
 		for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
-			IBus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
+			Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
 			if(values[i] == 0) {
-				bus.setLine(LineName.valueOf("A"));
+				bus.setLine(new Line(LineName.valueOf("A")));
 			}
 				
 			else {
-				bus.setLine(LineName.valueOf("B"));
+				bus.setLine(new Line(LineName.valueOf("B")));
 			}
 		}
 	}
 	
 	private void updateShouldGoToGasStation() {
-		int[] values = parseToArrayOfInts("lineOfReserveBus", NUM_RESERVE_BUSSES);
-		for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
-			IBus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
-			if(values[i] == 0) {
-				bus.setLine(LineName.valueOf("A"));
-			}
-				
-			else {
-				bus.setLine(LineName.valueOf("B"));
-			}
+		boolean[] values = parseToArrayOfBooleans("shouldGoToGasStation", NUM_BUSSES);
+		for(int i=0; i<NUM_BUSSES; i++) {
+			Bus bus = city.getBusses().get(i);
+			bus.setShouldGoToGasStation(values[i]);
 		}
 	}
 	
-	public void updateCity(Map<String, String> sysValues) {
+	private void updateNeedExtraBusForLine() {
+		boolean[] values = parseToArrayOfBooleans("needExtraBusForLine", NUM_LINES);
+		city.getLines().get(0).setNeedExtraBusForLine(values[0]);
+		city.getLines().get(1).setNeedExtraBusForLine(values[1]);
+	}
+	
+	
+	
+//	private void updateExtraBusSentLine() {
+//		boolean[] values = parseToArrayOfBooleans("extraBusSentLine");
+//		city.getLines.get(0).setExtraBusSentLine(values[0]);
+//		city.getLines.get(1).setExtraBusSentLine(values[1]);
+//	}
+	
+	private void updateStopAtNextStation() {
+		boolean[] values = parseToArrayOfBooleans("stopAtNextStation", NUM_BUSSES);
+		for(int i=0; i<NUM_BUSSES; i++) {
+			Bus bus = city.getBusses().get(i);
+			bus.setStopAtNextStation(values[i]);
+		}
+	}
+	
+	private void updateInUse() {
+		boolean[] values = parseToArrayOfBooleans("isUse", NUM_RESERVE_BUSSES);
+		for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
+			Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
+			bus.setInUse(values[i]);
+		}
+	}
+	
+	public void parseSysValues(Map<String, String> sysValues) {
 		this.sysValues = sysValues;
 		updateLineOfReserveBus();
 		updateShouldGoToGasStation();
 		updateNeedExtraBusForLine();	
-		
-		for(IBus bus : city.getBusses().values()) {
-			bus.updateNextDesitinationAndOriginStations();
-			//above method should do:
-			//if should go to gas station, set it as the destination. 
-			//else, check if atDestinationStation, and if true, set the next destination and origin according to the current line route
-			bus.updateCoordinate();
-			
-		}
-		
-		
-		
-		
-		
-		
-		
+		updateStopAtNextStation();
+		updateInUse();
+		//updateExtraBusSentLine();
+		//updateUnstoppedStationsLine();
+		//updateNumOfStopsPassedBus();
 	}
-				lineOfReserveBus
-				shouldGoToGasStation
-				needExtraBusForLine[0]=false, //only need to visualize this
-				extraBusSentLine[1]=true, //do nothing with this
-				stopAtNextStation[0]=false, //visualize + gui should stop when arriving destinationStation
-				inUse[1]=true, lineOfReserveBus[1]=1, // if not in main station, go there. otherwise do nothing
-				unstoppedStationsLineA=0, // only need to visualize this
-				numOfStopsPassedBus2=1, // only need to visualize this
+		
+	
+
+//				lineOfReserveBus
+//				shouldGoToGasStation
+//				needExtraBusForLine[0]=false, //only need to visualize this
+//				extraBusSentLine[1]=true, //do nothing with this
+//				stopAtNextStation[0]=false, //visualize + gui should stop when arriving destinationStation
+//				inUse[1]=true, lineOfReserveBus[1]=1, // if not in main station, go there. otherwise do nothing
+//				unstoppedStationsLineA=0, // only need to visualize this
+//				numOfStopsPassedBus2=1, // only need to visualize this
 
 
 		
-	}
-
+	
 }

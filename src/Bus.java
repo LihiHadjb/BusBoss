@@ -1,18 +1,18 @@
 //import GUI.IBus;
 
-public class Bus implements IBus{
+public class Bus{
     private int id;
     private int[] currCoordinate;
     private Line line;
-    private boolean isInService;
     private boolean shouldGoToGasStation;
     private int numOfStopsPassed;
     private int numUnstoppedStations;
     private boolean isStopPressed;
     private boolean isFull;
-    private boolean shouldStop;
+    private boolean shouldStopAtNextStation;
     private Station destination;
     private Station origin;
+    private boolean inUse;
 
     public Bus(int id, int[] initialCoordinate) {
         this.id = id;
@@ -64,14 +64,6 @@ public class Bus implements IBus{
         this.line = line;
     }
 
-    public boolean isInService() {
-        return isInService;
-    }
-
-    public void setInService(boolean inService) {
-        isInService = inService;
-    }
-
     public boolean isStopPressed() {
         return isStopPressed;
     }
@@ -88,13 +80,14 @@ public class Bus implements IBus{
         isFull = full;
     }
 
-    public boolean shouldStop() {
-        return shouldStop;
+    public boolean isSetStopAtNextStation() {
+        return shouldStopAtNextStation;
     }
 
-    public void setShouldStop(boolean shouldStop) {
-        shouldStop = shouldStop;
+    public void setStopAtNextStation(boolean shouldStop) {
+        this.shouldStopAtNextStation = shouldStop;
     }
+
 
     public boolean isShouldGoToGasStation() {
         return shouldGoToGasStation;
@@ -122,23 +115,18 @@ public class Bus implements IBus{
 
 
 
-	@Override
 	public boolean isAtMainStation() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 
-
-	@Override
 	public boolean isAtGasStation() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 
-
-	@Override
 	public boolean isAtDestinationStation() {
 		// TODO Auto-generated method stub
 		return false;
@@ -146,11 +134,18 @@ public class Bus implements IBus{
 
 
 
-	@Override
-	public void updateNextDesitinationAndOriginStations() {
-		// TODO Auto-generated method stub
+	public void setInUse(boolean inUse) {
+		this.inUse = inUse;
 		
 	}
+	
+	public boolean isInUse() {
+		return this.inUse;
+		
+	}
+
+
+	
 
 
 

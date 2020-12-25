@@ -122,6 +122,7 @@ gar G forall bus in Int(0..(NUM_BUSSES - 1)). !shouldGoToGasStation[bus] & !(isB
 //asm GF forall bus in Int(0..(NUM_BUSSES - 1)). atMainStation[bus];
 //asm GF  forall bus in Int(0..(NUM_BUSSES - 1)). atGasStation[bus];
 
+//TODO: reanme this to "numRounds...."
 counter numOfStopsPassedBus0 (0..MAX_ROUNDS_TO_GAS_STATION){
 	numOfStopsPassedBus0 = 0;
 	inc: atMainStation[0] & !atGasStation[0];

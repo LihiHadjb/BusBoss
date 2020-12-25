@@ -39,7 +39,7 @@ public class CentralStation extends Station {
     }
 
     public CentralStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right,int[] loc) {
-        super(loc);
+        super(loc, "main_station");
         this.top_left = top_left;
         this.top_right = top_right;
         this.bottom_left = bottom_left;

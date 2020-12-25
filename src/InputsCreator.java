@@ -46,9 +46,9 @@ public class InputsCreator {
     
     private void putAtDestinationStationForEachBus(boolean isInit) {
     	String envVarName = "atDestinationStation";
-    	HashMap<Integer, IBus> busses = city.getBusses();
+    	HashMap<Integer, Bus> busses = city.getBusses();
     	for(int i=0; i<NUM_BUSSES; i++) {
-    		IBus bus = busses.get(i);
+    		Bus bus = busses.get(i);
     		String name = String.format("%s[%d]", envVarName, i);
     		boolean result;
     		if(isInit) {
@@ -66,9 +66,9 @@ public class InputsCreator {
     
     private void putAtGasStationForEachBus(boolean isInit) {
     	String envVarName = "atGasStation";
-    	HashMap<Integer, IBus> busses = city.getBusses();
+    	HashMap<Integer, Bus> busses = city.getBusses();
     	for(int i=0; i<NUM_BUSSES; i++) {
-    		IBus bus = busses.get(i);
+    		Bus bus = busses.get(i);
     		String name = String.format("%s[%d]", envVarName, i);
     		boolean result;
     		if(isInit) {
@@ -86,9 +86,9 @@ public class InputsCreator {
     
     private void putAtMainStationForEachBus(boolean isInit) {
     	String envVarName = "atGasStation";
-    	HashMap<Integer, IBus> busses = city.getBusses();
+    	HashMap<Integer, Bus> busses = city.getBusses();
     	for(int i=0; i<NUM_BUSSES; i++) {
-    		IBus bus = busses.get(i);
+    		Bus bus = busses.get(i);
     		String name = String.format("%s[%d]", envVarName, i);
     		boolean result;
     		if(isInit) {

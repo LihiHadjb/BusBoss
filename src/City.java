@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,298 +11,64 @@ public class City {
     final int y = 20;
     final int NUM_BUSSES = 4;
     final int NUM_RESERVE_BUSSES = 2;
+    final int NUM_LINES = 2;
 
     private boolean isRaining;
     private CentralStation centralStation;
     private GasStation gasStation;
     private HashMap<String, Station > busStations;
-    private HashMap<Integer, IBus> busses;
+    private HashMap<Integer, Bus> busses;
     private Road roadBetweenNeighborhoodAndmMainStation;
     private Road roadBetweenNeighborhoodAndGasStation;
     private HashMap<String, int[]> stationsLocationsForTheBus;
-    private HashMap<String, HashMap<String, Route>> originRoutes;
-    private HashMap<String, FullRoute> fullRoutes;
-    
+    private List<Line> lines;
+    private BusMover busMover;
+
+
     public City(){
         this.busStations = new HashMap<>();
         this.busses = new HashMap<>();
+        this.lines = new ArrayList<>();
         this.stationsLocationsForTheBus = new HashMap<>();
-        this.originRoutes = new HashMap<>();
-        this.fullRoutes = new HashMap<>();
         createLineABusStations();
         createLineBBusStations();
         createCentralStation();
         createGasStation();
         createBusses();
+        createLines();
         createRoadBetweenCityAndMainStation();
         createRoadBetweenCityAndGasStation();
-        createOriginRoutes();
-        createFullRoutes();
+        createBusMover();
+       
         //this.isRaining = false;// TODO: make this initial guarantee
 
+
+
+
     }
     
-    
-    public void createFullRoutes(){
-    	// Line A route
-    	List<String> line_A_route = Arrays.asList("main_station", "a1", "a2");
-    	FullRoute Line_A = new FullRoute("line_A", line_A_route, this.originRoutes, 3);
-    	fullRoutes.put("line_A", Line_A);
-    	    	
-    	// Line B route
-    	List<String> Line_B_route = Arrays.asList("main_station", "b1", "b2");
-    	FullRoute Line_B = new FullRoute("line_B", Line_B_route, this.originRoutes, 3);
-    	fullRoutes.put("line_B", Line_B);
-
-    	
-    	// Main station to gas station route
-    	List<String> main_station_to_gas_station_route = Arrays.asList("main_station", "a1", "gas_station");
-    	FullRoute main_station_to_gas_station = new FullRoute("main_station_to_gas_station", main_station_to_gas_station_route, this.originRoutes, 3);
-    	fullRoutes.put("main_station_to_gas_station", main_station_to_gas_station);
+    public void createBusMover() {
+    	this.busMover = new BusMover(stationsLocationsForTheBus, gasStation, centralStation, busStations);
     }
-    
-    
-    public void createOriginRoutes(){
-    	// stations are: a1, a2, b1, b2, main_station, gas_station
-    	
-    	// main_station -> a1
-    	List<int[]> main_station_to_a1 = new ArrayList();
-    	main_station_to_a1.add(stationsLocationsForTheBus.get("main_station"));
-    	int[] main_station_to_a1_last = stationsLocationsForTheBus.get("main_station");
-    	for (int i=1; i<=13; i++) {
-    		int x = main_station_to_a1_last[0];
-    		int y = main_station_to_a1_last[1] - 1;
-    		main_station_to_a1.add(new int[]{x,y});
-    		main_station_to_a1_last[0] = x;
-    		main_station_to_a1_last[1] = y;
-    	}
-    	for (int i=1; i<=5; i++) {
-    		int x = main_station_to_a1_last[0] + 1;
-    		int y = main_station_to_a1_last[1];
-    		main_station_to_a1.add(new int[]{x,y});
-    		main_station_to_a1_last[0] = x;
-    		main_station_to_a1_last[1] = y;
-    	}
-    	
-    	// main_station -> b2
-    	List<int[]> main_station_to_b2 = new ArrayList();
-    	main_station_to_b2.add(stationsLocationsForTheBus.get("main_station"));
-    	int[] main_station_to_b2_last = stationsLocationsForTheBus.get("main_station");
-    	for (int i=1; i<=6; i++) {
-    		int x = main_station_to_b2_last[0];
-    		int y = main_station_to_b2_last[1] - 1;
-    		main_station_to_b2.add(new int[]{x,y});
-    		main_station_to_b2_last[0] = x;
-    		main_station_to_b2_last[1] = y;
-    	}
-    	for (int i=1; i<=9; i++) {
-    		int x = main_station_to_b2_last[0] + 1;
-    		int y = main_station_to_b2_last[1];
-    		main_station_to_b2.add(new int[]{x,y});
-    		main_station_to_b2_last[0] = x;
-    		main_station_to_b2_last[1] = y;
-    	}
-    	for (int i=1; i<=3; i++) {
-    		int x = main_station_to_b2_last[0];
-    		int y = main_station_to_b2_last[1] - i;
-    		main_station_to_b2.add(new int[]{x,y});
-    		main_station_to_b2_last[0] = x;
-    		main_station_to_b2_last[1] = y;
-    	}
-    	
-    	Route main_station_to_a1_route = new Route(main_station_to_a1, 13+5);
-    	Route main_station_to_b2_route = new Route(main_station_to_b2, 6+9+3);
-    	HashMap<String, Route> routes_from_main_stations = new HashMap<>();
-    	routes_from_main_stations.put("a1", main_station_to_a1_route);
-    	routes_from_main_stations.put("b2", main_station_to_b2_route);
-    	originRoutes.put("main_station", routes_from_main_stations);
+
+    public void createLines() {
+        this.lines = new ArrayList<>();
+        Line lineA = new Line(LineName.valueOf("A"), Arrays.asList("main_station", "a1", "a2"));
+        Line lineB = new Line(LineName.valueOf("B"), Arrays.asList("main_station", "b1", "b2"));
+
+        lines.add(lineA);
+        lines.add(lineB);
+
 
     	
-    	// a1 -> a2
-    	List<int[]> a1_to_a2 = new ArrayList();
-    	a1_to_a2.add(stationsLocationsForTheBus.get("a1"));
-    	int[] a1_to_a2_last = stationsLocationsForTheBus.get("a1");
-    	for (int i=1; i<=5; i++) {
-    		int x = a1_to_a2_last[0] + 1;
-    		int y = a1_to_a2_last[1];
-    		a1_to_a2.add(new int[]{x,y});
-    		a1_to_a2_last[0] = x;
-    		a1_to_a2_last[1] = y;
-    	}
-    	for (int i=1; i<=8; i++) {
-    		int x = a1_to_a2_last[0];
-    		int y = a1_to_a2_last[1] + 1;
-    		a1_to_a2.add(new int[]{x,y});
-    		a1_to_a2_last[0] = x;
-    		a1_to_a2_last[1] = y;
-    	}
-    	for (int i=1; i<=5; i++) {
-    		int x = a1_to_a2_last[0] - 1;
-    		int y = a1_to_a2_last[1];
-    		a1_to_a2.add(new int[]{x,y});
-    		a1_to_a2_last[0] = x;
-    		a1_to_a2_last[1] = y;
-    	}
-    	
-    	Route a1_to_a2_route = new Route(a1_to_a2, 5+8+5);
-    	HashMap<String, Route> routes_from_a1 = new HashMap<>();
-    	routes_from_a1.put("a2", a1_to_a2_route);
-    	originRoutes.put("a1", routes_from_a1);
-    	
-    	
-    	// a2 -> main_station
-    	List<int[]> a2_to_main_station = new ArrayList();
-    	a2_to_main_station.add(stationsLocationsForTheBus.get("a2"));
-    	int[] a2_to_main_station_last = stationsLocationsForTheBus.get("a2");
-    	for (int i=1; i<=4; i++) {
-    		int x = a2_to_main_station_last[0] - 1;
-    		int y = a2_to_main_station_last[1];
-    		a2_to_main_station.add(new int[]{x,y});
-    		a2_to_main_station_last[0] = x;
-    		a2_to_main_station_last[1] = y;
-    	}
-    	for (int i=1; i<=6; i++) {
-    		int x = a2_to_main_station_last[0];
-    		int y = a2_to_main_station_last[1] + 1;
-    		a2_to_main_station.add(new int[]{x,y});
-    		a2_to_main_station_last[0] = x;
-    		a2_to_main_station_last[1] = y;
-    	}
-    	for (int i=1; i<=1; i++) {
-    		int x = a2_to_main_station_last[0] - 1;
-    		int y = a2_to_main_station_last[1];
-    		a2_to_main_station.add(new int[]{x,y});
-    		a2_to_main_station_last[0] = x;
-    		a2_to_main_station_last[1] = y;
-    	}
-    	for (int i=1; i<=1; i++) {
-    		int x = a2_to_main_station_last[0];
-    		int y = a2_to_main_station_last[1] - 1;
-    		a2_to_main_station.add(new int[]{x,y});
-    		a2_to_main_station_last[0] = x;
-    		a2_to_main_station_last[1] = y;
-    	}
-    	
-    	Route a2_to_main_station_route = new Route(a2_to_main_station, 4+6+1+1);
-    	HashMap<String, Route> routes_from_a2 = new HashMap<>();
-    	routes_from_a2.put("main_station", a2_to_main_station_route);
-    	originRoutes.put("a2", routes_from_a2);
-    	
-    	
-    	// b1 -> main_station
-    	List<int[]> b1_to_main_station = new ArrayList();
-    	b1_to_main_station.add(stationsLocationsForTheBus.get("b1"));
-    	int[] b1_to_main_station_last = stationsLocationsForTheBus.get("b1");
-    	for (int i=1; i<=10; i++) {
-    		int x = b1_to_main_station_last[0];
-    		int y = b1_to_main_station_last[1] + 1;
-    		b1_to_main_station.add(new int[]{x,y});
-    		b1_to_main_station_last[0] = x;
-    		b1_to_main_station_last[1] = y;
-    	}
-    	for (int i=1; i<=1; i++) {
-    		int x = b1_to_main_station_last[0] - 1;
-    		int y = b1_to_main_station_last[1];
-    		b1_to_main_station.add(new int[]{x,y});
-    		b1_to_main_station_last[0] = x;
-    		b1_to_main_station_last[1] = y;
-    	}
-    	for (int i=1; i<=1; i++) {
-    		int x = b1_to_main_station_last[0];
-    		int y = b1_to_main_station_last[1] - 1;
-    		b1_to_main_station.add(new int[]{x,y});
-    		b1_to_main_station_last[0] = x;
-    		b1_to_main_station_last[1] = y;
-    	}
-    	
-    	Route b1_to_main_station_route = new Route(b1_to_main_station, 10+1+1);
-    	HashMap<String, Route> routes_from_b1 = new HashMap<>();
-    	routes_from_b1.put("main_station", b1_to_main_station_route);
-    	originRoutes.put("b1", routes_from_b1);
-    	
-    	// b2 -> b1
-    	List<int[]> b2_to_b1 = new ArrayList();
-    	b2_to_b1.add(stationsLocationsForTheBus.get("b2"));
-    	int[] b2_to_b1_last = stationsLocationsForTheBus.get("b2");
-    	for (int i=1; i<=3; i++) {
-    		int x = b2_to_b1_last[0];
-    		int y = b2_to_b1_last[1] - 1;
-    		b2_to_b1.add(new int[]{x,y});
-    		b2_to_b1_last[0] = x;
-    		b2_to_b1_last[1] = y;
-    	}
-    	for (int i=1; i<=8; i++) {
-    		int x = b2_to_b1_last[0] - 1;
-    		int y = b2_to_b1_last[1];
-    		b2_to_b1.add(new int[]{x,y});
-    		b2_to_b1_last[0] = x;
-    		b2_to_b1_last[1] = y;
-    	}
-    	for (int i=1; i<=3; i++) {
-    		int x = b2_to_b1_last[0];
-    		int y = b2_to_b1_last[1] + 1;
-    		b2_to_b1.add(new int[]{x,y});
-    		b2_to_b1_last[0] = x;
-    		b2_to_b1_last[1] = y;
-    	}
-    	
-    	Route b2_to_b1_route = new Route(b2_to_b1, 3+8+3);
-    	HashMap<String, Route> routes_from_b2 = new HashMap<>();
-    	routes_from_b2.put("b1", b2_to_b1_route);
-    	originRoutes.put("b2", routes_from_b2);
-    	
-    	// gas_station -> main_station //TODO - Tslil: think if this one is necessary, maybe from gas_station to a2 is enough?
-    	List<int[]> gas_station_to_main_station = new ArrayList();
-    	gas_station_to_main_station.add(stationsLocationsForTheBus.get("gas_station"));
-    	int[] gas_station_to_main_station_last = stationsLocationsForTheBus.get("gas_station");
-    	for (int i=1; i<=5; i++) {
-    		int x = gas_station_to_main_station_last[0];
-    		int y = gas_station_to_main_station_last[1] - 1;
-    		gas_station_to_main_station.add(new int[]{x,y});
-    		gas_station_to_main_station_last[0] = x;
-    		gas_station_to_main_station_last[1] = y;
-    	}
-    	for (int i=1; i<=8; i++) {
-    		int x = gas_station_to_main_station_last[0] - 1;
-    		int y = gas_station_to_main_station_last[1];
-    		gas_station_to_main_station.add(new int[]{x,y});
-    		gas_station_to_main_station_last[0] = x;
-    		gas_station_to_main_station_last[1] = y;
-    	}
-    	for (int i=1; i<=6; i++) {
-    		int x = gas_station_to_main_station_last[0];
-    		int y = gas_station_to_main_station_last[1] + 1;
-    		gas_station_to_main_station.add(new int[]{x,y});
-    		gas_station_to_main_station_last[0] = x;
-    		gas_station_to_main_station_last[1] = y;
-    	}
-    	for (int i=1; i<=1; i++) {
-    		int x = gas_station_to_main_station_last[0] - 1;
-    		int y = gas_station_to_main_station_last[1];
-    		gas_station_to_main_station.add(new int[]{x,y});
-    		gas_station_to_main_station_last[0] = x;
-    		gas_station_to_main_station_last[1] = y;
-    	}
-    	for (int i=1; i<=1; i++) {
-    		int x = gas_station_to_main_station_last[0];
-    		int y = gas_station_to_main_station_last[1] - 1;
-    		gas_station_to_main_station.add(new int[]{x,y});
-    		gas_station_to_main_station_last[0] = x;
-    		gas_station_to_main_station_last[1] = y;
-    	}
-    	
-    	Route gas_station_to_main_station_route = new Route(gas_station_to_main_station, 5+8+6+1+1);
-    	HashMap<String, Route> routes_from_gas_station = new HashMap<>();
-    	routes_from_gas_station.put("main_station", gas_station_to_main_station_route);
-    	originRoutes.put("gas_station", routes_from_gas_station);
     }
 
 
     public HashMap<String, Station > getBusStations() {
         return busStations;
     }
-    
-    public HashMap<Integer, IBus> getBusses(){
+
+    public HashMap<Integer, Bus> getBusses(){
     	return busses;
     }
     
@@ -328,7 +95,9 @@ public class City {
     
     private void createBusses() {
     	for(int i=0; i<NUM_BUSSES; i++) {
-    		busses.put(i, new Bus((Integer)i, centralStation.getLocation()));
+    		Bus bus = new Bus((Integer)i, centralStation.getLocation());
+    		bus.setOrigin(centralStation);
+    		busses.put(i, bus);
     	}
     }
 
@@ -377,8 +146,8 @@ public class City {
         station2Loc[0] = top_left()[0] + 1 + height;
         station2Loc[1] = top_right()[1];
 
-        Station a1 = new Station(station1Loc);
-        Station a2 = new Station(station2Loc);
+        Station a1 = new Station(station1Loc, "a1");
+        Station a2 = new Station(station2Loc, "a2");
 
         busStations.put("a1", a1);
         busStations.put("a2", a2);
@@ -413,8 +182,8 @@ public class City {
         station2Loc[0] = bottom_left()[0] - 3;
         station2Loc[1] = bottom_left()[1] + 1  + width;
 
-        Station b1 = new Station(station1Loc);
-        Station b2 = new Station(station2Loc);
+        Station b1 = new Station(station1Loc, "b1");
+        Station b2 = new Station(station2Loc, "b2");
 
         busStations.put("b1", b1);
         busStations.put("b2", b2);
@@ -449,6 +218,9 @@ public class City {
     	this.roadBetweenNeighborhoodAndGasStation = new Road(start, end);
     }
 
+    public List<Line> getLines(){
+    	return this.lines;
+    }
 
     public int getX() {
         return x;
@@ -494,11 +266,19 @@ public class City {
     	return this.stationsLocationsForTheBus;
     }
     
-    public HashMap<String, HashMap<String, Route>> getOriginRoutes(){
-    	return this.originRoutes;
+    public BusMover getBusMover() {
+    	return this.busMover;
     }
     
-    public HashMap<String, FullRoute> getFullRoutes(){
-    	return this.fullRoutes;
+    public void updateCity() {
+		for(Bus bus : busses.values()) {
+			busMover.updateNextDesitinationAndOriginStations(bus);		
+			busMover.updateCoordinates(bus);
+			
+		}
+		//do any other updates needed for the dashboard or whatever...(isExtraNeeded etc...) 
     }
+
+
+
 }

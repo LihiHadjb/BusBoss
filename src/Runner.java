@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -12,11 +13,17 @@ public class Runner  {
     ControllerExecutor executor;
     Map<String,String> inputs;
     Map<String, String> sysValues;
+    InputsCreator inputsCreator;
+    OutputsParser outputsParser;
 
-    public Runner (Board board, City city){
+    public Runner (Board board, City city) throws IOException{
         this.board = board;
         this.city = city;
         this.inputs = new HashMap<>();
+        
+    	executor = new ControllerExecutor(new BasicJitController(), "out");
+    	inputsCreator = new InputsCreator(inputs, city);
+    	outputsParser = new OutputsParser(city);
     }
 
 //    private void updateCity2() {
@@ -32,30 +39,31 @@ public class Runner  {
 //    	bus0.setCurrCoordinate(newLoc);
 //    }
     
+	private void parseAndupdateCity(Map<String, String> sysValues) {
+		outputsParser.parseSysValues(sysValues);
+		city.updateCity();
+		
+	}
+    
+    
 
 
     public void run() throws Exception {
-    	executor = new ControllerExecutor(new BasicJitController(), "out");
-    	InputsCreator inputsCreator = new InputsCreator(inputs, city);
-    	//OutputsParser outputsParser = new OutputsParser();
-    	
     	inputsCreator.createEnvVars(true);
         executor.initState(inputs);     
         sysValues = executor.getCurrOutputs();
-        //outputsParser.updateCity(sysValues);
+        parseAndupdateCity(sysValues);
         this.board.paint();
         Thread.sleep(1000);            
 
         while (true) {
         	//inputsCreator.createEnvVars(false);
         	inputsCreator.createEnvVars(true);
-
         	executor.updateState(inputs);
             sysValues = executor.getCurrOutputs();
-            //outputsParser.updateCity(sysValues);
+            parseAndupdateCity(sysValues);
             this.board.paint();
             Thread.sleep(1000);
-            System.out.println(sysValues);
         }
     }
 

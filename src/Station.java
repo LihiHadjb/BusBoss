@@ -1,11 +1,17 @@
 public class Station {
     boolean arePassengersWaiting;
     int[] location;
+    String name;
 
 
-    public Station(int[] location) {
+    public Station(int[] location, String name) {
         this.arePassengersWaiting = false; //TODO: do we want to make this initial guarantee?
         this.location = location;
+        this.name = name;
+    }
+    
+    public String getName() {
+    	return name;
     }
 
     public boolean isArePassengersWaiting() {

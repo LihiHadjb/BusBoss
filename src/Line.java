@@ -1,10 +1,13 @@
+import java.util.List;
+
 public class Line {
     private LineName lineName;
     private boolean isExtraBusNeeded;
+    private List<String> route;
 
-    public Line(LineName lineName, boolean isExtraBusNeeded) {
+    public Line(LineName lineName, List<String> route) {
         this.lineName = lineName;
-        this.isExtraBusNeeded = isExtraBusNeeded;
+        this.route = route;
     }
 
     public LineName getLineName() {
@@ -21,6 +24,10 @@ public class Line {
 
     public void setExtraBusNeeded(boolean extraBusNeeded) {
         isExtraBusNeeded = extraBusNeeded;
+    }
+    
+    public void setNeedExtraBusForLine(boolean needExtraBusForLine) {
+    	this.isExtraBusNeeded = needExtraBusForLine;
     }
 
 
