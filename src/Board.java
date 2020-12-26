@@ -50,7 +50,7 @@ public class Board extends JFrame {
 	
 	private void initImages() {
 		try{
-			this.busImage = ImageIO.read(new File("images/bus.jpeg"));
+			this.busImage = ImageIO.read(new File("images/bus_with_background.jpg"));
 			this.stationWithPeopleImage =  ImageIO.read(new File("images/station_with_people.jpeg"));
 			this.gasStationImage =  ImageIO.read(new File("images/gas_station.jpeg"));
 			this.emptyStationImage =  ImageIO.read(new File("images/empty_station.jpeg"));
@@ -215,7 +215,7 @@ public class Board extends JFrame {
 	public void drawBusses(){
 		Graphics g = this.getGraphics();
 		for (Bus bus : city.getBusses().values()){
-			g.drawImage(busImage, bus.getCurrCoordinate()[1] * dim, bus.getCurrCoordinate()[0] * dim, dim, dim, null);
+			g.drawImage(busImage, bus.getCurrCoordinate()[1] * dim + 1, bus.getCurrCoordinate()[0] * dim +2, dim-4, dim-4, null);
 		}
 	}
 

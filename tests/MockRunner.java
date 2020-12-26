@@ -37,7 +37,7 @@ public class MockRunner extends Runner{
             sysValues = executor.getCurrOutputs();
             parseAndupdateCity(sysValues);
             this.board.paint();
-            Thread.sleep(50);
+            Thread.sleep(DELAY);
 
             while (true) {
                 //System.out.println("hello");
@@ -47,7 +47,7 @@ public class MockRunner extends Runner{
                 sysValues = executor.getCurrOutputs();
                 parseAndupdateCity(sysValues);
                 this.board.paint();
-                Thread.sleep(1000);
+                Thread.sleep(DELAY);
             }
         }
 
