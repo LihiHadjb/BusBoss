@@ -5,12 +5,18 @@ public class Station {
     int[] location;
     String name;
     int[] locationForTheBus;
+    int id;
 
-    public Station(int[] location, String name, int[] locationForTheBus) {
+    public Station(int[] location, String name, int[] locationForTheBus, int id) {
         this.arePassengersWaiting = false; //TODO: do we want to make this initial guarantee?
         this.location = location;
         this.name = name;
         this.locationForTheBus = locationForTheBus;
+        this.id = id;
+    }
+
+    public int getId(){
+        return id;
     }
 
     public int[] getLocationForTheBus(){

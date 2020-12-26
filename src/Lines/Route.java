@@ -1,8 +1,13 @@
 package Lines;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Route {
+	public List<int[]> getCoordinates() {
+		return coordinates;
+	}
+
 	private List<int[]> coordinates;
 	int length;
 	
@@ -13,7 +18,6 @@ public class Route {
 	
 	public int[] getNextCoordinate(int[] currCoordinate) {
 		int index = this.coordinates.indexOf(currCoordinate);
-		
 		if (index < this.length) {
 			return coordinates.get(index+1);
 		}
@@ -30,6 +34,15 @@ public class Route {
 		}
 		
 		return false; //in case we're at the end of the route
+	}
+
+	public boolean isOnRoute(int[] coor){
+		for(int[] coorOnRoute : this.coordinates){
+			if(Arrays.equals(coor, coorOnRoute)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

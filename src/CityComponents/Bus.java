@@ -17,14 +17,21 @@ public class Bus{
     private Station origin;
     private boolean inUse;
     private boolean shouldStopAgainInRain;
+    //private int[] parkingLocation;
 
     public Bus(int id, int[] initialCoordinate) {
         this.id = id;
         this.currCoordinate = initialCoordinate;
+        //this.parkingLocation = initialCoordinate;
         this.isStopPressed = false;//TODO: initial guarantee
         this.isFull = false;//TODO: initial guarantee
 
+
     }
+
+    //public int[] getParkingLocation() {
+//        return parkingLocation;
+//    }
 
     public boolean isShouldStopAgainInRain() {
         return shouldStopAgainInRain;
@@ -64,7 +71,6 @@ public class Bus{
     }
 
     public void setCurrCoordinate(int[] currCoordinate) {
-        //System.out.println(String.format("updateing to %d, %d", currCoordinate[0], currCoordinate[1]));
         this.currCoordinate = currCoordinate;
     }
 
@@ -75,7 +81,13 @@ public class Bus{
     public void setLine(Line line) {
         this.line = line;
         FullRoute busFullRoute = line.getFullRoute();
-        String destinationName = busFullRoute.getNextDestination(this.origin.getName());
+
+        String originName = busFullRoute.getStationAtIndex(0);
+        Station originStation = busFullRoute.getName2Station().get(originName);
+        this.setOrigin(originStation);
+
+
+        String destinationName = busFullRoute.getStationAtIndex(1);
         Station destinationStation = busFullRoute.getName2Station().get(destinationName);
         this.setDestination(destinationStation);
 
@@ -143,6 +155,7 @@ public class Bus{
 		return this.inUse;
 		
 	}
+
 
 
 

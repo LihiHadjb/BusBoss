@@ -39,5 +39,9 @@ public class FullRoute {
 		Route result = busOriginRoute.get(currDestination);
 		return result;
 	}
+
+	public String getStationAtIndex(int i){
+		return this.routeStations.get(i);
+	}
 	
 }

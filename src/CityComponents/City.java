@@ -27,14 +27,18 @@ public class City {
     private Road roadBetweenNeighborhoodAndGasStation;
     private List<Line> lines;
     private BusMover busMover;
+    private HashMap<Integer, int[]> parkingsLocations;
+    private HashMap<Integer, Station> index2station;
 
 
     public City(){
         this.busStations = new HashMap<>();
         this.busses = new HashMap<>();
         this.lines = new ArrayList<>();
+        this.index2station = new HashMap<>();
         this.isRaining = false;
         this.isRushHour = false;
+        this.parkingsLocations = new HashMap<>();
         createLineABusStations();
         createLineBBusStations();
         createCentralStation();
@@ -43,10 +47,41 @@ public class City {
         createRoadBetweenCityAndMainStation();
         createRoadBetweenCityAndGasStation();
 
+        createParkingsLocations();
+
         createBusMover();
         createLines();
 
         createBusses();
+    }
+
+    public HashMap<Integer, Station> getIndex2station() {
+        return index2station;
+    }
+
+    private void createParkingsLocations(){
+        for(int i=0; i<NUM_BUSSES; i++){
+            int [] main_station_loc = mainStation.getLocationForTheBus();
+            int[] initLoc=null;
+            switch (i){
+            case(0):
+                initLoc = new int[]{main_station_loc[0], main_station_loc[1]+2};
+                parkingsLocations.put(0, initLoc);
+                break;
+            case(1):
+                initLoc = new int[]{main_station_loc[0]+1, main_station_loc[1]+2};
+                parkingsLocations.put(1, initLoc);
+                break;
+            case(2):
+                initLoc = new int[]{main_station_loc[0]+2, main_station_loc[1]+2};
+                parkingsLocations.put(2, initLoc);
+                break;
+            case(3):
+                initLoc = new int[]{main_station_loc[0]+3, main_station_loc[1]+2};
+                parkingsLocations.put(3, initLoc);
+            }
+        }
+
     }
 
     public int getNumBusses(){
@@ -63,7 +98,7 @@ public class City {
 
     
     public void createBusMover() {
-    	this.busMover = new BusMover(gasStation, mainStation, busStations);
+    	this.busMover = new BusMover(gasStation, mainStation, busStations, parkingsLocations);
     }
 
     public void createLines() {
@@ -109,8 +144,29 @@ public class City {
     
     public void createBusses() {
     	for(int i=0; i<NUM_BUSSES; i++) {
-    		Bus bus = new Bus((Integer)i, mainStation.getLocationForTheBus());
-    		bus.setOrigin(mainStation);
+//    	    int [] main_station_loc = mainStation.getLocationForTheBus();
+//            int[] initLoc=null;
+//    	    switch (i){
+//            case(0):
+//                initLoc = new int[]{main_station_loc[0]+1, main_station_loc[1]};
+//                parkingsLocations.put(0, initLoc);
+//                break;
+//            case(1):
+//                initLoc = new int[]{main_station_loc[0], main_station_loc[1]+1};
+//                parkingsLocations.put(1, initLoc);
+//                break;
+//            case(2):
+//                initLoc = new int[]{main_station_loc[0], main_station_loc[1]+2};
+//                parkingsLocations.put(2, initLoc);
+//                break;
+//            case(3):
+//                initLoc = new int[]{main_station_loc[0]+1, main_station_loc[1]+2};
+//                parkingsLocations.put(3, initLoc);
+//            }
+
+    		Bus bus = new Bus((Integer)i, parkingsLocations.get(i));
+            //Bus bus = new Bus((Integer)i, main_station_loc);
+    		//bus.setOrigin(mainStation);
     		busses.put(i, bus);
     	}
 
@@ -148,6 +204,7 @@ public class City {
         ms_loc[0] = bottom_left_cs[0] - 1;
         ms_loc[1] = bottom_left_cs[1] -1 + (bottom_right_cs[1] - bottom_left_cs[1])/2;
         this.mainStation = new MainStation(top_left_cs, top_right_cs, bottom_left_cs, bottom_right_cs, ms_loc, ms_loc);
+        this.index2station.put(4, mainStation);
 
     }
 
@@ -177,8 +234,11 @@ public class City {
         station2LocForBus[0] = station2Loc[0];
         station2LocForBus[1] = station2Loc[1] - 1;
 
-        Station a1 = new Station(station1Loc, "a1", station1LocForBus);
-        Station a2 = new Station(station2Loc, "a2", station2LocForBus);
+        Station a1 = new Station(station1Loc, "a1", station1LocForBus, 0);
+        Station a2 = new Station(station2Loc, "a2", station2LocForBus, 1);
+
+        this.index2station.put(0, a1);
+        this.index2station.put(1, a2);
 
         busStations.put("a1", a1);
         busStations.put("a2", a2);
@@ -213,8 +273,11 @@ public class City {
         station2LocForBus[1] = station2Loc[1];
 
 
-        Station b1 = new Station(station1Loc, "b1", station1LocForBus);
-        Station b2 = new Station(station2Loc, "b2", station2LocForBus);
+        Station b1 = new Station(station1Loc, "b1", station1LocForBus, 2);
+        Station b2 = new Station(station2Loc, "b2", station2LocForBus, 3);
+
+        this.index2station.put(2, b1);
+        this.index2station.put(3, b2);
 
         busStations.put("b1", b1);
         busStations.put("b2", b2);
@@ -254,24 +317,24 @@ public class City {
     public void setRaining(boolean raining) {
         isRaining = raining;
     }
-    
-    
+
+
     public void toggleRaining() {
     	this.isRaining = !this.isRaining;
     }
-    
+
     public boolean isRushHour() {
     	return this.isRushHour;
     }
-    
+
     public void setRushHour(boolean rushHour) {
     	this.isRushHour = rushHour;
     }
-    
+
     public void toggleRushHour() {
     	this.isRushHour = !this.isRushHour;
     }
-    
+
     public MainStation getMainStation() {
         return mainStation;
     }
