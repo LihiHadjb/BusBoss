@@ -1,3 +1,6 @@
+import CityComponents.City;
+import SpecificationVars.OutputsParser;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -10,11 +13,11 @@ public class MockRunner extends Runner{
         }
 
         //    private void updateCity2() {
-        //    	Bus bus0 = city.getBusses().get(0);
+        //    	CityComponents.Bus bus0 = city.getBusses().get(0);
         //    	bus0.setCurrCoordinate(city.top_left());
         //    }
         //    private void updateCity1() {
-        //    	Bus bus0 = city.getBusses().get(0);
+        //    	CityComponents.Bus bus0 = city.getBusses().get(0);
         //    	int[] newLoc = new int[2];
         //
         //    	newLoc[0] = city.top_left()[0] + 1;

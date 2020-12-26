@@ -1,3 +1,5 @@
+package CityComponents;
+
 public class GasStation extends Station{
     private int[] top_left;
     private int[] top_right;

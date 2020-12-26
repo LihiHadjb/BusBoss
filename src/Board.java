@@ -1,3 +1,7 @@
+import CityComponents.Bus;
+import CityComponents.City;
+import CityComponents.Station;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
@@ -222,7 +226,7 @@ public class Board extends JFrame {
 	public void drawPassengerInStations(){
 		Graphics g = this.getGraphics();
 		for (Station station : city.getBusStations().values()){
-			if(station.arePassengersWaiting){
+			if(station.isArePassengersWaiting()){
 				g.drawImage(stationWithPeopleImage, station.getLocation()[0] * dim * 2, station.getLocation()[1] * dim * 2, null);
 			}
 		}

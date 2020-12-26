@@ -1,4 +1,7 @@
-//import GUI.IBus;
+package CityComponents;//import GUI.IBus;
+
+import Lines.FullRoute;
+import Lines.Line;
 
 public class Bus{
     private int id;

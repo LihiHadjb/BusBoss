@@ -1,7 +1,10 @@
-import java.util.HashMap;
+import CityComponents.Bus;
+import CityComponents.City;
+import SpecificationVars.OutputsParser;
+
 import java.util.Map;
 
-public class MockOutputsParserNoStops extends OutputsParser{
+public class MockOutputsParserNoStops extends OutputsParser {
 
         public MockOutputsParserNoStops(City city) {
             super(city);
@@ -10,14 +13,14 @@ public class MockOutputsParserNoStops extends OutputsParser{
 
 
         private void updateLineOfReserveBus() {
-            for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
-                Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
+            for(int i=0; i<this.city.getNumReserveBusses(); i++) {
+                Bus bus = city.getBusses().get(i + city.getNumReserveBusses());
                 bus.setLine(city.getLines().get(1));
             }
         }
 
         private void updateShouldGoToGasStation() {
-            for(int i=0; i<NUM_BUSSES; i++) {
+            for(int i=0; i<city.getNumBusses(); i++) {
                 Bus bus = city.getBusses().get(i);
                 bus.setShouldGoToGasStation(false);
             }
@@ -37,15 +40,15 @@ public class MockOutputsParserNoStops extends OutputsParser{
         //	}
 
         public void updateStopAtNextStation() {
-            for(int i=0; i<NUM_BUSSES; i++) {
+            for(int i=0; i<city.getNumBusses(); i++) {
                 Bus bus = city.getBusses().get(i);
                 bus.setStopAtNextStation(false);
             }
         }
 
         private void updateInUse() {
-            for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
-                Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
+            for(int i=0; i<city.getNumReserveBusses(); i++) {
+                Bus bus = city.getBusses().get(i + city.getNumReserveBusses());
                 bus.setInUse(false);
             }
         }

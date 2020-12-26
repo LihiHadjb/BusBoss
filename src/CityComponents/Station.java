@@ -1,3 +1,5 @@
+package CityComponents;
+
 public class Station {
     boolean arePassengersWaiting;
     int[] location;

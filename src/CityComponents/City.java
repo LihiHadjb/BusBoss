@@ -1,3 +1,10 @@
+package CityComponents;
+
+import Lines.BusMover;
+import Lines.Line;
+import Lines.LineName;
+import Lines.Road;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +51,19 @@ public class City {
 
 
     }
+
+    public int getNumBusses(){
+        return NUM_BUSSES;
+    }
+
+    public int getNumReserveBusses(){
+        return NUM_RESERVE_BUSSES;
+    }
+
+    public int getNumLines(){
+        return NUM_LINES;
+    }
+
     
     public void createBusMover() {
     	this.busMover = new BusMover(gasStation, mainStation, busStations);

@@ -1,3 +1,8 @@
+package Lines;
+
+import CityComponents.Bus;
+import CityComponents.Station;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,7 +13,7 @@ public class FullRoute {
 	private int length;
 	private HashMap<String, Station> name2station;
 	
-	public FullRoute(String name,List<String> routeStations, HashMap<String, HashMap<String, Route>> originRoutes, int length, HashMap<String, Station > name2station) {
+	public FullRoute(String name,List<String> routeStations, HashMap<String, HashMap<String, Route>> originRoutes, int length, HashMap<String, Station> name2station) {
 		this.name = name;
 		this.routeStations = routeStations;
 		this.originRoutes = originRoutes;

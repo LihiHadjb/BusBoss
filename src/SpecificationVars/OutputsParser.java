@@ -1,9 +1,16 @@
+package SpecificationVars;
+
+import CityComponents.Bus;
+import CityComponents.City;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class OutputsParser {
-	Map<String, String> sysValues;
-	City city;
+	//TODO: fields should not be public! its just for the test!!!
+
+	public Map<String, String> sysValues;
+	public City city;
 	int NUM_BUSSES;
 	int NUM_RESERVE_BUSSES;
 	int NUM_LINES;
@@ -11,9 +18,9 @@ public class OutputsParser {
 	public OutputsParser(City city) {
 		this.sysValues = new HashMap<>();
 		this.city = city;
-		this.NUM_BUSSES = city.NUM_BUSSES;
-		this.NUM_RESERVE_BUSSES = city.NUM_RESERVE_BUSSES;
-		this.NUM_LINES = city.NUM_LINES;
+		this.NUM_BUSSES = city.getNumBusses();
+		this.NUM_RESERVE_BUSSES = city.getNumReserveBusses();
+		this.NUM_LINES = city.getNumLines();
 	}
 
 	private boolean[] parseToArrayOfBooleans(String sysVarName, int numElements) {

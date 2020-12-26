@@ -1,4 +1,4 @@
-
+package CityComponents;
 
 public class MainStation extends Station {
     private int[] top_left;

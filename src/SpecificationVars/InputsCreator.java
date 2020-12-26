@@ -1,3 +1,8 @@
+package SpecificationVars;
+
+import CityComponents.Bus;
+import CityComponents.City;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -14,7 +19,7 @@ public class InputsCreator {
 	public InputsCreator(Map<String, String> inputs, City city) {
 		this.inputs = inputs;
 		this.city = city;
-		this.NUM_BUSSES = city.NUM_BUSSES;
+		this.NUM_BUSSES = city.getNumBusses();
 		
 		this.envVarToInitValue = new HashMap<>();
 		envVarToInitValue.put("isBusFull", false);

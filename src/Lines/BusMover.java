@@ -1,4 +1,9 @@
+package Lines;
 
+import CityComponents.Bus;
+import CityComponents.GasStation;
+import CityComponents.MainStation;
+import CityComponents.Station;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,13 +13,13 @@ import java.util.List;
 public class BusMover {
 	private GasStation gasStation;
     private MainStation mainStation;
-	private HashMap<String, Station > busStations;
+	private HashMap<String, Station> busStations;
 	private HashMap<String, HashMap<String, Route>> originRoutes;
 	private HashMap<String, HashMap<String, String>> originRoutesDirections;
 
 	HashMap<String, Station> name2station;
 
-    public BusMover(GasStation gasStation, MainStation mainStation, HashMap<String, Station > busStations) {
+    public BusMover(GasStation gasStation, MainStation mainStation, HashMap<String, Station> busStations) {
 		this.gasStation = gasStation;
 		this.busStations = busStations;
 		this.mainStation = mainStation;
@@ -350,12 +355,12 @@ public class BusMover {
 		FullRoute result = null;
 		switch (lineName.toString()) {
 		case ("A"):
-			// Line A route
+			// Lines.Line A route
 			List<String> line_A_route = Arrays.asList("main_station", "a1", "a2");
 			FullRoute Line_A = new FullRoute("line_A", line_A_route, this.originRoutes, 3, name2station);
 			return Line_A;
 		case ("B"):
-			// Line B route
+			// Lines.Line B route
 			List<String> Line_B_route = Arrays.asList("main_station", "b2", "b1");
 			FullRoute Line_B = new FullRoute("line_B", Line_B_route, this.originRoutes, 3, name2station);
 			return Line_B;
