@@ -18,6 +18,7 @@ public class City {
     final int NUM_LINES = 2;
 
     private boolean isRaining;
+    private boolean isRushHour;
     private MainStation mainStation;
     private GasStation gasStation;
     private HashMap<String, Station > busStations;
@@ -32,6 +33,8 @@ public class City {
         this.busStations = new HashMap<>();
         this.busses = new HashMap<>();
         this.lines = new ArrayList<>();
+        this.isRaining = false;
+        this.isRushHour = false;
         createLineABusStations();
         createLineBBusStations();
         createCentralStation();
@@ -44,12 +47,6 @@ public class City {
         createLines();
 
         createBusses();
-
-        //this.isRaining = false;// TODO: make this initial guarantee
-
-
-
-
     }
 
     public int getNumBusses(){
@@ -257,7 +254,24 @@ public class City {
     public void setRaining(boolean raining) {
         isRaining = raining;
     }
-
+    
+    
+    public void toggleRaining() {
+    	this.isRaining = !this.isRaining;
+    }
+    
+    public boolean isRushHour() {
+    	return this.isRushHour;
+    }
+    
+    public void setRushHour(boolean rushHour) {
+    	this.isRushHour = rushHour;
+    }
+    
+    public void toggleRushHour() {
+    	this.isRushHour = !this.isRushHour;
+    }
+    
     public MainStation getMainStation() {
         return mainStation;
     }

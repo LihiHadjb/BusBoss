@@ -3,9 +3,13 @@ import CityComponents.City;
 import CityComponents.Station;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +18,7 @@ import static java.lang.Thread.sleep;
 
 
 @SuppressWarnings("serial")
-public class Board extends JFrame {
+public class Board extends JFrame{
 	final int dim = 40;
 	
 	int x;
@@ -31,11 +35,19 @@ public class Board extends JFrame {
 	int[] bottom_right;
 	
 	City city;
+	
+	JPanel panel;
+
+	int width;
+	int height;
 
 	public Board(City city){
 		this.city = city;
 		this.x = city.getX();
 		this.y = city.getY();
+		
+		this.width = this.y * dim;
+		this.height = this.x * dim;
 
 		top_left = city.top_left();
 		top_right = city.top_right();
@@ -45,12 +57,81 @@ public class Board extends JFrame {
 		initImages();
 
 		this.setTitle("BusBoss");
-		this.setSize(this.y * this.dim, this.x * this.dim);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setSize(this.width, this.height);
+		initBtns();
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
-
+		this.paint(this.getGraphics());
 	}
 
+	private void initBtns() {
+		// Buttons-Container
+		this.panel = new JPanel();
+		this.panel.setBounds(0, 0, this.width, this.height);
+		this.setLayout(null);
+		
+		// Buttons
+		JButton rainBtn = new JButton("Rain Scenario");
+		JButton rushHourBtn = new JButton("Rush Hour Scenario");
+		JButton resetScenarioBtn = new JButton("Reset Scenario");
+		Color defaultBgColor = new JButton().getBackground();
+		
+		// Listeners
+		ActionListener rainBtnListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				city.toggleRaining();
+				if(city.isRaining()) {
+					rainBtn.setBackground(new Color(130, 216, 229));
+				}
+				else {
+					rainBtn.setBackground(defaultBgColor);
+				}
+			}
+		};
+		ActionListener rushBtnListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				city.toggleRushHour();
+				if(city.isRushHour()) {
+					rushHourBtn.setBackground(new Color(130, 216, 229));
+				}
+				else {
+					rushHourBtn.setBackground(defaultBgColor);
+				}
+			}
+		};
+		ActionListener resetScenarioBtnListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				city.setRaining(false);
+				city.setRushHour(false);
+				rainBtn.setBackground(defaultBgColor);
+				rushHourBtn.setBackground(defaultBgColor);
+			}
+		};
+		
+		// Register Listeners to buttons
+		rainBtn.addActionListener(rainBtnListener);
+		rushHourBtn.addActionListener(rushBtnListener);
+		resetScenarioBtn.addActionListener(resetScenarioBtnListener);
+		
+		// Register buttons to panel
+		this.panel.add(rainBtn);
+		this.panel.add(rushHourBtn);
+		this.panel.add(resetScenarioBtn);
+		
+		// Set panel location top-mid window
+		int panelHalfWid = this.panel.getWidth() / 2;
+		int windowHalfWid = this.width / 2;
+		int newX = windowHalfWid - panelHalfWid;
+		int newY = this.height - this.panel.getHeight();
+		this.panel.setLocation(newX, newY);
+		
+		// Register panel
+		this.getContentPane().add(this.panel);
+		
+	}
 	
 	private void initImages() {
 		try{
@@ -275,7 +356,7 @@ public class Board extends JFrame {
 	
 
 	public void paint() {
-		draw_background();
+		//draw_background(); //Tslil - no need for that
 		draw_neighbourhood();
 		draw_borders("main_station");
 		draw_borders("gas_station");
