@@ -308,9 +308,10 @@ public class BusMover {
 	}
 
 	public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses) {
-    	if(!bus.isMovedInPrevStep() && bus.getPotentialCoor() != null){
-			moveAndAvoidCollision(bus, bus.getPotentialCoor(), allBusses);
-		}
+//    	if(!bus.isMovedInPrevStep() && bus.getPotentialCoor() != null){
+//			moveAndAvoidCollision(bus, bus.getPotentialCoor(), allBusses);
+//			return;
+//		}
 
     	if(isAtDestinationStation(bus) && bus.isStopAtNextStation()){
 			updateNextDesitinationAndOriginStations(bus);
@@ -326,26 +327,21 @@ public class BusMover {
 				Station dest = bus.getDestination();
 				Route route = originRoutes.get(origin.getName()).get(dest.getName());
 				int[] nextCoor = route.getNextCoordinate(bus.getCurrCoordinate());
-				boolean moved = moveAndAvoidCollision(bus, nextCoor, allBusses);
-				bus.setMovedInPrevStep(moved);
-
-
+				moveOrAvoidCollision(bus, nextCoor, allBusses);
 			}
 		}
 	}
 
 	//go through all the busses with smaller indices (which means that their coordiante was already updated!), and see if this bus is about to go to the same coordiante.
 	//if it does, than curr bus should not move
-	public boolean moveAndAvoidCollision(Bus bus, int[] nextCoor, HashMap<Integer, Bus> allBusses){
+	public void moveOrAvoidCollision(Bus bus, int[] nextCoor, HashMap<Integer, Bus> allBusses){
     	for(int i=0; i<bus.getId(); i++){
 			Bus prevBus = allBusses.get(i);
 			if(Arrays.equals((nextCoor), prevBus.getCurrCoordinate())){
-				bus.setPotentialCoor(nextCoor);
-				return false;
+				return;
 			}
 		}
 		bus.setCurrCoordinate(nextCoor);
-    	return true;
 
 	}
 

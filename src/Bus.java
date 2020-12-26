@@ -13,8 +13,6 @@ public class Bus{
     private Station destination;
     private Station origin;
     private boolean inUse;
-    private int[] potentialCoor;
-    private boolean isMovedInPrevStep;
 
     public Bus(int id, int[] initialCoordinate) {
         this.id = id;
@@ -24,22 +22,6 @@ public class Bus{
 
     }
 
-
-    public int[] getPotentialCoor() {
-        return potentialCoor;
-    }
-
-    public void setPotentialCoor(int[] potentialCoor) {
-        this.potentialCoor = potentialCoor;
-    }
-
-    public boolean isMovedInPrevStep() {
-        return isMovedInPrevStep;
-    }
-
-    public void setMovedInPrevStep(boolean movedInPrevStep) {
-        isMovedInPrevStep = movedInPrevStep;
-    }
 
 
 
