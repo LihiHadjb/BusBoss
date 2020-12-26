@@ -1,13 +1,22 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Line {
     private LineName lineName;
     private boolean isExtraBusNeeded;
-    private List<String> route;
+    private FullRoute fullRoute;
 
-    public Line(LineName lineName, List<String> route) {
+
+    public Line(LineName lineName, FullRoute fullRoute) {
         this.lineName = lineName;
-        this.route = route;
+        this.fullRoute = fullRoute;
+
+    }
+
+    public FullRoute getFullRoute(){
+        return this.fullRoute;
     }
 
     public LineName getLineName() {
@@ -29,6 +38,12 @@ public class Line {
     public void setNeedExtraBusForLine(boolean needExtraBusForLine) {
     	this.isExtraBusNeeded = needExtraBusForLine;
     }
+
+
+
+
+
+
 
 
 }

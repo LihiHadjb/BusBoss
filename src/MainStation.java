@@ -1,6 +1,6 @@
 
 
-public class CentralStation extends Station {
+public class MainStation extends Station {
     private int[] top_left;
     private int[] top_right;
     private int[] bottom_left;
@@ -38,8 +38,8 @@ public class CentralStation extends Station {
         this.bottom_right = bottom_right;
     }
 
-    public CentralStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right,int[] loc) {
-        super(loc, "main_station");
+    public MainStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right,int[] loc, int[] locForTheBus) {
+        super(loc, "main_station", locForTheBus);
         this.top_left = top_left;
         this.top_right = top_right;
         this.bottom_left = bottom_left;

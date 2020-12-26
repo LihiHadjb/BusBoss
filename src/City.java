@@ -1,6 +1,3 @@
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,13 +11,12 @@ public class City {
     final int NUM_LINES = 2;
 
     private boolean isRaining;
-    private CentralStation centralStation;
+    private MainStation mainStation;
     private GasStation gasStation;
     private HashMap<String, Station > busStations;
     private HashMap<Integer, Bus> busses;
     private Road roadBetweenNeighborhoodAndmMainStation;
     private Road roadBetweenNeighborhoodAndGasStation;
-    private HashMap<String, int[]> stationsLocationsForTheBus;
     private List<Line> lines;
     private BusMover busMover;
 
@@ -29,17 +25,19 @@ public class City {
         this.busStations = new HashMap<>();
         this.busses = new HashMap<>();
         this.lines = new ArrayList<>();
-        this.stationsLocationsForTheBus = new HashMap<>();
         createLineABusStations();
         createLineBBusStations();
         createCentralStation();
         createGasStation();
-        createBusses();
-        createLines();
+
         createRoadBetweenCityAndMainStation();
         createRoadBetweenCityAndGasStation();
+
         createBusMover();
-       
+        createLines();
+
+        createBusses();
+
         //this.isRaining = false;// TODO: make this initial guarantee
 
 
@@ -48,14 +46,13 @@ public class City {
     }
     
     public void createBusMover() {
-    	this.busMover = new BusMover(stationsLocationsForTheBus, gasStation, centralStation, busStations);
+    	this.busMover = new BusMover(gasStation, mainStation, busStations);
     }
 
     public void createLines() {
         this.lines = new ArrayList<>();
-        Line lineA = new Line(LineName.valueOf("A"), Arrays.asList("main_station", "a1", "a2"));
-        Line lineB = new Line(LineName.valueOf("B"), Arrays.asList("main_station", "b1", "b2"));
-
+        Line lineA = new Line(LineName.valueOf("A"), busMover.createFullRoute(LineName.valueOf("A")));
+        Line lineB = new Line(LineName.valueOf("B"), busMover.createFullRoute(LineName.valueOf("B")));
         lines.add(lineA);
         lines.add(lineB);
 
@@ -93,12 +90,20 @@ public class City {
         return result;
     }
     
-    private void createBusses() {
+    public void createBusses() {
     	for(int i=0; i<NUM_BUSSES; i++) {
-    		Bus bus = new Bus((Integer)i, centralStation.getLocation());
-    		bus.setOrigin(centralStation);
+    		Bus bus = new Bus((Integer)i, mainStation.getLocationForTheBus());
+    		bus.setOrigin(mainStation);
     		busses.put(i, bus);
     	}
+
+    	Bus lineABus = busses.get(0);
+    	Bus lineBBus = busses.get(1);
+
+    	lineABus.setLine(lines.get(0));
+        lineBBus.setLine(lines.get(1));
+
+
     }
 
     private void createGasStation(){
@@ -111,9 +116,8 @@ public class City {
         int[] gs_loc = new int[2];
         gs_loc[0] = bottom_left_gs[0] - 1;
         gs_loc[1] = bottom_left_gs[1] -1 + (bottom_right_gs[1] - bottom_left_gs[1])/2;
-        this.gasStation = new GasStation(top_left_gs, top_right_gs, bottom_left_gs, bottom_right_gs, gs_loc);
+        this.gasStation = new GasStation(top_left_gs, top_right_gs, bottom_left_gs, bottom_right_gs, gs_loc, gs_loc);
 
-        this.stationsLocationsForTheBus.put("gas_station", gs_loc);
     }
 
     private void createCentralStation(){
@@ -126,9 +130,8 @@ public class City {
         int[] ms_loc = new int[2];
         ms_loc[0] = bottom_left_cs[0] - 1;
         ms_loc[1] = bottom_left_cs[1] -1 + (bottom_right_cs[1] - bottom_left_cs[1])/2;
-        this.centralStation = new CentralStation(top_left_cs, top_right_cs, bottom_left_cs, bottom_right_cs, ms_loc );
+        this.mainStation = new MainStation(top_left_cs, top_right_cs, bottom_left_cs, bottom_right_cs, ms_loc, ms_loc);
 
-        this.stationsLocationsForTheBus.put("main_station", ms_loc);
     }
 
     private void createLineABusStations(){
@@ -146,12 +149,6 @@ public class City {
         station2Loc[0] = top_left()[0] + 1 + height;
         station2Loc[1] = top_right()[1];
 
-        Station a1 = new Station(station1Loc, "a1");
-        Station a2 = new Station(station2Loc, "a2");
-
-        busStations.put("a1", a1);
-        busStations.put("a2", a2);
-
         int[] station1LocForBus = new int[2];
         int[] station2LocForBus = new int[2];
 
@@ -163,8 +160,13 @@ public class City {
         station2LocForBus[0] = station2Loc[0];
         station2LocForBus[1] = station2Loc[1] - 1;
 
-        this.stationsLocationsForTheBus.put("a1", station1LocForBus);
-        this.stationsLocationsForTheBus.put("a2", station2LocForBus);
+        Station a1 = new Station(station1Loc, "a1", station1LocForBus);
+        Station a2 = new Station(station2Loc, "a2", station2LocForBus);
+
+        busStations.put("a1", a1);
+        busStations.put("a2", a2);
+
+
 
     }
 
@@ -182,12 +184,6 @@ public class City {
         station2Loc[0] = bottom_left()[0] - 3;
         station2Loc[1] = bottom_left()[1] + 1  + width;
 
-        Station b1 = new Station(station1Loc, "b1");
-        Station b2 = new Station(station2Loc, "b2");
-
-        busStations.put("b1", b1);
-        busStations.put("b2", b2);
-
         int[] station1LocForBus = new int[2];
         int[] station2LocForBus = new int[2];
 
@@ -199,8 +195,12 @@ public class City {
         station2LocForBus[0] = station2Loc[0] + 1;
         station2LocForBus[1] = station2Loc[1];
 
-        this.stationsLocationsForTheBus.put("b1", station1LocForBus);
-        this.stationsLocationsForTheBus.put("b2", station2LocForBus);
+
+        Station b1 = new Station(station1Loc, "b1", station1LocForBus);
+        Station b2 = new Station(station2Loc, "b2", station2LocForBus);
+
+        busStations.put("b1", b1);
+        busStations.put("b2", b2);
 
     }
 
@@ -238,12 +238,12 @@ public class City {
         isRaining = raining;
     }
 
-    public CentralStation getCentralStation() {
-        return centralStation;
+    public MainStation getMainStation() {
+        return mainStation;
     }
 
-    public void setCentralStation(CentralStation centralStation) {
-        this.centralStation = centralStation;
+    public void setMainStation(MainStation mainStation) {
+        this.mainStation = mainStation;
     }
 
     public GasStation getGasStation() {
@@ -261,10 +261,6 @@ public class City {
     public Road getRoadBetweenCityAndGasStation() {
         return this.roadBetweenNeighborhoodAndGasStation;
     }
-
-    public HashMap<String, int[]> getStationsLocationsForTheBus(){
-    	return this.stationsLocationsForTheBus;
-    }
     
     public BusMover getBusMover() {
     	return this.busMover;
@@ -272,9 +268,7 @@ public class City {
     
     public void updateCity() {
 		for(Bus bus : busses.values()) {
-			busMover.updateNextDesitinationAndOriginStations(bus);		
-			busMover.updateCoordinates(bus);
-			
+            busMover.updateCoordinates(bus, busses);
 		}
 		//do any other updates needed for the dashboard or whatever...(isExtraNeeded etc...) 
     }

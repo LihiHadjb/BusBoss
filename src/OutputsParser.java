@@ -39,11 +39,11 @@ public class OutputsParser {
 		for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
 			Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
 			if(values[i] == 0) {
-				bus.setLine(new Line(LineName.valueOf("A")));
+				bus.setLine(city.getLines().get(0));
 			}
 				
 			else {
-				bus.setLine(new Line(LineName.valueOf("B")));
+				bus.setLine(city.getLines().get(1));
 			}
 		}
 	}
@@ -70,7 +70,7 @@ public class OutputsParser {
 //		city.getLines.get(1).setExtraBusSentLine(values[1]);
 //	}
 	
-	private void updateStopAtNextStation() {
+	public void updateStopAtNextStation() {
 		boolean[] values = parseToArrayOfBooleans("stopAtNextStation", NUM_BUSSES);
 		for(int i=0; i<NUM_BUSSES; i++) {
 			Bus bus = city.getBusses().get(i);

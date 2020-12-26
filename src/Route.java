@@ -12,7 +12,7 @@ public class Route {
 	public int[] getNextCoordinate(int[] currCoordinate) {
 		int index = this.coordinates.indexOf(currCoordinate);
 		
-		if (index < this.length-1) {
+		if (index < this.length) {
 			return coordinates.get(index+1);
 		}
 		

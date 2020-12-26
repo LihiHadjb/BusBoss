@@ -54,7 +54,7 @@ public class Runner  {
         sysValues = executor.getCurrOutputs();
         parseAndupdateCity(sysValues);
         this.board.paint();
-        Thread.sleep(1000);            
+        Thread.sleep(500);
 
         while (true) {
         	//inputsCreator.createEnvVars(false);

@@ -13,6 +13,8 @@ public class Bus{
     private Station destination;
     private Station origin;
     private boolean inUse;
+    private int[] potentialCoor;
+    private boolean isMovedInPrevStep;
 
     public Bus(int id, int[] initialCoordinate) {
         this.id = id;
@@ -22,8 +24,25 @@ public class Bus{
 
     }
 
-    
-    
+
+    public int[] getPotentialCoor() {
+        return potentialCoor;
+    }
+
+    public void setPotentialCoor(int[] potentialCoor) {
+        this.potentialCoor = potentialCoor;
+    }
+
+    public boolean isMovedInPrevStep() {
+        return isMovedInPrevStep;
+    }
+
+    public void setMovedInPrevStep(boolean movedInPrevStep) {
+        isMovedInPrevStep = movedInPrevStep;
+    }
+
+
+
     public Station getDestination() {
         return destination;
     }
@@ -53,6 +72,7 @@ public class Bus{
     }
 
     public void setCurrCoordinate(int[] currCoordinate) {
+        //System.out.println(String.format("updateing to %d, %d", currCoordinate[0], currCoordinate[1]));
         this.currCoordinate = currCoordinate;
     }
 
@@ -62,7 +82,13 @@ public class Bus{
 
     public void setLine(Line line) {
         this.line = line;
+        FullRoute busFullRoute = line.getFullRoute();
+        String destinationName = busFullRoute.getNextDestination(this.origin.getName());
+        Station destinationStation = busFullRoute.getName2Station().get(destinationName);
+        this.setDestination(destinationStation);
+
     }
+
 
     public boolean isStopPressed() {
         return isStopPressed;
@@ -80,7 +106,7 @@ public class Bus{
         isFull = full;
     }
 
-    public boolean isSetStopAtNextStation() {
+    public boolean isStopAtNextStation() {
         return shouldStopAtNextStation;
     }
 
@@ -115,24 +141,6 @@ public class Bus{
 
 
 
-	public boolean isAtMainStation() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-	public boolean isAtGasStation() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-	public boolean isAtDestinationStation() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
 
 	public void setInUse(boolean inUse) {
 		this.inUse = inUse;
@@ -143,6 +151,8 @@ public class Bus{
 		return this.inUse;
 		
 	}
+
+
 
 
 	

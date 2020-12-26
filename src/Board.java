@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import static java.lang.Thread.sleep;
 
@@ -45,7 +44,6 @@ public class Board extends JFrame {
 		this.setSize(this.y * this.dim, this.x * this.dim);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
-		this.paint(this.getGraphics());
 
 	}
 
@@ -74,12 +72,12 @@ public class Board extends JFrame {
 			case "neighbourhood":
 				g.setColor(Color.WHITE);
 				break;
-			case "central_station":
+			case "main_station":
 				g.setColor(Color.ORANGE);
-				top_left = city.getCentralStation().getTop_left();
-				top_right = city.getCentralStation().getTop_right();
-				bottom_left = city.getCentralStation().getBottom_left();
-				bottom_right = city.getCentralStation().getBottom_right();
+				top_left = city.getMainStation().getTop_left();
+				top_right = city.getMainStation().getTop_right();
+				bottom_left = city.getMainStation().getBottom_left();
+				bottom_right = city.getMainStation().getBottom_right();
 				break;
 
 			case "gas_station":
@@ -200,6 +198,9 @@ public class Board extends JFrame {
 		start[1] = bottom_left[1]+1;
 		end[0] = bottom_right[0]-1 -1;
 		draw_horizontal_road(start, end);
+
+		drawRoadsOutsideTheNeighborhoood();
+
 	}
 
 	private void draw_neighbourhood() {
@@ -208,12 +209,13 @@ public class Board extends JFrame {
 		draw_A_stations();
 		draw_B_stations();
 
+
 	}
 
 	public void drawBusses(){
 		Graphics g = this.getGraphics();
 		for (Bus bus : city.getBusses().values()){
-			g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
+			g.drawImage(busImage, bus.getCurrCoordinate()[1] * dim, bus.getCurrCoordinate()[0] * dim, dim, dim, null);
 		}
 	}
 
@@ -252,49 +254,31 @@ public class Board extends JFrame {
 		g.setColor(Color.RED);
 		int row;
 		int col;
-		for (int[] loc : this.city.getStationsLocationsForTheBus().values()) {
-			col = loc[1];
-			row = loc[0];
+		for (Station station : this.city.getBusStations().values()) {
+			col = station.getLocationForTheBus()[1];
+			row = station.getLocationForTheBus()[0];
 			g.fillRect(col * dim, row * dim, dim, dim);
 		}
+
+		col = city.getGasStation().getLocationForTheBus()[1];
+		row = city.getGasStation().getLocationForTheBus()[0];
+		g.fillRect(col * dim, row * dim, dim, dim);
+
+		col = city.getMainStation().getLocationForTheBus()[1];
+		row = city.getMainStation().getLocationForTheBus()[0];
+		g.fillRect(col * dim, row * dim, dim, dim);
 	}
 	
-	public void checkRoutes(){
-		Graphics g = this.getGraphics();
-		Bus bus = city.getBusses().get(1);
-		bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(new int[]{2,3}));
-		g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
-		bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(new int[]{2,4}));	
-		g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
-		bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(new int[]{2,5}));	
-		g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
-		bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(new int[]{2,6}));	
-		g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
-		
-		
-//		for (String origin : this.city.getOriginRoutes().keySet()){
-//			
-//			bus.setCurrCoordinate((this.city.getStationsLocationsForTheBus()).get(origin));				
-//			
-//			for (String destination : this.city.getOriginRoutes().get(origin).keySet()){
-//				g.drawImage(busImage, bus.getCurrCoordinate()[0] * dim, bus.getCurrCoordinate()[1] * dim, dim, dim, null);
-//				Route curr_route_between_stations = this.city.getOriginRoutes().get(origin).get(destination);
-//				int[] next_coordinates = curr_route_between_stations.getNextCoordinate(bus.getCurrCoordinate());
-//				bus.setCurrCoordinate(next_coordinates);	
-//			}
-//		}
-	}
-		
+
 	public void paint() {
 		draw_background();
 		draw_neighbourhood();
-		draw_borders("central_station");
+		draw_borders("main_station");
 		draw_borders("gas_station");
+		checkStationsLocations(); //TODO: Remove after!!!
 		drawBusses();
 		drawPassengerInStations();
-		drawRoadsOutsideTheNeighborhoood();
-		checkStationsLocations(); //TODO: Remove after!!!
-		checkRoutes(); //TODO: Remove after!!!
+		//checkRoutes(); //TODO: Remove after!!!
 	}
 
 }

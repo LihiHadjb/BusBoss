@@ -95,7 +95,7 @@ public class InputsCreator {
     			result = envVarToInitValue.get(envVarName);
     		}
     		else {
-    			result = bus.isAtMainStation();
+    			result = city.getBusMover().isAtMainStation(bus);
     			result = true;
     		
     		}

@@ -4,8 +4,8 @@ public class GasStation extends Station{
     private int[] bottom_left;
     private int[] bottom_right;
 
-    public GasStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right, int[] loc) {
-    	super(loc, "gas_station");
+    public GasStation(int[] top_left, int[] top_right, int[] bottom_left, int[] bottom_right, int[] loc, int[] locForTheBus) {
+    	super(loc, "gas_station", locForTheBus);
         this.top_left = top_left;
         this.top_right = top_right;
         this.bottom_left = bottom_left;
