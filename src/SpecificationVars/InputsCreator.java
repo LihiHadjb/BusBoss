@@ -2,6 +2,7 @@ package SpecificationVars;
 
 import CityComponents.Bus;
 import CityComponents.City;
+import Lines.BusMover;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,8 +61,9 @@ public class InputsCreator {
     			result = envVarToInitValue.get(envVarName);
     		}
     		else {
-    			//result = bus.isAtDestinationStation();
-    			result = true;
+    			BusMover busMover = city.getBusMover();
+    			result = busMover.isAtDestinationStation(bus);
+
     		}
     		inputs.put(name, Boolean.toString(result));
 
@@ -80,17 +82,16 @@ public class InputsCreator {
     			result = envVarToInitValue.get(envVarName);
     		}
     		else {
-    			//result = bus.isAtGasStation();
-    			result = true;
+				BusMover busMover = city.getBusMover();
+				result = busMover.isAtGasStation(bus);
     		}
-    		//inputs.put(name, Boolean.toString(bus.isAtGasStation()));
     		inputs.put(name, Boolean.toString(result));
     	}	
     	
     }
     
     private void putAtMainStationForEachBus(boolean isInit) {
-    	String envVarName = "atGasStation";
+    	String envVarName = "atMainStation";
     	HashMap<Integer, Bus> busses = city.getBusses();
     	for(int i=0; i<NUM_BUSSES; i++) {
     		Bus bus = busses.get(i);
@@ -100,8 +101,8 @@ public class InputsCreator {
     			result = envVarToInitValue.get(envVarName);
     		}
     		else {
-    			result = city.getBusMover().isAtMainStation(bus);
-    			result = true;
+				BusMover busMover = city.getBusMover();
+				result = busMover.isAtMainStation(bus);
     		
     		}
     		inputs.put(name, Boolean.toString(result));
@@ -111,7 +112,7 @@ public class InputsCreator {
     
     private void putIsRaining() {
     	//TODO: this should come from GUI or something
-    	inputs.put("isRaining", Boolean.toString(true));
+    	inputs.put("isRaining", Boolean.toString(false));
     }
     
     public void createEnvVars(boolean isInit) {

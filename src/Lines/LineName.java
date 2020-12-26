@@ -2,7 +2,8 @@ package Lines;
 
 public enum LineName {
     A,
-    B
+    B,
+    main_station_to_gas_station
 }
 
 

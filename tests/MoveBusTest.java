@@ -1,4 +1,5 @@
 import CityComponents.City;
+import SpecificationVars.OutputsParser;
 import org.junit.Test;
 
 public class MoveBusTest {
@@ -17,5 +18,25 @@ public class MoveBusTest {
         Board board = new Board(city);
         MockRunner runner = new MockRunner(board, city, new MockOutputsParserAlwaysStop(city));
         runner.run();
+    }
+
+    @Test
+    public void moveOnLineGoToGas() throws Exception {
+        City city = new City();
+        Board board = new Board(city);
+        MockRunner runner = new MockRunner(board, city, new MockOutpusParserGoToGasStation(city));
+        runner.run();
+
+
+    }
+
+    @Test
+    public void real() throws Exception {
+        City city = new City();
+        Board board = new Board(city);
+        Runner runner = new MockRunner(board, city, new OutputsParser(city));
+        runner.run();
+
+
     }
 }

@@ -16,6 +16,7 @@ public class Bus{
     private Station destination;
     private Station origin;
     private boolean inUse;
+    private boolean shouldStopAgainInRain;
 
     public Bus(int id, int[] initialCoordinate) {
         this.id = id;
@@ -25,7 +26,13 @@ public class Bus{
 
     }
 
+    public boolean isShouldStopAgainInRain() {
+        return shouldStopAgainInRain;
+    }
 
+    public void setShouldStopAgainInRain(boolean shouldStopAgainInRain) {
+        this.shouldStopAgainInRain = shouldStopAgainInRain;
+    }
 
 
     public Station getDestination() {

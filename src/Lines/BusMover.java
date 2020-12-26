@@ -5,6 +5,7 @@ import CityComponents.GasStation;
 import CityComponents.MainStation;
 import CityComponents.Station;
 
+import javax.sound.sampled.Line;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -291,36 +292,54 @@ public class BusMover {
 	//if should go to gas station, set it as the destination.
 	//else, check if atDestinationStation, and if true, set the next destination and origin according to the current line route
 	public void updateNextDesitinationAndOriginStations(Bus bus) {
+		bus.setOrigin(bus.getDestination());
+		String nextDestinationName;
+
 		if(bus.isShouldGoToGasStation()) {
-			bus.setOrigin(bus.getDestination());
-			bus.setDestination(this.gasStation);
+			FullRoute fullRouteToGasStation = createFullRoute(LineName.valueOf("main_station_to_gas_station"));
+			nextDestinationName = fullRouteToGasStation.getNextDestination(bus.getOrigin().getName());
+
 		}
 
 		else {
-				bus.setOrigin(bus.getDestination());
-				FullRoute currLineRoute = bus.getLine().getFullRoute();
-				String nextDestinationName = currLineRoute.getNextDestination(bus.getOrigin().getName());
+			FullRoute currLineRoute = bus.getLine().getFullRoute();
+			nextDestinationName = currLineRoute.getNextDestination(bus.getOrigin().getName());
+		}
 
-				if(nextDestinationName.equals("main_station")) {
-					bus.setDestination(mainStation);
-				}
-				else {
-					Station nextDestinationStation = busStations.get(nextDestinationName);
-					bus.setDestination(nextDestinationStation);
-				}
+		if(nextDestinationName.equals("gas_station")) {
+			bus.setDestination(gasStation);
+		}
+
+		else if(nextDestinationName.equals("main_station")) {
+			bus.setDestination(mainStation);
+		}
+		else {
+			Station nextDestinationStation = busStations.get(nextDestinationName);
+			bus.setDestination(nextDestinationStation);
 		}
 
 	}
 
-	public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses) {
+	public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses, boolean isRaining) {
 //    	if(!bus.isMovedInPrevStep() && bus.getPotentialCoor() != null){
 //			moveAndAvoidCollision(bus, bus.getPotentialCoor(), allBusses);
 //			return;
 //		}
 
     	if(isAtDestinationStation(bus) && bus.isStopAtNextStation()){
+			if(isRaining){
+				bus.setShouldStopAgainInRain(true);
+			}
+			else{
+				updateNextDesitinationAndOriginStations(bus);
+			}
+		}
+
+		else if(isAtDestinationStation(bus) && isRaining && !bus.isShouldStopAgainInRain()){
+			bus.setShouldStopAgainInRain(false);
 			updateNextDesitinationAndOriginStations(bus);
 		}
+
 
 		else {
 			if(isAtDestinationStation(bus) || bus.isShouldGoToGasStation()) {
@@ -331,6 +350,11 @@ public class BusMover {
 				Station origin = bus.getOrigin();
 				Station dest = bus.getDestination();
 				Route route = originRoutes.get(origin.getName()).get(dest.getName());
+				System.out.println("_________________________________________");
+				System.out.println(bus.getId());
+				System.out.println(origin.getName());
+				System.out.println(dest.getName());
+				System.out.println(route==null);
 				int[] nextCoor = route.getNextCoordinate(bus.getCurrCoordinate());
 				moveOrAvoidCollision(bus, nextCoor, allBusses);
 			}

@@ -19,9 +19,13 @@ public class MockOutputsParserNoStops extends OutputsParser {
             }
         }
 
-        private void updateShouldGoToGasStation() {
+        public void updateShouldGoToGasStation() {
             for(int i=0; i<city.getNumBusses(); i++) {
                 Bus bus = city.getBusses().get(i);
+                if(city.getBusMover().isAtMainStation(bus)){
+                    bus.setShouldGoToGasStation(true);
+
+                }
                 bus.setShouldGoToGasStation(false);
             }
         }

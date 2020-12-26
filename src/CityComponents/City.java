@@ -288,7 +288,7 @@ public class City {
     
     public void updateCity() {
 		for(Bus bus : busses.values()) {
-            busMover.updateCoordinates(bus, busses);
+            busMover.updateCoordinates(bus, busses, isRaining);
 		}
 		//do any other updates needed for the dashboard or whatever...(isExtraNeeded etc...) 
     }
