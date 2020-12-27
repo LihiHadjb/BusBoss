@@ -7,9 +7,11 @@ Project Tasks
     3. Improve visualization of main station and gas station
     3. Bug in the route when arriving back to main station
     4. Randomize the boolean for people in station with higher probability when rushHour scenario in on
-    5. Check the visualization when extra busses are sent
-    6. Visualize when bus is full
-    7. Visualize when a line needs an extra bus
+    5. Change the probabilities of the randomized env variables to something more realistic (for example, bus should not become full so quickly)
+    6. Check the visualization when extra busses are sent
+    7. Visualize when bus is full
+    8. Visualize when a line needs an extra bus
+
 
 - Spectra:
     1. Add gar's for the rain and rush scenario

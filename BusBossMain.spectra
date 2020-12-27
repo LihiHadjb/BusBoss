@@ -1,4 +1,4 @@
-import "DwyerPatterns.spectra"
+import "./imports/DwyerPatterns.spectra"
 
 spec BusBoss_sprint02
 
