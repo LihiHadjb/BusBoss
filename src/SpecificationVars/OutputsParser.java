@@ -91,10 +91,6 @@ public class OutputsParser {
 		for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
 			Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
 			bus.setInUse(values[i]);
-			if(values[i]){
-				System.out.println("bus "+ bus.getId() + "in use!");
-			}
-
 		}
 	}
 	

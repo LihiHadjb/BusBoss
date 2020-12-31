@@ -16,8 +16,10 @@ public class InputsCreator {
 	private City city;
 	private int NUM_BUSSES;
 	private Map<String, Boolean> envVarToInitValue;
-	
-	
+	double isBusFullProb;
+	double arePassengersWaitingProb;
+	double isStopPressedProb;
+
 	public InputsCreator(Map<String, String> inputs, City city) {
 		this.inputs = inputs;
 		this.city = city;
@@ -27,18 +29,35 @@ public class InputsCreator {
 		envVarToInitValue.put("isBusFull", false);
 		envVarToInitValue.put("isStopPressed", false);
 		envVarToInitValue.put("arePassengersWaitingInStation", false);
-		envVarToInitValue.put("isBusFull", false);
 		envVarToInitValue.put("atDestinationStation", false);
 		envVarToInitValue.put("atGasStation", false);
 		envVarToInitValue.put("atMainStation", false);
-		
+
+		initProbabilities();
 	}
 
+	public void initProbabilities(){
+		this.isBusFullProb = 0.005;
+		this.isStopPressedProb = 0.015;
+		this.arePassengersWaitingProb = 0.02;
+	}
 
+	public void updateProbabilities(){
+		// Rush hour scenario
+		if (city.isRushHour()){
+			this.isBusFullProb = 0.15;
+			this.arePassengersWaitingProb = 0.15;
+			this.isStopPressedProb = 0.15;
+		}
+		else{
+			this.isBusFullProb = 0.005;
+			this.isStopPressedProb = 0.015;
+			this.arePassengersWaitingProb = 0.02;
+		}
+	}
 
 	//TODO: maybe these should be with probability
-	private void randomizeBooleanForEachBus(String envVarName, boolean isInit) {
-		Random rand = new Random();
+	private void randomizeBooleanForEachBus(String envVarName, boolean isInit, double prob) {
 		boolean result;
 		for(int i=0; i<NUM_BUSSES; i++) {
 			String name = String.format("%s[%d]", envVarName, i);
@@ -46,7 +65,7 @@ public class InputsCreator {
 				result = envVarToInitValue.get(envVarName);
 			}
 			else {
-				result = rand.nextBoolean();
+				result = Math.random() < prob;
 			}
 
 			inputs.put(name, Boolean.toString(result));
@@ -67,11 +86,11 @@ public class InputsCreator {
 	}
 
 
-	private boolean[] randomizeBooleanForEachStation(boolean isInit){
-		Random rand = new Random();
+	private boolean[] randomizeBooleanForEachStation(boolean isInit, double prob){
 		boolean[] result = new boolean[city.getBusStations().size()+1];
+
 		for(int i=0; i<city.getBusStations().size()+1; i++) {
-			result[i] = rand.nextBoolean();
+			result[i] = Math.random() < prob;
 			Station station = city.getIndex2station().get(i);
 			if(!existsBusThatStopsAtStation(station)){
 				if(!station.isArePassengersWaiting()){
@@ -87,8 +106,8 @@ public class InputsCreator {
 	}
 	
     //TODO: maybe these should be with probability
-    private void arePassengersWaitingInNextStationForEachBus(String envVarName, boolean isInit) {
-		boolean[] valuesForStations = randomizeBooleanForEachStation(isInit);
+    private void arePassengersWaitingInNextStationForEachBus(String envVarName, boolean isInit, double prob) {
+		boolean[] valuesForStations = randomizeBooleanForEachStation(isInit, prob);
     	for(int i=0; i<NUM_BUSSES; i++) {
 			String name = String.format("%s[%d]", envVarName, i);
 			if(isInit) {
@@ -182,11 +201,11 @@ public class InputsCreator {
     }
     
     public void createEnvVars(boolean isInit) {
-    	
-    	randomizeBooleanForEachBus("isBusFull", isInit);
-    	randomizeBooleanForEachBus("isStopPressed", isInit);
-    	//randomizeBooleanForEachBus("arePassengersWaitingInNextStation", isInit);
-		arePassengersWaitingInNextStationForEachBus("arePassengersWaitingInNextStation", isInit);
+		updateProbabilities();
+		randomizeBooleanForEachBus("isBusFull", isInit, isBusFullProb);
+		randomizeBooleanForEachBus("isStopPressed", isInit, isStopPressedProb);
+		//randomizeBooleanForEachBus("arePassengersWaitingInNextStation", isInit);
+		arePassengersWaitingInNextStationForEachBus("arePassengersWaitingInNextStation", isInit, arePassengersWaitingProb);
     	
     	putAtDestinationStationForEachBus(isInit);
     	putAtGasStationForEachBus(isInit);

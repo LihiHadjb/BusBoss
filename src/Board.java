@@ -24,7 +24,7 @@ public class Board extends JFrame{
 	int x;
 	int y;
 
-	final int DELAY = 400;
+	final int DELAY = 200;
 	BufferedImage busImage;
 	BufferedImage busImageEastToWest;
 	BufferedImage busImageWestToEast;
@@ -410,8 +410,6 @@ public class Board extends JFrame{
 			busPainter.drawBusses(i);
 			Thread.sleep(DELAY/dim);
 		}
-
-
 
 	}
 

@@ -378,48 +378,47 @@ public class BusMover {
 	//if should go to gas station, set it as the destination.
 	//else, check if atDestinationStation, and if true, set the next destination and origin according to the current line route
 	public void updateNextDesitinationAndOriginStations(Bus bus) {
-		String nextDestinationName;
-		bus.setOrigin(bus.getDestination());
+			String nextDestinationName;
+			bus.setOrigin(bus.getDestination());
 
-		if(bus.isShouldGoToGasStation()) {
-			FullRoute fullRouteToGasStation = createFullRoute(LineName.valueOf("main_station_to_gas_station"));
-			nextDestinationName = fullRouteToGasStation.getNextDestination(bus.getOrigin().getName());
-		}
+			if(bus.isShouldGoToGasStation()) {
+				FullRoute fullRouteToGasStation = createFullRoute(LineName.valueOf("main_station_to_gas_station"));
+				nextDestinationName = fullRouteToGasStation.getNextDestination(bus.getOrigin().getName());
+			}
 
-		else {
-			FullRoute currLineRoute = bus.getLine().getFullRoute();
-			nextDestinationName = currLineRoute.getNextDestination(bus.getOrigin().getName());
-		}
-
-
+			else {
+				FullRoute currLineRoute = bus.getLine().getFullRoute();
+				nextDestinationName = currLineRoute.getNextDestination(bus.getOrigin().getName());
+			}
 
 
+			if(nextDestinationName.equals("gas_station")) {
+				bus.setDestination(gasStation);
+			}
 
-
-
-
-
-		if(nextDestinationName.equals("gas_station")) {
-			bus.setDestination(gasStation);
-		}
-
-		else if(nextDestinationName.equals("main_station")) {
-			bus.setDestination(mainStation);
-		}
-		else {
-			Station nextDestinationStation = busStations.get(nextDestinationName);
-			bus.setDestination(nextDestinationStation);
-		}
-
+			else if(nextDestinationName.equals("main_station")) {
+				bus.setDestination(mainStation);
+			}
+			else {
+				Station nextDestinationStation = busStations.get(nextDestinationName);
+				bus.setDestination(nextDestinationStation);
+			}
 	}
 
 	public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses, boolean isRaining) {
     	if(bus.isInUse() || bus.getId()==0 || bus.getId()==1){
+    		if (bus.getId() == 2 || bus.getId() == 3){
+				System.out.println("reserve bus " + bus.getId() + " is in use");
+				System.out.println("reserve bus " + bus.getId() + " origin: " + bus.getOrigin().getName());
+				System.out.println("reserve bus " + bus.getId() + " dest: " + bus.getDestination().getName());
+			}
 			if(isParking(bus) && !isAtMainStation(bus)){
+				if (bus.getId() == 2 || bus.getId() == 3){
+					System.out.println("reserve bus " + bus.getId() + " is parking");
+				}
 				Route routeFromParkingToMain = routesFromParkingsToMainStation.get(bus.getId());
 				int[] nextCoor = routeFromParkingToMain.getNextCoordinate(bus.getCurrCoordinate());
 				moveOrAvoidCollision(bus, nextCoor, allBusses);
-
 			}
 
 			else if(isAtDestinationStation(bus) && bus.isStopAtNextStation()){
@@ -439,27 +438,20 @@ public class BusMover {
 				updateNextDesitinationAndOriginStations(bus);
 			}
 
-
 			else {
 				if(isAtDestinationStation(bus)) {
 					updateNextDesitinationAndOriginStations(bus);
 				}
-
 
 				Station origin = bus.getOrigin();
 				Station dest = bus.getDestination();
 				Route route = originRoutes.get(origin.getName()).get(dest.getName());
 
 
-
-
 				int[] nextCoor = route.getNextCoordinate(bus.getCurrCoordinate());
 				moveOrAvoidCollision(bus, nextCoor, allBusses);
-
 			}
-
 		}
-
 	}
 
 	//go through all the busses with smaller indices (which means that their coordiante was already updated!), and see if this bus is about to go to the same coordiante.

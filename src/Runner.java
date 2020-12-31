@@ -43,7 +43,6 @@ public class Runner{
 	private void parseAndupdateCity(Map<String, String> sysValues) {
 		outputsParser.parseSysValues(sysValues);
 		city.updateCity();
-		
 	}
     
     

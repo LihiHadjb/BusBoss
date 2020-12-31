@@ -106,14 +106,11 @@ gar G forall bus in Int(0..(NUM_BUSSES - 1)).
 // Guarantee for each bus: while a the bus is on it's way to the gas station (meaning shouldGoToGasStation = true), it shouldn't stop (meaning next(shouldStop) = false),
 gar G forall bus in Int(0..(NUM_BUSSES - 1)). shouldGoToGasStation[bus] -> next(stopAtNextStation[bus])=false;
 
-// dont stop at station if bus is full and no one wants to get off the bus
-gar G forall bus in Int(0..(NUM_BUSSES - 1)). (isBusFull[bus] & !isStopPressed[bus]) -> next(stopAtNextStation[bus])=false;
+// Don't stop at station if bus is full and no one wants to get off the bus
+gar G forall bus in Int(0..(NUM_BUSSES - 1)). (isBusFull[bus] & !isStopPressed[bus] & !isRaining) -> next(stopAtNextStation[bus])=false;
 
 //For each bus, it will stop if there are people waiting or if stop button was presses (unless it needs to go to the gas station)
 gar G forall bus in Int(0..(NUM_BUSSES - 1)). !shouldGoToGasStation[bus] & !(isBusFull[bus] & !isStopPressed[bus]) & (arePassengersWaitingInNextStation[bus] | isStopPressed[bus])  -> next(stopAtNextStation[bus])=true;
-
-
-
 
 
 
@@ -222,8 +219,10 @@ gar G forall line in Int(0..(NUM_LINES - 1)). extraBusSentLine[line] -> next(nee
 
 
 
+//______________ Rain Scenario_________________
 
-
+// If it's raining, every bus should stop at every station, except busses that are on their way to the gas station.
+gar G forall bus in Int(0..(NUM_BUSSES - 1)). isRaining & !shouldGoToGasStation[bus] -> next(stopAtNextStation[bus]) = true;
 
 
 
