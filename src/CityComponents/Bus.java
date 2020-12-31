@@ -6,6 +6,9 @@ import Lines.Line;
 public class Bus{
     private int id;
     private int[] currCoordinate;
+
+    private int[] prevCoordinate;
+
     private Line line;
     private boolean shouldGoToGasStation;
     private int numOfStopsPassed;
@@ -18,10 +21,10 @@ public class Bus{
     private boolean inUse;
     private boolean shouldStopAgainInRain;
     //private int[] parkingLocation;
-
     public Bus(int id, int[] initialCoordinate) {
         this.id = id;
         this.currCoordinate = initialCoordinate;
+        this.prevCoordinate = initialCoordinate;
         //this.parkingLocation = initialCoordinate;
         this.isStopPressed = false;//TODO: initial guarantee
         this.isFull = false;//TODO: initial guarantee
@@ -29,16 +32,24 @@ public class Bus{
 
     }
 
+
     //public int[] getParkingLocation() {
 //        return parkingLocation;
 //    }
-
     public boolean isShouldStopAgainInRain() {
         return shouldStopAgainInRain;
     }
 
     public void setShouldStopAgainInRain(boolean shouldStopAgainInRain) {
         this.shouldStopAgainInRain = shouldStopAgainInRain;
+    }
+
+    public int[] getPrevCoordinate() {
+        return prevCoordinate;
+    }
+
+    public void setPrevCoordinate(int[] prevCoordinate) {
+        this.prevCoordinate = prevCoordinate;
     }
 
 
@@ -70,8 +81,9 @@ public class Bus{
         return currCoordinate;
     }
 
-    public void setCurrCoordinate(int[] currCoordinate) {
-        this.currCoordinate = currCoordinate;
+    public void setCurrCoordinate(int[] newCoordinate) {
+        this.prevCoordinate = this.currCoordinate;
+        this.currCoordinate = newCoordinate;
     }
 
     public Line getLine() {

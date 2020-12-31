@@ -23,7 +23,8 @@ public class Board extends JFrame{
 	
 	int x;
 	int y;
-	
+
+	final int DELAY = 400;
 	BufferedImage busImage;
 	BufferedImage stationWithPeopleImage;
 	BufferedImage gasStationImage;
@@ -324,13 +325,13 @@ public class Board extends JFrame{
 
 	}
 
-	public void drawBusses(){
-		Graphics g = this.getGraphics();
-		for (Bus bus : city.getBusses().values()){
-			g.drawImage(busImage, bus.getCurrCoordinate()[1] * dim + 1, bus.getCurrCoordinate()[0] * dim +2, dim-4, dim-4, null);
-
-		}
-	}
+//	public void drawBusses(){
+//		Graphics g = this.getGraphics();
+//		for (Bus bus : city.getBusses().values()){
+//			g.drawImage(busImage, bus.getCurrCoordinate()[1] * dim + 1, bus.getCurrCoordinate()[0] * dim +2, dim-4, dim-4, null);
+//
+//		}
+//	}
 
 	public void drawPassengerInStations(){
 		Graphics g = this.getGraphics();
@@ -387,15 +388,22 @@ public class Board extends JFrame{
 	}
 	
 
-	public void paint() {
+	public void paint() throws InterruptedException {
 		//draw_background(); //Tslil - no need for that
+		BusPainter busPainter = new BusPainter(this.getGraphics(), city, dim, busImage, DELAY);
+
 		draw_neighbourhood();
 		draw_borders("main_station");
 		draw_borders("gas_station");
 		checkStationsLocations(); //TODO: Remove after!!!
-		drawBusses();
-		//drawPassengerInStations();
-		//checkRoutes(); //TODO: Remove after!!!
+
+		for(int i=0; i<dim; i++){
+			busPainter.drawBusses(i);
+			Thread.sleep(DELAY/dim);
+		}
+
+
+
 	}
 
 }

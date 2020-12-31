@@ -431,6 +431,7 @@ public class BusMover {
 				else{
 					updateNextDesitinationAndOriginStations(bus);
 				}
+				moveOrAvoidCollision(bus, bus.getCurrCoordinate(), allBusses);
 			}
 
 			else if(isAtDestinationStation(bus) && isRaining && !bus.isShouldStopAgainInRain()){
