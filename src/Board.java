@@ -26,6 +26,10 @@ public class Board extends JFrame{
 
 	final int DELAY = 400;
 	BufferedImage busImage;
+	BufferedImage busImageEastToWest;
+	BufferedImage busImageWestToEast;
+	BufferedImage busImageNorthToSouth;
+	BufferedImage busImageSouthToNorth;
 	BufferedImage stationWithPeopleImage;
 	BufferedImage gasStationImage;
 	BufferedImage emptyStationImage;
@@ -138,6 +142,10 @@ public class Board extends JFrame{
 	private void initImages() {
 		try{
 			this.busImage = ImageIO.read(new File("images/bus_with_background.jpg"));
+			this.busImageEastToWest = ImageIO.read(new File("images/bus_with_background_east_to_west.jpg"));
+			this.busImageWestToEast = ImageIO.read(new File("images/bus_with_background_west_to_east.jpg"));
+			this.busImageNorthToSouth = ImageIO.read(new File("images/bus_with_background_north_to_south.jpg"));
+			this.busImageSouthToNorth = ImageIO.read(new File("images/bus_with_background_south_to_north.jpg"));
 			this.busImageNoBG = ImageIO.read(new File("images/bus.jpeg"));
 			this.stationWithPeopleImage =  ImageIO.read(new File("images/station_with_people.jpeg"));
 			this.gasStationImage =  ImageIO.read(new File("images/gas_station.jpeg"));
@@ -390,7 +398,8 @@ public class Board extends JFrame{
 
 	public void paint() throws InterruptedException {
 		//draw_background(); //Tslil - no need for that
-		BusPainter busPainter = new BusPainter(this.getGraphics(), city, dim, busImage, DELAY);
+		BusPainter busPainter = new BusPainter(this.getGraphics(), city, dim, busImageEastToWest,
+				busImageWestToEast, busImageNorthToSouth, busImageSouthToNorth, DELAY);
 
 		draw_neighbourhood();
 		draw_borders("main_station");

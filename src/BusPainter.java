@@ -1,8 +1,10 @@
 import CityComponents.Bus;
 import CityComponents.City;
+import CityComponents.Station;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 import static java.lang.Thread.sleep;
 
@@ -10,9 +12,14 @@ public class BusPainter {
     Graphics g;
     City city;
     int dim;
-    BufferedImage busImage;
+//    BufferedImage busImage;
+    BufferedImage busImageEastToWest;
+    BufferedImage busImageWestToEast;
+    BufferedImage busImageNorthToSouth;
+    BufferedImage busImageSouthToNorth;
     int DELAY;
     int[][] tempLocs;
+    private HashMap<int[], String> busStationsDirections;
 
     final String eastTowest = "eastToWest";
     final String westToEast = "westToEast";
@@ -20,12 +27,29 @@ public class BusPainter {
     final String southToNorth = "southToNorth";
     final String stay = "stay";
 
-    public BusPainter(Graphics g, City city, int dim, BufferedImage busImage, int DELAY){
+    public BusPainter(Graphics g, City city, int dim, BufferedImage busImageEastToWest, BufferedImage busImageWestToEast, BufferedImage busImageNorthToSouth, BufferedImage busImageSouthToNorth, int DELAY){
         this.g = g;
         this.city = city;
         this.dim = dim;
-        this.busImage = busImage;
+        this.busImageEastToWest = busImageEastToWest;
+        this.busImageWestToEast = busImageWestToEast;
+        this.busImageNorthToSouth = busImageNorthToSouth;
+        this.busImageSouthToNorth = busImageSouthToNorth;
         this.DELAY = DELAY;
+        this.busStationsDirections = initBusStationsDirections();
+    }
+
+    public HashMap<int[], String> initBusStationsDirections(){
+        HashMap<int[], String> result = new HashMap<>();
+
+        result.put(city.getBusStations().get("a1").getLocation(), northToSouth);
+        result.put(city.getBusStations().get("a2").getLocation(), southToNorth);
+        result.put(city.getBusStations().get("b1").getLocation(), eastTowest);
+        result.put(city.getBusStations().get("b2").getLocation(), westToEast);
+        result.put(city.getMainStation().getLocation(), eastTowest);
+        result.put(city.getGasStation().getLocation(), eastTowest);
+
+        return result;
     }
 
     private String chooseDirection(Bus bus){
@@ -46,6 +70,11 @@ public class BusPainter {
         if(prev[1] < curr[1]){
             return westToEast;
         }
+
+        if (busStationsDirections.containsKey(curr)){
+            return busStationsDirections.get(curr);
+        }
+
         return stay;
     }
 
@@ -70,10 +99,10 @@ public class BusPainter {
             case (southToNorth):
                 y_offset = 0;
                 x_offset = -subIterationNumber;
+                break;
             case(stay):
                 y_offset = 0;
                 x_offset = 0;
-
         }
 
         newY = bus.getPrevCoordinate()[1] * dim  + y_offset;
@@ -88,24 +117,23 @@ public class BusPainter {
         //TODO: return picture according to current coordiante
         switch (direction){
             case(eastTowest):
-                return busImage;
+                return this.busImageEastToWest;
 
             case (westToEast):
-                return busImage;
+                return this.busImageWestToEast;
 
 
             case (northToSouth):
-                return busImage;
+                return this.busImageNorthToSouth;
 
 
             case (southToNorth):
                 System.out.println(southToNorth);
-                return busImage;
+                return this.busImageSouthToNorth;
 
 
             case(stay):
-                return busImage;
-
+                return this.busImageSouthToNorth;
 
         }
         return null;

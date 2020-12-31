@@ -21,7 +21,7 @@ public class City {
     private boolean isRushHour;
     private MainStation mainStation;
     private GasStation gasStation;
-    private HashMap<String, Station > busStations;
+    private HashMap<String, Station> busStations;
     private HashMap<Integer, Bus> busses;
     private Road roadBetweenNeighborhoodAndmMainStation;
     private Road roadBetweenNeighborhoodAndGasStation;

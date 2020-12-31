@@ -6,7 +6,6 @@ import Lines.Line;
 public class Bus{
     private int id;
     private int[] currCoordinate;
-
     private int[] prevCoordinate;
 
     private Line line;
