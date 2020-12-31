@@ -8,8 +8,7 @@ import SpecificationVars.OutputsParser;
 import tau.smlab.syntech.controller.executor.ControllerExecutor;
 import tau.smlab.syntech.controller.jit.BasicJitController;
 
-public class Runner  {
-    final int DELAY = 300;
+public class Runner{
     Board board;
     City city;
     ControllerExecutor executor;
@@ -57,7 +56,6 @@ public class Runner  {
         sysValues = executor.getCurrOutputs();
         parseAndupdateCity(sysValues);
         this.board.paint();
-        Thread.sleep(DELAY);
 
         while (true) {
         	inputsCreator.createEnvVars(false);
@@ -65,7 +63,6 @@ public class Runner  {
             sysValues = executor.getCurrOutputs();
             parseAndupdateCity(sysValues);
             this.board.paint();
-            Thread.sleep(DELAY);
         }
     }
 
