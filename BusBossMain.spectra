@@ -176,14 +176,14 @@ predicate atStationAndPassengersDidNotHaveSeats(Bus bus):
 
 counter unstoppedStationsLineA (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsLineA = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(0) | (atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=A) | (atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=A);
+	inc: atStationAndPassengersDidNotHaveSeats(0) | (inUse[0] & atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=A) | (inUse[1] & atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=A);
 	reset: extraBusSentLine[A];
 	overflow: keep;
 }
 
 counter unstoppedStationsLineB (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsLineB = 0;
-	inc: atStationAndPassengersDidNotHaveSeats(1) | (atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=B) | (atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=B);
+	inc: atStationAndPassengersDidNotHaveSeats(1) | (inUse[0] & atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=B) | (inUse[1] & atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=B);
 	reset: extraBusSentLine[B];
 	overflow: keep;
 }
