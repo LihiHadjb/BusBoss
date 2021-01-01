@@ -16,6 +16,7 @@ public class City {
     final int NUM_BUSSES = 4;
     final int NUM_RESERVE_BUSSES = 2;
     final int NUM_LINES = 2;
+    final int MAX_ROUNDS_TO_GAS_STATION = 5;
 
     private boolean isRaining;
     private boolean isRushHour;
@@ -82,6 +83,10 @@ public class City {
             }
         }
 
+    }
+
+    public int getMAX_ROUNDS_TO_GAS_STATION(){
+        return MAX_ROUNDS_TO_GAS_STATION;
     }
 
     public int getNumBusses(){
@@ -367,7 +372,6 @@ public class City {
 		for(Bus bus : busses.values()) {
             busMover.updateCoordinates(bus, busses, isRaining);
 		}
-		//do any other updates needed for the dashboard or whatever...(isExtraNeeded etc...) 
     }
 
 

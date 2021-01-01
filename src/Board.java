@@ -1,11 +1,9 @@
-import CityComponents.Bus;
 import CityComponents.City;
 import CityComponents.Station;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,9 +16,9 @@ import static java.lang.Thread.sleep;
 
 
 @SuppressWarnings("serial")
-public class Board extends JFrame{
-	final int dim = 40;
-	
+public class Board extends JPanel{
+
+	int dim;
 	int x;
 	int y;
 
@@ -30,7 +28,12 @@ public class Board extends JFrame{
 	BufferedImage gasStationImage;
 	BufferedImage emptyStationImage;
 	BufferedImage busImageNoBG;
-	
+
+	int width;
+	int height;
+
+	boolean initialized;
+
 	int[] top_left;
 	int[] top_right;
 	int[] bottom_left;
@@ -38,103 +41,33 @@ public class Board extends JFrame{
 	
 	City city;
 	
-	JPanel panel;
+	JPanel buttonsPanel;
+	JPanel bussesPanel;
 
-	int width;
-	int height;
+//	int width;
+//	int height;
 
-	public Board(City city){
+	public Board(City city, int dim){
 		this.city = city;
 		this.x = city.getX();
 		this.y = city.getY();
-		
-		this.width = this.y * dim;
-		this.height = this.x * dim;
+		this.dim = dim;
+//		this.width = this.y * dim;
+//		this.height = this.x * dim;
 
 		top_left = city.top_left();
 		top_right = city.top_right();
 		bottom_left = city.bottom_left();
 		bottom_right = city.bottom_right();
-		
+
+		this.width = this.y * dim;
+		this.height = this.x * dim;
+		initialized = true;
 		initImages();
 
-		this.setTitle("BusBoss");
-		this.setSize(this.width, this.height);
-		initBtns();
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setVisible(true);
-		this.paint(this.getGraphics());
 	}
 
-	private void initBtns() {
-		// Buttons-Container
-		this.panel = new JPanel();
-		this.panel.setBounds(0, 0, this.width, this.height);
-		this.setLayout(null);
-		
-		// Buttons
-		JButton rainBtn = new JButton("Rain Scenario");
-		JButton rushHourBtn = new JButton("Rush Hour Scenario");
-		JButton resetScenarioBtn = new JButton("Reset Scenario");
-		Color defaultBgColor = new JButton().getBackground();
-		
-		// Listeners
-		ActionListener rainBtnListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				city.toggleRaining();
-				if(city.isRaining()) {
-					rainBtn.setBackground(new Color(130, 216, 229));
-				}
-				else {
-					rainBtn.setBackground(defaultBgColor);
-				}
-			}
-		};
-		ActionListener rushBtnListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				city.toggleRushHour();
-				if(city.isRushHour()) {
-					rushHourBtn.setBackground(new Color(130, 216, 229));
-				}
-				else {
-					rushHourBtn.setBackground(defaultBgColor);
-				}
-			}
-		};
-		ActionListener resetScenarioBtnListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				city.setRaining(false);
-				city.setRushHour(false);
-				rainBtn.setBackground(defaultBgColor);
-				rushHourBtn.setBackground(defaultBgColor);
-			}
-		};
-		
-		// Register Listeners to buttons
-		rainBtn.addActionListener(rainBtnListener);
-		rushHourBtn.addActionListener(rushBtnListener);
-		resetScenarioBtn.addActionListener(resetScenarioBtnListener);
-		
-		// Register buttons to panel
-		this.panel.add(rainBtn);
-		this.panel.add(rushHourBtn);
-		this.panel.add(resetScenarioBtn);
-		
-		// Set panel location top-mid window
-		int panelHalfWid = this.panel.getWidth() / 2;
-		int windowHalfWid = this.width / 2;
-		int newX = windowHalfWid - panelHalfWid;
-		int newY = this.height - this.panel.getHeight();
-		this.panel.setLocation(newX, newY);
-		
-		// Register panel
-		this.getContentPane().add(this.panel);
-		
-	}
-	
+
 	private void initImages() {
 		try{
 			this.busImage = ImageIO.read(new File("images/bus_with_background.jpg"));
@@ -387,8 +320,10 @@ public class Board extends JFrame{
 		g.fillRect(col * dim, row * dim, dim, dim);
 	}
 	
+@Override
+	public void paintComponent(Graphics g) {
+		System.out.println("__________in paintComponent!!");
 
-	public void paint() throws InterruptedException {
 		//draw_background(); //Tslil - no need for that
 		BusPainter busPainter = new BusPainter(this.getGraphics(), city, dim, busImage, DELAY);
 
@@ -399,7 +334,11 @@ public class Board extends JFrame{
 
 		for(int i=0; i<dim; i++){
 			busPainter.drawBusses(i);
-			Thread.sleep(DELAY/dim);
+			try {
+				Thread.sleep(DELAY/dim);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 

@@ -12,7 +12,6 @@ public class Bus{
     private Line line;
     private boolean shouldGoToGasStation;
     private int numOfStopsPassed;
-    private int numUnstoppedStations;
     private boolean isStopPressed;
     private boolean isFull;
     private boolean shouldStopAtNextStation;
@@ -20,6 +19,9 @@ public class Bus{
     private Station origin;
     private boolean inUse;
     private boolean shouldStopAgainInRain;
+
+
+
     //private int[] parkingLocation;
     public Bus(int id, int[] initialCoordinate) {
         this.id = id;
@@ -31,7 +33,6 @@ public class Bus{
 
 
     }
-
 
     //public int[] getParkingLocation() {
 //        return parkingLocation;
@@ -147,13 +148,6 @@ public class Bus{
         this.numOfStopsPassed = numOfStopsPassed;
     }
 
-    public int getNumUnstoppedStations() {
-        return numUnstoppedStations;
-    }
-
-    public void setNumUnstoppedStations(int numUnstoppedStations) {
-        this.numUnstoppedStations = numUnstoppedStations;
-    }
 
 
 
