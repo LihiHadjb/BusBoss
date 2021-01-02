@@ -99,7 +99,6 @@ public class BusPainter {
 
 
             case (southToNorth):
-                System.out.println(southToNorth);
                 return busImage;
 
 

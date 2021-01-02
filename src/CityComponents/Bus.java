@@ -18,8 +18,10 @@ public class Bus{
     private boolean shouldStopAtNextStation;
     private Station destination;
     private Station origin;
-    private boolean inUse;
     private boolean shouldStopAgainInRain;
+
+    private boolean isParking;
+    private boolean inUse;
     //private int[] parkingLocation;
     public Bus(int id, int[] initialCoordinate) {
         this.id = id;
@@ -32,7 +34,13 @@ public class Bus{
 
     }
 
+    public boolean isParking() {
+        return isParking;
+    }
 
+    public void setParking(boolean parking) {
+        isParking = parking;
+    }
     //public int[] getParkingLocation() {
 //        return parkingLocation;
 //    }

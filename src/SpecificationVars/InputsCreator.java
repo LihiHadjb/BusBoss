@@ -35,6 +35,25 @@ public class InputsCreator {
 	}
 
 
+	//TODO: go back to real method
+	private void randomizeBooleanForEachBusFake(String envVarName, boolean isInit, boolean putThis) {
+		Random rand = new Random();
+		boolean result;
+		for(int i=0; i<NUM_BUSSES; i++) {
+			String name = String.format("%s[%d]", envVarName, i);
+			result = putThis;
+			if(isInit) {
+				result = envVarToInitValue.get(envVarName);
+			}
+			else {
+				result = putThis;
+			}
+
+			inputs.put(name, Boolean.toString(result));
+		}
+	}
+
+
 
 	//TODO: maybe these should be with probability
 	private void randomizeBooleanForEachBus(String envVarName, boolean isInit) {
@@ -89,31 +108,29 @@ public class InputsCreator {
     //TODO: maybe these should be with probability
     private void arePassengersWaitingInNextStationForEachBus(String envVarName, boolean isInit) {
 		boolean[] valuesForStations = randomizeBooleanForEachStation(isInit);
+		Bus bus;
+		Station nextStation;
+		int stationId;
+		BusMover busMover = city.getBusMover();
     	for(int i=0; i<NUM_BUSSES; i++) {
 			String name = String.format("%s[%d]", envVarName, i);
-			if(isInit) {
+			if (isInit) {
 				inputs.put(name, Boolean.toString(envVarToInitValue.get("arePassengersWaitingInStation")));
-			}
-			else{
-//				BusMover busMover = city.getBusMover();
-				Bus bus = city.getBusses().get(i);
-				Station nextStation = bus.getDestination();
-				int stationId = nextStation.getId();
-				if(stationId != 5){
-					inputs.put(name, Boolean.toString(valuesForStations[stationId]));
+			} else {
+				bus = city.getBusses().get(i);
+				nextStation = bus.getDestination();
+				stationId = nextStation.getId();
+				if (stationId != 5) {
+
+					if (!busMover.isAtDestinationStation(bus) & !nextStation.isArePassengersWaiting()) {
+						inputs.put(name, Boolean.toString(valuesForStations[stationId]));
+						nextStation.setArePassengersWaiting(valuesForStations[stationId]);
+					} else {
+						inputs.put(name, Boolean.toString(nextStation.isArePassengersWaiting()));
+					}
 				}
-//				if(!busMover.isAtDestinationStation(bus)){
-//					inputs.put(name, Boolean.toString(nextStation.isArePassengersWaiting()));
-//				}
-//				else{
-//					int stationId = nextStation.getId();
-//					inputs.put(name, Boolean.toString(valuesForStations[stationId]));
-//				}
-
-
-
 			}
-    	}
+		}
     }
     
     private void putAtDestinationStationForEachBus(boolean isInit) {
@@ -175,6 +192,24 @@ public class InputsCreator {
     	}	
     	
     }
+
+	private void putIsParking() {
+		String envVarName = "isParking";
+		HashMap<Integer, Bus> busses = city.getBusses();
+		for(int i=0; i<city.getNumReserveBusses(); i++) {
+			Bus bus = busses.get(i + city.getNumReserveBusses());
+			String name = String.format("%s[%d]", envVarName, i);
+			boolean result;
+			BusMover busMover = city.getBusMover();
+			result = busMover.isAtPrivateParking(bus);
+			inputs.put(name, Boolean.toString(result));
+		}
+
+	}
+
+
+
+
     
     private void putIsRaining() {
     	//TODO: this should come from GUI or something
@@ -182,16 +217,20 @@ public class InputsCreator {
     }
     
     public void createEnvVars(boolean isInit) {
-    	
-    	randomizeBooleanForEachBus("isBusFull", isInit);
-    	randomizeBooleanForEachBus("isStopPressed", isInit);
+		randomizeBooleanForEachBusFake("isBusFull", isInit, true);
+		randomizeBooleanForEachBusFake("isStopPressed", isInit, false);
+
+
+		//randomizeBooleanForEachBus("isBusFull", isInit);
+//    	randomizeBooleanForEachBus("isStopPressed", isInit);
     	//randomizeBooleanForEachBus("arePassengersWaitingInNextStation", isInit);
 		arePassengersWaitingInNextStationForEachBus("arePassengersWaitingInNextStation", isInit);
     	
     	putAtDestinationStationForEachBus(isInit);
     	putAtGasStationForEachBus(isInit);
     	putAtMainStationForEachBus(isInit);
-    	putIsRaining();   	
+    	putIsRaining();
+    	putIsParking();
     }
 
 }

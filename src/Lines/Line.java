@@ -2,7 +2,7 @@ package Lines;
 
 public class Line {
     private LineName lineName;
-    private boolean isExtraBusNeeded;
+    private boolean isWaiting;
     private FullRoute fullRoute;
 
 
@@ -24,16 +24,12 @@ public class Line {
         this.lineName = lineName;
     }
 
-    public boolean isExtraBusNeeded() {
-        return isExtraBusNeeded;
+    public boolean isWaiting() {
+        return isWaiting;
     }
 
-    public void setExtraBusNeeded(boolean extraBusNeeded) {
-        isExtraBusNeeded = extraBusNeeded;
-    }
-    
-    public void setNeedExtraBusForLine(boolean needExtraBusForLine) {
-    	this.isExtraBusNeeded = needExtraBusForLine;
+    public void setWaiting(boolean waiting) {
+        isWaiting = waiting;
     }
 
 

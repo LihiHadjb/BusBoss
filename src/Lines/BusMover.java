@@ -5,8 +5,6 @@ import CityComponents.GasStation;
 import CityComponents.MainStation;
 import CityComponents.Station;
 
-import javax.sound.sampled.Line;
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +35,7 @@ public class BusMover {
 	  }
 
 
+
 	public void createRoutesFromParkingsToMainStation(){
     	routesFromParkingsToMainStation = new HashMap<>();
 		//0
@@ -65,9 +64,18 @@ public class BusMover {
 
 		//3
 		List<int[]> parking3_to_main_route = new ArrayList<>();
-		//parking3_to_main_route.add(parkingsLocations.get(3));
-		parking3_to_main_route.add(parkingsLocations.get(2));
-		parking3_to_main_route.addAll(parking2_to_main_route);
+		int[] parkingLoc3 = parkingsLocations.get(3);
+		int[] first = new int[]{parkingLoc3[0], parkingLoc3[1]-1};
+		int[] second = new int[]{first[0]-1, first[1]};
+		int[] third = new int[]{second[0]-1, second[1]};
+		int[] forth = new int[]{third[0]-1, third[1]};
+
+		parking3_to_main_route.add(first);
+		parking3_to_main_route.add(second);
+		parking3_to_main_route.add(third);
+		parking3_to_main_route.add(forth);
+		parking0_to_main_route.add(mainStation.getLocationForTheBus());
+
 		Route parking3_to_main = new Route(parking3_to_main_route, 5);
 		routesFromParkingsToMainStation.put(3, parking3_to_main);
 
@@ -415,9 +423,14 @@ public class BusMover {
 
 	public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses, boolean isRaining) {
     	if(bus.isInUse() || bus.getId()==0 || bus.getId()==1){
-			if(isParking(bus) && !isAtMainStation(bus)){
+    		if(bus.getId()==2 || bus.getId() == 3){
+    			System.out.println("bus "+ bus.getId() + "goint to town!");
+			}
+			if(isAtParkingArea(bus) && !isAtMainStation(bus)){
 				Route routeFromParkingToMain = routesFromParkingsToMainStation.get(bus.getId());
 				int[] nextCoor = routeFromParkingToMain.getNextCoordinate(bus.getCurrCoordinate());
+				System.out.println("bus "+ bus.getId() + "goint to town!");
+
 				moveOrAvoidCollision(bus, nextCoor, allBusses);
 
 			}
@@ -535,18 +548,16 @@ public class BusMover {
 	}
 
 
-	public boolean isParking(Bus bus){
-//    	for(int i=0; i<routesFromParkingsToMainStation.get(bus.getId()).length; i++){
-//    		Route routeFromParkingToMain = routesFromParkingsToMainStation.get(bus.getId());
-//    		if(routeFromParkingToMain.isOnRoute(bus.getCurrCoordinate())){
-//				return true;
-//			}
-//		}
-//        return false;
+	public boolean isAtParkingArea(Bus bus){
         Route routeFromParkingToMain = routesFromParkingsToMainStation.get(bus.getId());
-        return routeFromParkingToMain.isOnRoute(bus.getCurrCoordinate()) || Arrays.equals(bus.getCurrCoordinate(), parkingsLocations.get(bus.getId()));
+        return routeFromParkingToMain.isOnRoute(bus.getCurrCoordinate()) || isAtPrivateParking(bus);
 
 	}
 
+	public boolean isAtPrivateParking(Bus bus){
+    	int[] currLocation = bus.getCurrCoordinate();
+    	int[] privateParking = parkingsLocations.get(bus.getId());
+    	return Arrays.equals(currLocation, privateParking);
+	}
 
 }

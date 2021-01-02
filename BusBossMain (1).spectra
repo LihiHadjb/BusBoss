@@ -5,18 +5,21 @@ spec BusBoss_sprint02
 define NUM_BUSSES := 4; // 2 for each line (A and B) + 2 reserve
 define NUM_RESERVE_BUSSES := 2;
 define MAX_ROUNDS_TO_GAS_STATION := 5;
-define MAX_UNSTOPPED_STATIONS := 3;
+define MAX_UNSTOPPED_STATIONS := 4;
 define NUM_STATIONS := 6;
 define NUM_LINES := 2;
 define NUM_ROUNDS_TO_FREE_RESERVE_BUS := 2;
 
-
+// ____scenarios_____
+//TODO: If it is raining, than the bus should wait 2 steps in each station it stops at in order to help passengers get settled
+env boolean isRaining;
 
 //Lines
 define A := 0;
 define B := 1;
 
 sys boolean[NUM_LINES] extraBusSentLine;
+sys boolean[NUM_LINES] needExtraBusForLine;
 
 //_______Stations________
 
@@ -49,24 +52,11 @@ env boolean[NUM_BUSSES] atDestinationStation;
 env boolean [NUM_BUSSES] arePassengersWaitingInNextStation;
 env boolean [NUM_BUSSES] atGasStation;  
 env boolean [NUM_BUSSES] atMainStation; 
-env boolean [NUM_RESERVE_BUSSES] isParking;
 
 sys Int(0..(NUM_LINES - 1))[NUM_RESERVE_BUSSES] lineOfReserveBus;
-//sys boolean[NUM_RESERVE_BUSSES] inUse;
+sys boolean[NUM_RESERVE_BUSSES] inUse;
 sys boolean[NUM_BUSSES] stopAtNextStation;
 sys boolean[NUM_BUSSES] shouldGoToGasStation;
-
-//TODO:  forall
-//assumptions
-asm GF atDestinationStation[0];
-asm GF atDestinationStation[1];
-asm GF atDestinationStation[2];
-asm GF atDestinationStation[3];
-
-asm GF isParking[0];
-asm GF isParking[1];
-
-
 
 
 //TODO: make sure there is a reserve bus sent when the regular bus of this line goes to the gas station and there is no other bus in this line
@@ -78,7 +68,8 @@ asm GF isParking[1];
 gar forall bus in Int(0..(NUM_BUSSES - 1)). shouldGoToGasStation[bus]=false;
 
 //// Guarantee for each bus: at the beginning, reserve busses are not in use and other busses are in use.
-//gar forall bus in Int(0..(NUM_RESERVE_BUSSES-1)). inUse[bus] = false;
+gar forall bus in Int(0..(NUM_RESERVE_BUSSES-1)). inUse[bus] = false;
+gar forall line in Int(0..(NUM_LINES-1)). needExtraBusForLine[line] = false;
 gar forall line in Int(0..(NUM_LINES-1)). extraBusSentLine[line] = false;
 
 
@@ -87,26 +78,13 @@ asm forall bus in Int(0..(NUM_BUSSES - 1)). isBusFull[bus]=false;
 asm forall bus in Int(0..(NUM_BUSSES - 1)). atDestinationStation[bus]=false;
 asm forall bus in Int(0..(NUM_BUSSES - 1)). arePassengersWaitingInNextStation[bus]=false;
 asm forall bus in Int(0..(NUM_BUSSES - 1)). atGasStation[bus]=false;
-asm forall bus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[bus]=true;
-
-// ____scenarios_____
-//______________ Rain Scenario_________________
-
-env boolean isRaining;
-// If it's raining, every bus should stop at every station, except busses that are on their way to the gas station.
-gar G forall bus in Int(0..(NUM_BUSSES - 1)). isRaining & !shouldGoToGasStation[bus] -> next(stopAtNextStation[bus]) = true;
-
-
-
-
-
-
+//asm forall bus in Int(0..(NUM_BUSSES - 1)). atMainStation[bus]=true;
 
 
 
 // __________when should stop at station and when should go to gas station
 
-// after visiting gas station, turn off shouldGoToGasStation
+//// after visiting gas station, turn off shouldGoToGasStation 
 gar G forall bus in Int(0..(NUM_BUSSES - 1)).
 	( (shouldGoToGasStation[bus]) & atGasStation[bus] ) -> next(shouldGoToGasStation[bus])=false;
 
@@ -183,156 +161,93 @@ gar G !atGasStation[2] & numOfStopsPassedBus2 = MAX_ROUNDS_TO_GAS_STATION iff ne
 gar G !atGasStation[3] & numOfStopsPassedBus3 = MAX_ROUNDS_TO_GAS_STATION iff next(shouldGoToGasStation[3]) = true;
 
 
-//_____________________predicates_____________________
-//predicate BothNeed():
-//	needExtraBusForLine[A] & needExtraBusForLine[B];
-//
-//predicate OnlyANeed():
-//	needExtraBusForLine[A] & !needExtraBusForLine[B];
-//
-//predicate OnlyBNeed():
-//	!needExtraBusForLine[A] & needExtraBusForLine[B];
-//
-//predicate BothDontNeed():
-//	!needExtraBusForLine[A] & !needExtraBusForLine[B];
-//
-//
-//
-define BothCanBeUsed := reserveBusCanBeUsed(0) & reserveBusCanBeUsed(1);
-
-define BothCantBeUsed := !reserveBusCanBeUsed(0) & !reserveBusCanBeUsed(1);
-
-define Only2CanBeUsed := reserveBusCanBeUsed(0) & !reserveBusCanBeUsed(1);
-
-define Only3CanBeUsed := !reserveBusCanBeUsed(0) & reserveBusCanBeUsed(1);
-	
-define AtLeastOneCanBeUsed := BothCanBeUsed | Only2CanBeUsed | Only3CanBeUsed;
-
-	
-predicate atStationAndPassengersDidNotHaveSeats(Bus bus):
-	atDestinationStation[bus] & !stopAtNextStation[bus];
-
-
-predicate reserveBusCanBeUsed(Bus bus):
-	isParking[bus];
-
 
 
 
 // _____________________Rush hours______________
-counter unstoppedStationsLineA (0..(MAX_UNSTOPPED_STATIONS)){
+
+predicate atStationAndPassengersDidNotHaveSeats(Bus bus):
+	atDestinationStation[bus] & isBusFull[bus] & arePassengersWaitingInNextStation[bus];
+	
+
+counter unstoppedStationsLineA (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsLineA = 0;
-	inc: !extraBusSentLine[A] & (atStationAndPassengersDidNotHaveSeats(0) | (atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=A) | ( atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=A));
+	inc: atStationAndPassengersDidNotHaveSeats(0) | (inUse[0] & atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=A) | (inUse[1] & atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=A);
 	reset: extraBusSentLine[A];
 	overflow: keep;
 }
 
-
-monitor boolean waitingA{
-	!waitingA;
-	G ((unstoppedStationsLineA=MAX_UNSTOPPED_STATIONS | waitingA)) & !extraBusSentLine[A] <-> next(waitingA);
-}
-
-gar GF !waitingA;
-//Stopped here!!!
-
-//dont send more resreve busses than available
-gar G next(extraBusSentLine[A]) & next(extraBusSentLine[B]) -> BothCanBeUsed;
-gar G next(extraBusSentLine[A]) & !next(extraBusSentLine[B]) -> AtLeastOneCanBeUsed;
-gar G !next(extraBusSentLine[A]) & next(extraBusSentLine[B]) -> AtLeastOneCanBeUsed;
-//gar G !next(extraBusSentLine[A]) & !next(extraBusSentLine[B]) -> !waitingA & !waitingB;
-
-//dont send for no reason
-gar G next(extraBusSentLine[A]) -> waitingA;
-gar G next(extraBusSentLine[B]) -> waitingB;
-
-//asm trig [lineOfReserveBus[0]=NOT_IN_SERVICE][lineOfReserveBus[0]=A] |=> [!atDestinationStation[0]]{3,};
-//asm trig [lineOfReserveBus[1]=NOT_IN_SERVICE][lineOfReserveBus[1]=A] |=> [!atDestinationStation[1]]{3,};
-//asm trig [lineOfReserveBus[0]=NOT_IN_SERVICE][lineOfReserveBus[0]=B] |=> [!atDestinationStation[0]]{3,};
-//asm trig [lineOfReserveBus[1]=NOT_IN_SERVICE][lineOfReserveBus[1]=B] |=> [!atDestinationStation[1]]{3,};
-
-
-//gar G next(extraBusSentLine[A]) <-> ( (lineOfReserveBus[0]=NOT_IN_SERVICE & next(lineOfReserveBus[0]=A)) | (lineOfReserveBus[1]=NOT_IN_SERVICE & next(lineOfReserveBus[1]=A)) );
-
-gar G (extraBusSentLine[A]) & (extraBusSentLine[B]) -> (lineOfReserveBus[0]=A & lineOfReserveBus[1]=B) | (lineOfReserveBus[0]=B & lineOfReserveBus[1]=A);
-
-gar G next(extraBusSentLine[A]) & !next(extraBusSentLine[B]) & Only2CanBeUsed -> next(lineOfReserveBus[0]) = A;
-gar G next(extraBusSentLine[A]) & !next(extraBusSentLine[B]) & Only3CanBeUsed -> next(lineOfReserveBus[1]) = A;
-gar G next(extraBusSentLine[A]) & !next(extraBusSentLine[B]) & BothCanBeUsed -> next(lineOfReserveBus[0]) = A | next(lineOfReserveBus[1]) = A;
-
-
-gar G !next(extraBusSentLine[A]) & next(extraBusSentLine[B]) & Only2CanBeUsed -> next(lineOfReserveBus[0]) = B;
-gar G !next(extraBusSentLine[A]) & next(extraBusSentLine[B]) & Only3CanBeUsed -> next(lineOfReserveBus[1]) = B;
-gar G !next(extraBusSentLine[A]) & next(extraBusSentLine[B]) & BothCanBeUsed -> next(lineOfReserveBus[1]) = B | next(lineOfReserveBus[1]) = B;
-
-
-//gar G (isParking[0] & next(!isParking[0]) & next(lineOfReserveBus[0])=A) | (isParking[1] & next(!isParking[1]) & next(lineOfReserveBus[1])=A) <-> next(extraBusSentLine[A]);
-
-
-//gar pRespondsToS(extraBusSentLine[A], waitingA);
-//gar G waitingA <-> next(extraBusSentLine[A]);
-
-
-
-
-counter unstoppedStationsLineB (0..(MAX_UNSTOPPED_STATIONS)){
+counter unstoppedStationsLineB (0..MAX_UNSTOPPED_STATIONS){
 	unstoppedStationsLineB = 0;
-	inc: !extraBusSentLine[B] & (atStationAndPassengersDidNotHaveSeats(1) | (atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=B) | ( atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=B));
+	inc: atStationAndPassengersDidNotHaveSeats(1) | (inUse[0] & atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=B) | (inUse[1] & atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=B);
 	reset: extraBusSentLine[B];
 	overflow: keep;
 }
 
-
-monitor boolean waitingB{
-	!waitingB;
-	G ((unstoppedStationsLineB=MAX_UNSTOPPED_STATIONS | waitingB)) & !extraBusSentLine[B] <-> next(waitingB);
-}
-
-gar GF !waitingB;
-
-
-//gar G (isParking[0] & next(!isParking[0]) & next(lineOfReserveBus[0])=B) | (isParking[1] & next(!isParking[1]) & next(lineOfReserveBus[1])=B) <-> next(extraBusSentLine[B]);
-//
-//
-//gar pRespondsToS(extraBusSentLine[B], waitingB);
-//gar G waitingB & AtLeastOneCanBeUsed -> next(extraBusSentLine[B]);
-
-
-
-
-
-
-
-//gar G waitingA & !waitingB & AtLeastOneCanBeUsed-> next(extraBusSentLine[A]); 
-//gar G !waitingA & waitingB & AtLeastOneCanBeUsed-> next(extraBusSentLine[B]); 
-//gar G waitingA & waitingB & BothCanBeUsed->  next(extraBusSentLine[A]) & next(extraBusSentLine[B]); 
-
-
-////as long as the bus is in use and in the middle of a round (i.e not in main station which represents finishing of a full round), don't change the bus's line
-gar G forall bus in Int(0..(NUM_RESERVE_BUSSES - 1)).
-	!isParking[bus] -> 
-	( next(lineOfReserveBus[bus]) = lineOfReserveBus[bus] );
-
-
-
-
 //for each reserve bus, after it completes 3 rounds, it should turn to be not in use
 //TODO: in such case, GUI should take the bus back to the main station
 ////TODO: couldnt use the constant NUM_ROUNDS_TO_FREE_RESERVE_BUS
-//gar trig [true]*[!inUse[0]][inUse[0]][!atMainStation[2]]*([atMainStation[2]]){1} |=> [!inUse[0]];
-//gar trig [true]*[!inUse[1]][inUse[1]][!atMainStation[3]]*([atMainStation[3]]){1} |=> [!inUse[1]];
+//gar trig [true]*[!inUse[0]][inUse[0]]([true]*[atMainStation[2]]){3} |=> [!inUse[0]];
+//gar trig [true]*[!inUse[1]][inUse[1]]([true]*[atMainStation[3]]){3} |=> [!inUse[1]];
 
-//gar trig [true]*[!inUse[0]]([inUse[0]] & [!isParking[0]])*([isParking[0]]) |=> [!inUse[0]];
-//gar trig [true]*[!inUse[1]]([inUse[1]] & [!isParking[1]])*([isParking[1]]) |=> [!inUse[1]];
+	
+gar G unstoppedStationsLineA > MAX_UNSTOPPED_STATIONS iff next(needExtraBusForLine[A]) = true;
+gar G unstoppedStationsLineB > MAX_UNSTOPPED_STATIONS iff next(needExtraBusForLine[B]) = true;
+
+//gar G next(extraBusSentLine[A]) = false -> (unstoppedStationsLineA < MAX_UNSTOPPED_STATIONS) | (inUse[0] & inUse[1]);
+//gar G next(extraBusSentLine[B]) = false -> (unstoppedStationsLineB < MAX_UNSTOPPED_STATIONS) | (inUse[0] & inUse[1]);
+
+sys Int(0..1) prioritize;
+predicate reserveBusCanBeUsed(Bus bus):
+	!inUse[bus] &  atMainStation[bus + NUM_RESERVE_BUSSES];
+
+//if both lines need an extra bus and both reserve busses available
+gar G needExtraBusForLine[A] & needExtraBusForLine[B] & reserveBusCanBeUsed(0) & reserveBusCanBeUsed(1) 
+	-> next(inUse[0])=true & next(inUse[1])=true & next(lineOfReserveBus[0])=A & next(lineOfReserveBus[1])=B & next(extraBusSentLine[A]) = true & next(extraBusSentLine[B]) = true;
+
+//if both lines need an extra bus and there is only one reserve bus available, alternate between prioritizing each line
+gar G needExtraBusForLine[A] & needExtraBusForLine[B] & ( (reserveBusCanBeUsed(0) & !reserveBusCanBeUsed(1)) | (!reserveBusCanBeUsed(0) & reserveBusCanBeUsed(1)) ) iff next(prioritize) = 1 - prioritize;
+gar G needExtraBusForLine[A] & needExtraBusForLine[B] & (reserveBusCanBeUsed(0) & !reserveBusCanBeUsed(1)) -> next(inUse[0])=true & next(lineOfReserveBus[0])=prioritize & next(extraBusSentLine[prioritize]) = true;
+gar G needExtraBusForLine[A] & needExtraBusForLine[B] & (!reserveBusCanBeUsed(0) & reserveBusCanBeUsed(1)) -> next(inUse[1])=true & next(lineOfReserveBus[1])=prioritize & next(extraBusSentLine[prioritize]) = true;
+
+//if only one line needs an extra bus and there is an available reserve bus, then allocate this bus to the line in need (always use bus 2 before using bus 3)
+gar G needExtraBusForLine[A] & !needExtraBusForLine[B] & reserveBusCanBeUsed(0) -> next(inUse[0])=true & next(lineOfReserveBus[0])=A & next(extraBusSentLine[A]) = true;
+gar G !needExtraBusForLine[A] & needExtraBusForLine[B] & reserveBusCanBeUsed(0) -> next(inUse[0])=true & next(lineOfReserveBus[0])=B & next(extraBusSentLine[B]) = true; 
+gar G needExtraBusForLine[A] & !needExtraBusForLine[B] & !reserveBusCanBeUsed(0) & reserveBusCanBeUsed(1) -> next(inUse[1])=true & next(lineOfReserveBus[1])=A & next(extraBusSentLine[A]) = true; 
+gar G !needExtraBusForLine[A] & needExtraBusForLine[B] & !reserveBusCanBeUsed(0) & reserveBusCanBeUsed(1) -> next(inUse[1])=true & next(lineOfReserveBus[1])=B & next(extraBusSentLine[B]) = true;
+
+//if no line needs help, both reserve bus should not be in use
+//gar G !needExtraBusForLine[A] & !needExtraBusForLine[B] iff inUse[0] = false & inUse[1] = false;
+gar G needExtraBusForLine[A] | needExtraBusForLine[B] -> next(inUse[0]) = true | next(inUse[1]) = true;
+
+// Guarantee for each line: if an extra bus was sent to this line, needExtraBusForLine = false
+gar G forall line in Int(0..(NUM_LINES - 1)). extraBusSentLine[line] -> next(needExtraBusForLine[line]) = false;
 
 
-asm GF atMainStation[2];
-asm GF atMainStation[3];
+gar G extraBusSentLine[A]=true -> next(extraBusSentLine[A]) = false;
+gar G extraBusSentLine[B]=true -> next(extraBusSentLine[B]) = false;
 
-//gar G !isParking[0] -> inUse[0];
-//gar G !isParking[1] -> inUse[1];
+gar G next(extraBusSentLine[A]) = true -> needExtraBusForLine[A];
+gar G next(extraBusSentLine[B]) = true -> needExtraBusForLine[B];
 
-//gar pHolds_afterQuntilR(inUse[0], !inUse[0] & next(inUse[0]), isParking[0]);
-//gar pHolds_afterQuntilR(inUse[1], !inUse[1] & next(inUse[1]), isParking[1]);
+gar G forall bus in Int(0..(NUM_RESERVE_BUSSES-1)). !inUse[bus] & next(inUse[bus]) -> needExtraBusForLine[A] | needExtraBusForLine[B];
+
+
+//______________ Rain Scenario_________________
+
+// If it's raining, every bus should stop at every station, except busses that are on their way to the gas station.
+gar G forall bus in Int(0..(NUM_BUSSES - 1)). isRaining & !shouldGoToGasStation[bus] -> next(stopAtNextStation[bus]) = true;
+
+
+
+
+//________________ other ______________________
+
+//// Guarantee for each bus: as long as the bus is in use and in the middle of a round (i.e not in main station which represents finishing of a full round), don't change the bus's line
+gar G forall bus in Int(0..(NUM_RESERVE_BUSSES - 1)).
+	( inUse[bus] & ! atMainStation[bus + NUM_RESERVE_BUSSES] ) -> 
+	( next(lineOfReserveBus[bus]) = lineOfReserveBus[bus] );
+
+
 
 
