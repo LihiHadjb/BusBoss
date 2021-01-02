@@ -113,15 +113,16 @@ public class InputsCreator {
 		int stationId;
 		BusMover busMover = city.getBusMover();
     	for(int i=0; i<NUM_BUSSES; i++) {
+			bus = city.getBusses().get(i);
 			String name = String.format("%s[%d]", envVarName, i);
 			if (isInit) {
 				inputs.put(name, Boolean.toString(envVarToInitValue.get("arePassengersWaitingInStation")));
-			} else {
-				bus = city.getBusses().get(i);
+			}
+
+			else if (bus.isInUse() || bus.getId()==0 || bus.getId()==1){
 				nextStation = bus.getDestination();
 				stationId = nextStation.getId();
-				if (stationId != 5) {
-
+				if (stationId != 5) {//not gas station
 					if (!busMover.isAtDestinationStation(bus) & !nextStation.isArePassengersWaiting()) {
 						inputs.put(name, Boolean.toString(valuesForStations[stationId]));
 						nextStation.setArePassengersWaiting(valuesForStations[stationId]);
@@ -130,7 +131,20 @@ public class InputsCreator {
 					}
 				}
 			}
+			else{
+				inputs.put(name, Boolean.toString(false));
+			}
 		}
+
+
+
+
+
+
+
+
+
+
     }
     
     private void putAtDestinationStationForEachBus(boolean isInit) {

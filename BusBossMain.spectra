@@ -15,6 +15,7 @@ define NUM_ROUNDS_TO_FREE_RESERVE_BUS := 2;
 //Lines
 define A := 0;
 define B := 1;
+//define NOT_IN_SERVICE := 2;
 
 sys boolean[NUM_LINES] extraBusSentLine;
 
@@ -88,6 +89,8 @@ asm forall bus in Int(0..(NUM_BUSSES - 1)). atDestinationStation[bus]=false;
 asm forall bus in Int(0..(NUM_BUSSES - 1)). arePassengersWaitingInNextStation[bus]=false;
 asm forall bus in Int(0..(NUM_BUSSES - 1)). atGasStation[bus]=false;
 asm forall bus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[bus]=true;
+//asm forall bus in Int(0..(NUM_RESERVE_BUSSES - 1)). lineOfReserveBus[bus]=NOT_IN_SERVICE;
+
 
 // ____scenarios_____
 //______________ Rain Scenario_________________
@@ -265,6 +268,15 @@ gar G !next(extraBusSentLine[A]) & next(extraBusSentLine[B]) & Only2CanBeUsed ->
 gar G !next(extraBusSentLine[A]) & next(extraBusSentLine[B]) & Only3CanBeUsed -> next(lineOfReserveBus[1]) = B;
 gar G !next(extraBusSentLine[A]) & next(extraBusSentLine[B]) & BothCanBeUsed -> next(lineOfReserveBus[1]) = B | next(lineOfReserveBus[1]) = B;
 
+//
+//gar G !(lineOfReserveBus[0]=A) & next(lineOfReserveBus[0]) = A -> lineOfReserveBus[0]=NOT_IN_SERVICE;
+//gar G !(lineOfReserveBus[1]=A) & next(lineOfReserveBus[1]) = A -> lineOfReserveBus[1]=NOT_IN_SERVICE;
+//
+//gar G !(lineOfReserveBus[0]=B) & next(lineOfReserveBus[0]) = B -> lineOfReserveBus[0]=NOT_IN_SERVICE;
+//gar G !(lineOfReserveBus[1]=B) & next(lineOfReserveBus[1]) = B -> lineOfReserveBus[1]=NOT_IN_SERVICE;
+
+
+
 
 //gar G (isParking[0] & next(!isParking[0]) & next(lineOfReserveBus[0])=A) | (isParking[1] & next(!isParking[1]) & next(lineOfReserveBus[1])=A) <-> next(extraBusSentLine[A]);
 
@@ -328,6 +340,11 @@ gar G forall bus in Int(0..(NUM_RESERVE_BUSSES - 1)).
 
 asm GF atMainStation[2];
 asm GF atMainStation[3];
+
+//gar G isParking[0] -> lineOfReserveBus[0] = NOT_IN_SERVICE;
+//gar G lineOfReserveBus[0] = NOT_IN_SERVICE -> lineOfReserveBus[0] = NOT_IN_SERVICE;
+
+
 
 //gar G !isParking[0] -> inUse[0];
 //gar G !isParking[1] -> inUse[1];
