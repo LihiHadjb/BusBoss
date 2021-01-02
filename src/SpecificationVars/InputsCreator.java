@@ -56,7 +56,7 @@ public class InputsCreator {
 		}
 	}
 
-	//TODO: maybe these should be with probability
+	//TODO: if already true, should remain true unltil reaching the station
 	private void randomizeBooleanForEachBus(String envVarName, boolean isInit, double prob) {
 		boolean result;
 		for(int i=0; i<NUM_BUSSES; i++) {
