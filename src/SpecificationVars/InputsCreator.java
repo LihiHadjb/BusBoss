@@ -45,9 +45,9 @@ public class InputsCreator {
 	public void updateProbabilities(){
 		// Rush hour scenario
 		if (city.isRushHour()){
-			this.isBusFullProb = 0.15;
-			this.arePassengersWaitingProb = 0.15;
-			this.isStopPressedProb = 0.15;
+			this.isBusFullProb = 0.7;
+			this.arePassengersWaitingProb = 0.8;
+			this.isStopPressedProb = 0.5;
 		}
 		else{
 			this.isBusFullProb = 0.005;

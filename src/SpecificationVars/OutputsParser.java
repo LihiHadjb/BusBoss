@@ -62,6 +62,11 @@ public class OutputsParser {
 		for(int i=0; i<NUM_BUSSES; i++) {
 			Bus bus = city.getBusses().get(i);
 			bus.setShouldGoToGasStation(values[i]);
+			if(bus.getId() == 2 || bus.getId() == 3){
+				BusMover busMover = city.getBusMover();
+				System.out.println("bus "+ bus.getId() + " should go: " + bus.isShouldGoToGasStation());
+				System.out.println("bus "+ bus.getId() + "  at main: " + busMover.isAtMainStationEntrance(bus));
+			}
 		}
 	}
 	
