@@ -11,8 +11,6 @@ import java.util.HashMap;
 
 import static java.lang.Thread.sleep;
 
-import javax.imageio.ImageIO;
-
 public class BusPainter {
     Graphics g;
     City city;

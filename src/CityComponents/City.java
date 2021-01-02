@@ -176,6 +176,10 @@ public class City {
     	lineABus.setLine(lines.get(0));
         lineBBus.setLine(lines.get(1));
 
+        Bus reserve0 = busses.get(2);
+        Bus reserve1 = busses.get(3);
+        reserve0.setLine(lines.get(0));
+        reserve1.setLine(lines.get(0));
 
     }
 

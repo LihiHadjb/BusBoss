@@ -2,8 +2,9 @@ package SpecificationVars;
 
 import CityComponents.Bus;
 import CityComponents.City;
+import Lines.BusMover;
+import Lines.LineName;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,19 +43,19 @@ public class OutputsParser {
     	return result;	
 	}
 	
-	private void updateLineOfReserveBus() {
-		int[] values = parseToArrayOfInts("lineOfReserveBus", NUM_RESERVE_BUSSES);
-		for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
-			Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
-			if(values[i] == 0) {
-				bus.setLine(city.getLines().get(0));
-			}
-				
-			else {
-				bus.setLine(city.getLines().get(1));
-			}
-		}
-	}
+//	private void updateLineOfReserveBus() {
+//		int[] values = parseToArrayOfInts("lineOfReserveBus", NUM_RESERVE_BUSSES);
+//		for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
+//			Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
+//			if(values[i] == 0) {
+//				bus.setLine(city.getLines().get(0));
+//			}
+//
+//			else {
+//				bus.setLine(city.getLines().get(1));
+//			}
+//		}
+//	}
 	
 	private void updateShouldGoToGasStation() {
 		boolean[] values = parseToArrayOfBooleans("shouldGoToGasStation", NUM_BUSSES);
@@ -64,19 +65,53 @@ public class OutputsParser {
 		}
 	}
 	
-	private void updateNeedExtraBusForLine() {
-		boolean[] values = parseToArrayOfBooleans("needExtraBusForLine", NUM_LINES);
-		city.getLines().get(0).setNeedExtraBusForLine(values[0]);
-		city.getLines().get(1).setNeedExtraBusForLine(values[1]);
+	private void updateWaiting() {
+		boolean resultA = Boolean.parseBoolean(sysValues.get("waitingA"));
+		boolean resultB = Boolean.parseBoolean(sysValues.get("waitingB"));
+		city.getLines().get(0).setWaiting(resultA);
+		city.getLines().get(1).setWaiting(resultB);
 	}
 	
 	
 	
-//	private void updateExtraBusSentLine() {
-//		boolean[] values = parseToArrayOfBooleans("extraBusSentLine");
-//		city.getLines.get(0).setExtraBusSentLine(values[0]);
-//		city.getLines.get(1).setExtraBusSentLine(values[1]);
-//	}
+	private void updateExtraBusSentLine() {
+		boolean[] values = parseToArrayOfBooleans("extraBusSentLine", city.getNumLines());
+		int[] lines = parseToArrayOfInts("lineOfReserveBus", city.getNumReserveBusses());
+		boolean sendForA = values[0];
+		boolean sendForB = values[1];
+		int newLineFor2 = lines[0];
+		int newLineFor3 = lines[1];
+		HashMap<Integer, Bus> busses = city.getBusses();
+		BusMover busMover = city.getBusMover();
+
+		if(sendForA){
+			if(newLineFor2==0 && busMover.isAtPrivateParking(busses.get(2))){
+				busses.get(2).setLine(city.getLines().get(0));
+				busses.get(2).setInUse(true);
+
+			}
+			else if(newLineFor3==0 && busMover.isAtPrivateParking(busses.get(3))){
+				busses.get(3).setLine(city.getLines().get(0));
+				busses.get(3).setInUse(true);
+			}
+		}
+
+		if(sendForB){
+			if(newLineFor2==1 && busMover.isAtPrivateParking(busses.get(2))){
+				busses.get(2).setLine(city.getLines().get(1));
+				busses.get(2).setInUse(true);
+
+			}
+			else if(newLineFor3==1 && busMover.isAtPrivateParking(busses.get(3))){
+				busses.get(3).setLine(city.getLines().get(1));
+				busses.get(3).setInUse(true);
+			}
+		}
+
+		System.out.println("sent for A: "+ values[0]);
+		System.out.println("sent for B: "+ values[1]);
+
+	}
 	
 	public void updateStopAtNextStation() {
 		boolean[] values = parseToArrayOfBooleans("stopAtNextStation", NUM_BUSSES);
@@ -86,23 +121,35 @@ public class OutputsParser {
 		}
 	}
 	
-	private void updateInUse() {
-		boolean[] values = parseToArrayOfBooleans("inUse", NUM_RESERVE_BUSSES);
-		for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
-			Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
-			bus.setInUse(values[i]);
-		}
+//	private void updateInUse() {
+//		boolean[] values = parseToArrayOfBooleans("inUse", NUM_RESERVE_BUSSES);
+//		for(int i=0; i<NUM_RESERVE_BUSSES; i++) {
+//			Bus bus = city.getBusses().get(i + NUM_RESERVE_BUSSES);
+//			bus.setInUse(values[i]);
+//		}
+//
+//		System.out.println("inUse0: "+ values[0]);
+//		System.out.println("inUse1: "+ values[1]);
+//	}
+
+	private void updateUnstoppedStationsLine(){
+		String nameA = "unstoppedStationsLineA";
+		int valueA = Integer.parseInt(sysValues.get(nameA));
+		System.out.println("unstoppedStationsLineA" + valueA);
+
+		String nameB = "unstoppedStationsLineB";
+		int valueB = Integer.parseInt(sysValues.get(nameB));
+		System.out.println("unstoppedStationsLineB" + valueB);
+
 	}
-	
+
 	public void parseSysValues(Map<String, String> sysValues) {
 		this.sysValues = sysValues;
-		updateLineOfReserveBus();
 		updateShouldGoToGasStation();
-		updateNeedExtraBusForLine();	
+		updateWaiting();
 		updateStopAtNextStation();
-		updateInUse();
-		//updateExtraBusSentLine();
-		//updateUnstoppedStationsLine();
+		updateExtraBusSentLine();
+		updateUnstoppedStationsLine();
 		//updateNumOfStopsPassedBus();
 	}
 		

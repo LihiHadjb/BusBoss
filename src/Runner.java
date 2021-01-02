@@ -51,15 +51,20 @@ public class Runner{
     public void run() throws Exception {
     	inputsCreator.createEnvVars(true);
         executor.initState(inputs);
+        System.out.println(inputs);
 
         sysValues = executor.getCurrOutputs();
+        System.out.println(sysValues.toString());
         parseAndupdateCity(sysValues);
         this.board.paint();
 
         while (true) {
         	inputsCreator.createEnvVars(false);
+        	System.out.println(inputs);
         	executor.updateState(inputs);
             sysValues = executor.getCurrOutputs();
+            System.out.println(sysValues.toString());
+
             parseAndupdateCity(sysValues);
             this.board.paint();
         }
