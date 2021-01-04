@@ -69,7 +69,19 @@ public class InputsCreator {
 			}
 
 			inputs.put(name, Boolean.toString(result));
+
+			//update the bus object so that control panel can be updted correctly
+			Bus bus = city.getBusses().get(i);
+			switch (envVarName){
+				case "isBusFull":
+					bus.setFull(result);
+				case "isStopPressed":
+					bus.setStopPressed(result);
+			}
 		}
+
+
+
 	}
 
 	private boolean existsBusThatStopsAtStation(Station station){
@@ -230,7 +242,8 @@ public class InputsCreator {
     	//TODO: this should come from GUI or something
     	inputs.put("isRaining", Boolean.toString(false));
     }
-    
+
+
     public void createEnvVars(boolean isInit) {
 		updateProbabilities();
 		randomizeBooleanForEachBus("isBusFull", isInit, isBusFullProb);
