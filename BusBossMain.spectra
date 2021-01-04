@@ -68,7 +68,6 @@ asm GF isParking[1];
 
 
 
-
 //TODO: make sure there is a reserve bus sent when the regular bus of this line goes to the gas station and there is no other bus in this line
 
 
@@ -99,22 +98,25 @@ env boolean isRaining;
 gar G forall bus in Int(0..(NUM_BUSSES - 1)). isRaining & !shouldGoToGasStation[bus] -> next(stopAtNextStation[bus]) = true;
 
 
+asm G forall bus in Int(0..(NUM_BUSSES - 1)). isStopPressed[bus] & !atDestinationStation[bus] -> next(isStopPressed[bus])=true;
+asm G forall bus in Int(0..(NUM_BUSSES - 1)). isBusFull[bus] & !atDestinationStation[bus] -> next(isBusFull[bus])=true;
+asm G forall bus in Int(0..(NUM_BUSSES - 1)). arePassengersWaitingInNextStation[bus] & !atDestinationStation[bus] -> next(arePassengersWaitingInNextStation[bus])=true;
 
-
-
+//TODO: Lihi: this is causing trouble!! maybe the problem is in inputs creator
+//asm G forall bus in Int(0..(NUM_BUSSES - 1)).
+//	!atDestinationStation[bus] &  arePassengersWaitingInNextStation[bus]->
+//	next(arePassengersWaitingInNextStation[bus]) = arePassengersWaitingInNextStation[bus];
 
 
 
 
 // __________when should stop at station and when should go to gas station
 
-// after visiting gas station, turn off shouldGoToGasStation
-gar G forall bus in Int(0..(NUM_BUSSES - 1)).
-	( (shouldGoToGasStation[bus]) & atGasStation[bus] ) -> next(shouldGoToGasStation[bus])=false;
+
 
 // Assumption for each bus: if isStopPressed and the bus didn't stop yet, isStopPressed should remain true
 //asm isStopPressedNotTurningFalseBeforeReachingDestination0:
-//  pBecomesTrue_betweenQandR(atDestinationStation[0], isStopPressed[0], !isStopPressed[0]);
+//	pBecomesTrue_betweenQandR(atDestinationStation[0], isStopPressed[0], !isStopPressed[0]);
 //asm isStopPressedNotTurningFalseBeforeReachingDestination1:
 //  pBecomesTrue_betweenQandR(atDestinationStation[1], isStopPressed[1], !isStopPressed[1]);
 //asm isStopPressedNotTurningFalseBeforeReachingDestination2:
@@ -134,13 +136,15 @@ gar G forall bus in Int(0..(NUM_BUSSES - 1)).
 gar G forall bus in Int(0..(NUM_BUSSES - 1)). shouldGoToGasStation[bus] -> next(stopAtNextStation[bus])=false;
 
 // Don't stop at station if bus is full and no one wants to get off the bus
-gar G forall bus in Int(0..(NUM_BUSSES - 1)). (isBusFull[bus] & !isStopPressed[bus] & !isRaining) -> next(stopAtNextStation[bus])=false;
+//gar G forall bus in Int(0..(NUM_BUSSES - 1)). (isBusFull[bus] & !isStopPressed[bus] & !isRaining) -> next(stopAtNextStation[bus])=false;
 
-//For each bus, it will stop if there are people waiting or if stop button was presses (unless it needs to go to the gas station)
+//For each bus, it will stop if there are people waiting or if stop button was pressed (unless it needs to go to the gas station)
 gar G forall bus in Int(0..(NUM_BUSSES - 1)). !shouldGoToGasStation[bus] & !(isBusFull[bus] & !isStopPressed[bus]) & (arePassengersWaitingInNextStation[bus] | isStopPressed[bus])  -> next(stopAtNextStation[bus])=true;
 
+//TODO: Lihi added this!!!! verify!!!!!!
+//gar G forall bus in Int(0..(NUM_BUSSES - 1)). !isRaining & !arePassengersWaitingInNextStation[bus] & !isStopPressed[bus] -> next(stopAtNextStation[bus])=false;
 
-
+gar G forall bus in Int(0..(NUM_BUSSES - 1)). !isRaining & !isStopPressed[bus] & (!arePassengersWaitingInNextStation[bus] | isBusFull[bus]) -> next(stopAtNextStation[bus])=false;
 
 //asm G forall bus in Int(0..(NUM_BUSSES - 1)). !(atMainStation[bus] & atGasStation[bus]);
 //asm GF forall bus in Int(0..(NUM_BUSSES - 1)). atMainStation[bus];
@@ -212,7 +216,7 @@ define AtLeastOneCanBeUsed := BothCanBeUsed | Only2CanBeUsed | Only3CanBeUsed;
 
 
 predicate atStationAndPassengersDidNotHaveSeats(Bus bus):
-	atDestinationStation[bus] & !stopAtNextStation[bus];
+	atDestinationStation[bus] & isBusFull[bus] & arePassengersWaitingInNextStation[bus];
 
 
 predicate reserveBusCanBeUsed(Bus bus):

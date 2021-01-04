@@ -170,7 +170,7 @@ public class BusMover {
 	private int[] moveFromParkingToMain(Bus bus, HashMap<Integer, Bus> allBusses){
 		Route routeFromParkingToMain = routesFromParkingsToMainStation.get(bus.getId());
 		int[] nextCoor = routeFromParkingToMain.getNextCoordinate(bus.getCurrCoordinate());
-		System.out.println("bus "+ bus.getId() + "goint to town!");
+		//System.out.println("bus "+ bus.getId() + "goint to town!");
 
 		return nextCoor;
 
@@ -237,7 +237,7 @@ public class BusMover {
 
 	public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses, boolean isRaining){
     	if(isRaining && !bus.isShouldStopAgainInRain() && !bus.isShouldGoToGasStation()){
-    		System.out.println("shoudlnt stop in rain!!!!");
+    		throw new RuntimeException("shoudlnt stop in rain!!!!");
 		}
     	if(bus.getId() == 0 || bus.getId() == 1){
     		moveNormalBus(bus, allBusses);

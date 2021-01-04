@@ -125,8 +125,9 @@ public class InputsCreator {
 		}
 		return result;
 	}
-	
-    //TODO: maybe these should be with probability
+
+
+	//TODO: bug in inputs
     private void arePassengersWaitingInNextStationForEachBus(String envVarName, boolean isInit, double prob) {
 		boolean[] valuesForStations = randomizeBooleanForEachStation(isInit, prob);
 		Bus bus;

@@ -4,6 +4,7 @@ import CityComponents.City;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
@@ -26,6 +27,14 @@ public abstract class TableCreator {
         table.setGridColor(Color.magenta);
         table.setRowSelectionAllowed(false);
         table.setShowGrid(true);
+
+        //center the text inside cells
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+        for(int i=0; i<headers.length; i++){
+            table.getColumnModel().getColumn(i).setCellRenderer( centerRenderer );
+        }
+
         return table;
     }
 
