@@ -133,6 +133,14 @@ public class Bus{
         return shouldStopAtNextStation;
     }
 
+    public boolean isReserve(){
+        return id == 2 || id == 3;
+    }
+
+    public boolean isRegular(){
+        return id == 0 || id == 1;
+    }
+
     public void setStopAtNextStation(boolean shouldStop) {
         this.shouldStopAtNextStation = shouldStop;
     }
