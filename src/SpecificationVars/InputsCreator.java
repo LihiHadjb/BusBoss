@@ -68,16 +68,25 @@ public class InputsCreator {
 				result = Math.random() < prob;
 			}
 
-			inputs.put(name, Boolean.toString(result));
 
-			//update the bus object so that control panel can be updted correctly
+			//update the bus object so that control panel can be updted correctly, and dont put the random value if its already
+			//true and the bus did not arrive to the station yet
 			Bus bus = city.getBusses().get(i);
+			BusMover busMover = city.getBusMover();
 			switch (envVarName){
 				case "isBusFull":
+					if(bus.isFull() && !busMover.isAtDestinationStation(bus) && !isInit){
+						result = bus.isFull();
+					}
 					bus.setFull(result);
 				case "isStopPressed":
+					if(bus.isStopPressed() && !busMover.isAtDestinationStation(bus) && !isInit){
+						result = bus.isStopPressed();
+					}
 					bus.setStopPressed(result);
 			}
+			inputs.put(name, Boolean.toString(result));
+
 		}
 
 
