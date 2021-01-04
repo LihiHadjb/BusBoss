@@ -167,10 +167,12 @@ public class Bus{
 
 	public void setInUse(boolean inUse) {
 		this.inUse = inUse;
+
 	}
 	
 	public boolean isInUse() {
 		return this.inUse;
+
 	}
 
 

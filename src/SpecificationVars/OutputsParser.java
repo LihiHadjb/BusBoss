@@ -5,6 +5,7 @@ import CityComponents.City;
 import Lines.BusMover;
 import Lines.LineName;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,8 +65,11 @@ public class OutputsParser {
 			bus.setShouldGoToGasStation(values[i]);
 			if(bus.getId() == 2 || bus.getId() == 3){
 				BusMover busMover = city.getBusMover();
-				System.out.println("bus "+ bus.getId() + " should go: " + bus.isShouldGoToGasStation());
-				System.out.println("bus "+ bus.getId() + "  at main: " + busMover.isAtMainStationEntrance(bus));
+//				System.out.println("bus "+ bus.getId() + " should go: " + bus.isShouldGoToGasStation());
+				if(bus.isShouldGoToGasStation()){
+//					System.out.println("____________curr coor is: "+ Arrays.toString(bus.getCurrCoordinate()));
+				}
+//				System.out.println("bus "+ bus.getId() + "  at main: " + busMover.isAtMainStationEntrance(bus));
 			}
 		}
 	}
@@ -113,8 +117,8 @@ public class OutputsParser {
 			}
 		}
 
-		System.out.println("sent for A: "+ values[0]);
-		System.out.println("sent for B: "+ values[1]);
+//		System.out.println("sent for A: "+ values[0]);
+//		System.out.println("sent for B: "+ values[1]);
 
 	}
 	
@@ -137,14 +141,27 @@ public class OutputsParser {
 //		System.out.println("inUse1: "+ values[1]);
 //	}
 
+
+	private void updateNumOfStopsPassedBus(){
+		for(Bus bus : city.getBusses().values()){
+			String name = "numOfStopsPassedBus" + bus.getId();
+			int value = Integer.parseInt(sysValues.get(name));
+			bus.setNumOfStopsPassed(value);
+		}
+	}
+
+
 	private void updateUnstoppedStationsLine(){
 		String nameA = "unstoppedStationsLineA";
 		int valueA = Integer.parseInt(sysValues.get(nameA));
-		System.out.println("unstoppedStationsLineA" + valueA);
+//		System.out.println("unstoppedStationsLineA" + valueA);
 
 		String nameB = "unstoppedStationsLineB";
 		int valueB = Integer.parseInt(sysValues.get(nameB));
-		System.out.println("unstoppedStationsLineB" + valueB);
+		city.getLines().get(0).setNumUnstopped(valueA);
+		city.getLines().get(1).setNumUnstopped(valueB);
+
+//		System.out.println("unstoppedStationsLineB" + valueB);
 
 	}
 
@@ -155,10 +172,9 @@ public class OutputsParser {
 		updateStopAtNextStation();
 		updateExtraBusSentLine();
 		updateUnstoppedStationsLine();
-		//updateNumOfStopsPassedBus();
+		updateNumOfStopsPassedBus();
 	}
-		
-	
+
 
 //				lineOfReserveBus
 //				shouldGoToGasStation

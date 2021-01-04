@@ -1,6 +1,6 @@
-import CityComponents.Bus;
 import CityComponents.City;
 import CityComponents.Station;
+import Panels.ControlPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -23,6 +23,8 @@ public class Board extends JFrame{
 	
 	int x;
 	int y;
+	int frame_x;
+	int frame_y;
 
 	final int DELAY = 200;
 	BufferedImage busImage;
@@ -43,6 +45,7 @@ public class Board extends JFrame{
 	City city;
 	
 	JPanel panel;
+	ControlPanel controlPanel;
 
 	int width;
 	int height;
@@ -51,9 +54,12 @@ public class Board extends JFrame{
 		this.city = city;
 		this.x = city.getX();
 		this.y = city.getY();
-		
-		this.width = this.y * dim;
-		this.height = this.x * dim;
+
+		frame_x = x + 1;
+		frame_y = y + 12;
+
+		this.width = this.frame_y * dim;
+		this.height = this.frame_x * dim;
 
 		top_left = city.top_left();
 		top_right = city.top_right();
@@ -64,17 +70,27 @@ public class Board extends JFrame{
 
 		this.setTitle("BusBoss");
 		this.setSize(this.width, this.height);
+
 		initBtns();
+		initBussesPanel();
+
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.paint(this.getGraphics());
 	}
 
+	private void initBussesPanel(){
+		this.controlPanel = new ControlPanel(city);
+		this.getContentPane().add(this.controlPanel, BorderLayout.EAST);
+
+
+	}
+
 	private void initBtns() {
 		// Buttons-Container
 		this.panel = new JPanel();
-		this.panel.setBounds(0, 0, this.width, this.height);
-		this.setLayout(null);
+		//this.panel.setBounds(0, 0, this.width, this.height);
+		//this.setLayout(null);
 		
 		// Buttons
 		JButton rainBtn = new JButton("Rain Scenario");
@@ -135,7 +151,7 @@ public class Board extends JFrame{
 		this.panel.setLocation(newX, newY);
 		
 		// Register panel
-		this.getContentPane().add(this.panel);
+		this.getContentPane().add(this.panel, BorderLayout.PAGE_START);
 		
 	}
 	
@@ -410,6 +426,7 @@ public class Board extends JFrame{
 			busPainter.drawBusses(i);
 			Thread.sleep(DELAY/dim);
 		}
+		controlPanel.update();
 
 	}
 

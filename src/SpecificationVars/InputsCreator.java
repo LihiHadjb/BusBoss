@@ -126,7 +126,8 @@ public class InputsCreator {
 					if (!busMover.isAtDestinationStation(bus) & !nextStation.isArePassengersWaiting()) {
 						inputs.put(name, Boolean.toString(valuesForStations[stationId]));
 						nextStation.setArePassengersWaiting(valuesForStations[stationId]);
-					} else {
+					}
+					else {
 						inputs.put(name, Boolean.toString(nextStation.isArePassengersWaiting()));
 					}
 				}
