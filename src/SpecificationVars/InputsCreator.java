@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-//import GUI.IBus;
 
 public class InputsCreator {
 	private Map<String, String> inputs;
@@ -38,21 +37,21 @@ public class InputsCreator {
 
 	public void initProbabilities(){
 		this.isBusFullProb = 0.005;
-		this.isStopPressedProb = 0.015;
 		this.arePassengersWaitingProb = 0.02;
+		this.isStopPressedProb = 0.015;
 	}
 
 	public void updateProbabilities(){
 		// Rush hour scenario
 		if (city.isRushHour()){
-			this.isBusFullProb = 0.7;
+			this.isBusFullProb = 0.8;
 			this.arePassengersWaitingProb = 0.8;
-			this.isStopPressedProb = 0.5;
+			this.isStopPressedProb = 0.015;
 		}
 		else{
 			this.isBusFullProb = 0.005;
-			this.isStopPressedProb = 0.015;
 			this.arePassengersWaitingProb = 0.02;
+			this.isStopPressedProb = 0.015;
 		}
 	}
 
@@ -68,7 +67,6 @@ public class InputsCreator {
 				result = Math.random() < prob;
 			}
 
-
 			//update the bus object so that control panel can be updted correctly, and dont put the random value if its already
 			//true and the bus did not arrive to the station yet
 			Bus bus = city.getBusses().get(i);
@@ -79,11 +77,13 @@ public class InputsCreator {
 						result = bus.isFull();
 					}
 					bus.setFull(result);
+					break;
 				case "isStopPressed":
 					if(bus.isStopPressed() && !busMover.isAtDestinationStation(bus) && !isInit){
 						result = bus.isStopPressed();
 					}
 					bus.setStopPressed(result);
+					break;
 			}
 			inputs.put(name, Boolean.toString(result));
 

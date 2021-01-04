@@ -14,41 +14,43 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static java.lang.Thread.sleep;
-
-
 @SuppressWarnings("serial")
 public class Board extends JFrame{
+	City city;
+
 	final int dim = 40;
-	
 	int x;
 	int y;
 	int frame_x;
 	int frame_y;
+	int width;
+	int height;
 
 	final int DELAY = 200;
+
+	//images
 	BufferedImage busImage;
-	BufferedImage busImageEastToWest;
-	BufferedImage busImageWestToEast;
-	BufferedImage busImageNorthToSouth;
-	BufferedImage busImageSouthToNorth;
-	BufferedImage stationWithPeopleImage;
-	BufferedImage gasStationImage;
-	BufferedImage emptyStationImage;
-	BufferedImage busImageNoBG;
-	
+	BufferedImage station_A_empty;
+	BufferedImage station_A_with_people;
+	BufferedImage station_B_empty;
+	BufferedImage station_B_with_people;
+
+	BufferedImage main_station_empty;
+	BufferedImage main_station_with_people;
+
+	BufferedImage mainStationSign;
+	BufferedImage parkingSign;
+	BufferedImage gasStationSign;
+	BufferedImage gasStationPainting;
+
 	int[] top_left;
 	int[] top_right;
 	int[] bottom_left;
 	int[] bottom_right;
-	
-	City city;
-	
+
 	JPanel panel;
 	ControlPanel controlPanel;
 
-	int width;
-	int height;
 
 	public Board(City city){
 		this.city = city;
@@ -82,15 +84,13 @@ public class Board extends JFrame{
 	private void initBussesPanel(){
 		this.controlPanel = new ControlPanel(city);
 		this.getContentPane().add(this.controlPanel, BorderLayout.EAST);
-
-
 	}
 
 	private void initBtns() {
 		// Buttons-Container
 		this.panel = new JPanel();
-		//this.panel.setBounds(0, 0, this.width, this.height);
-		//this.setLayout(null);
+//		this.panel.setBounds(0, 0, this.width, this.height);
+//		this.setLayout(null);
 		
 		// Buttons
 		JButton rainBtn = new JButton("Rain Scenario");
@@ -149,7 +149,7 @@ public class Board extends JFrame{
 		int newX = windowHalfWid - panelHalfWid;
 		int newY = this.height - this.panel.getHeight();
 		this.panel.setLocation(newX, newY);
-		
+
 		// Register panel
 		this.getContentPane().add(this.panel, BorderLayout.PAGE_START);
 		
@@ -158,66 +158,79 @@ public class Board extends JFrame{
 	private void initImages() {
 		try{
 			this.busImage = ImageIO.read(new File("images/bus_with_background.jpg"));
-			this.busImageEastToWest = ImageIO.read(new File("images/bus_with_background_east_to_west.jpg"));
-			this.busImageWestToEast = ImageIO.read(new File("images/bus_with_background_west_to_east.jpg"));
-			this.busImageNorthToSouth = ImageIO.read(new File("images/bus_with_background_north_to_south.jpg"));
-			this.busImageSouthToNorth = ImageIO.read(new File("images/bus_with_background_south_to_north.jpg"));
-			this.busImageNoBG = ImageIO.read(new File("images/bus.jpeg"));
-			this.stationWithPeopleImage =  ImageIO.read(new File("images/station_with_people.jpeg"));
-			this.gasStationImage =  ImageIO.read(new File("images/gas_station.jpeg"));
-			this.emptyStationImage =  ImageIO.read(new File("images/empty_station.jpeg"));
+
+			//Bus stations
+			this.station_A_empty = ImageIO.read(new File("images/stations/station_A_empty.jpeg"));
+			this.station_A_with_people = ImageIO.read(new File("images/stations/station_A_with_people.jpeg"));
+			this.station_B_empty = ImageIO.read(new File("images/stations/station_B_empty.jpeg"));
+			this.station_B_with_people = ImageIO.read(new File("images/stations/station_B_with_people.jpeg"));
+
+			//Gas station & Main station
+			this.main_station_empty = ImageIO.read(new File("images/stations/main_station_empty.jpeg"));
+			this.main_station_with_people = ImageIO.read(new File("images/stations/main_station_with_people.jpeg"));
+			this.mainStationSign = ImageIO.read(new File("images/main_station_sign.jpg"));
+			this.parkingSign = ImageIO.read(new File("images/parking.jpg"));
+			this.gasStationSign = ImageIO.read(new File("images/gas_station_sign.jpg"));
+			this.gasStationPainting = ImageIO.read(new File("images/gas_station_painting.jpg"));
 		}
+
 		catch (IOException e){
 			System.out.println("error in reading images!");
 			e.printStackTrace();
 		}	
 	}
-	
-	private void draw_borders(String type) {
+
+	private void draw_main_station() {
 		int row, col;
 		Graphics g = this.getGraphics();
-		int[] top_left = new int[2];
-		int[] top_right = new int[2];
-		int[] bottom_left = new int[2];
-		int[] bottom_right = new int[2];
-		switch (type){
-			case "neighbourhood":
-				g.setColor(Color.WHITE);
-				break;
-			case "main_station":
-				g.setColor(Color.ORANGE);
-				top_left = city.getMainStation().getTop_left();
-				top_right = city.getMainStation().getTop_right();
-				bottom_left = city.getMainStation().getBottom_left();
-				bottom_right = city.getMainStation().getBottom_right();
-				break;
+		int[] top_left = city.getMainStation().getTop_left();
+		int[] top_right = city.getMainStation().getTop_right();
 
-			case "gas_station":
-				g.setColor(Color.BLUE);
-				top_left = city.getGasStation().getTop_left();
-				top_right = city.getGasStation().getTop_right();
-				bottom_left = city.getGasStation().getBottom_left();
-				bottom_right = city.getGasStation().getBottom_right();
-		}
+		//draw main station roads
+		draw_horizontal_road(top_left, top_right);
 
-		row = top_left[0];
-		for(col=top_left[1]; col<top_right[1]; col++) {
-			g.fillRect(col * dim, row * dim, dim, dim);
-		}
+		//draw main station parking
+		g.setColor(Color.GRAY);
+		int[] parking_top_left = new int[]{top_left[0]+2, top_left[1]+1};
+		int[] parking_top_right = new int[]{parking_top_left[0], parking_top_left[1]+1};
+		int[] parking_bottom_left = new int[]{parking_top_left[0]+1, parking_top_left[1]};
+		int[] parking_bottom_right = new int[]{parking_top_left[0]+1, parking_top_left[1]+1};
 
-		for(row=top_right[0]; row<bottom_right[0]; row++) {
-			g.fillRect(col * dim, row * dim, dim, dim);
+		g.fillRect(parking_top_left[1] * dim, parking_top_left[0] * dim, dim, dim);
+		g.fillRect(parking_top_right[1] * dim, parking_top_right[0] * dim, dim, dim);
+		g.fillRect(parking_bottom_left[1] * dim, parking_bottom_left[0] * dim, dim, dim);
+		g.fillRect(parking_bottom_right[1] * dim, parking_bottom_right[0] * dim, dim, dim);
+
+		//draw parking sign
+		g.drawImage(parkingSign, parking_bottom_left[1] * dim + dim/6, parking_bottom_left[0] * dim + dim + dim/6, dim*2 - 2*dim/6, dim - 2*dim/6, null);
+
+
+		//draw main station sign
+		Station main_station = city.getMainStation();
+		g.drawImage(mainStationSign, main_station.getLocation()[1] * dim + dim + 2*dim/6, main_station.getLocation()[0] * dim - 2*dim + 2*dim/6, dim*2 - 4*dim/6, dim*2 - 4*dim/6, null);
+
+		//draw main station itself
+		if(main_station.isArePassengersWaiting()){
+			g.drawImage(main_station_with_people, main_station.getLocation()[1] * dim - dim, main_station.getLocation()[0] * dim - 2*dim, dim*2, dim*2, null);
 
 		}
-
-		for(col=bottom_right[1]; col>bottom_left[1]; col--) {
-			g.fillRect(col * dim, row * dim, dim, dim);
-
+		else{
+			g.drawImage(main_station_empty, main_station.getLocation()[1] * dim - dim, main_station.getLocation()[0] * dim - 2*dim, dim*2, dim*2, null);
 		}
+	}
 
-		for(row=bottom_left[0]; row>top_left[0]; row--) {
-			g.fillRect(col * dim, row * dim, dim, dim);
-		}
+
+	private void draw_gas_station() {
+		Graphics g = this.getGraphics();
+		int[] top_left = city.getGasStation().getTop_left();
+		int[] top_right = city.getGasStation().getTop_right();
+
+		//draw gas station roads
+		draw_horizontal_road(top_left, top_right);
+
+		//draw gas station sign & painting
+		g.drawImage(gasStationPainting, top_left[1] * dim  + dim/6, top_left[0] * dim - dim + dim/6, dim-2*dim/6, dim-2*dim/6, null);
+		g.drawImage(gasStationSign, top_left[1] * dim + dim, top_left[0] * dim - dim, dim*2, dim, null);
 	}
 
 	private void draw_vertical_road(int[] start,int [] end) {
@@ -266,18 +279,18 @@ public class Board extends JFrame{
 		Graphics g = this.getGraphics();
 		//g.setColor(Color.PINK);
 		if(station1.isArePassengersWaiting()){
-			g.drawImage(stationWithPeopleImage, station1.getLocation()[1] * dim - dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
+			g.drawImage(station_A_with_people, station1.getLocation()[1] * dim - dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
 		else{
-			g.drawImage(emptyStationImage, station1.getLocation()[1] * dim - dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
+			g.drawImage(station_A_empty, station1.getLocation()[1] * dim - dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
 
 		if(station2.isArePassengersWaiting()){
-			g.drawImage(stationWithPeopleImage, station2.getLocation()[1] * dim, station2.getLocation()[0] * dim, dim*2, dim*2, null);
+			g.drawImage(station_A_with_people, station2.getLocation()[1] * dim, station2.getLocation()[0] * dim, dim*2, dim*2, null);
 
 		}
 		else{
-			g.drawImage(emptyStationImage, station2.getLocation()[1] * dim, station2.getLocation()[0] * dim, dim*2, dim*2, null);
+			g.drawImage(station_A_empty, station2.getLocation()[1] * dim, station2.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
 
 	}
@@ -288,18 +301,18 @@ public class Board extends JFrame{
 		Graphics g = this.getGraphics();
 		//g.setColor(Color.MAGENTA);
 		if(station1.isArePassengersWaiting()){
-			g.drawImage(stationWithPeopleImage, station1.getLocation()[1] * dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
+			g.drawImage(station_B_with_people, station1.getLocation()[1] * dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
 		else{
-			g.drawImage(emptyStationImage, station1.getLocation()[1] * dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
+			g.drawImage(station_B_empty, station1.getLocation()[1] * dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
 
 		if(station2.isArePassengersWaiting()){
-			g.drawImage(stationWithPeopleImage, station2.getLocation()[1] * dim - dim, station2.getLocation()[0] * dim - dim, dim*2, dim*2, null);
+			g.drawImage(station_B_with_people, station2.getLocation()[1] * dim - dim, station2.getLocation()[0] * dim - dim, dim*2, dim*2, null);
 
 		}
 		else{
-			g.drawImage(emptyStationImage, station2.getLocation()[1] * dim - dim, station2.getLocation()[0] * dim - dim, dim*2, dim*2, null);
+			g.drawImage(station_B_empty, station2.getLocation()[1] * dim - dim, station2.getLocation()[0] * dim - dim, dim*2, dim*2, null);
 		}
 
 
@@ -341,35 +354,11 @@ public class Board extends JFrame{
 	}
 
 	private void draw_neighbourhood() {
-//		draw_borders(top_left, top_right, bottom_left, bottom_right, "neighbourhood");
 		draw_roads();
 		draw_A_stations();
 		draw_B_stations();
-
-
 	}
 
-//	public void drawBusses(){
-//		Graphics g = this.getGraphics();
-//		for (Bus bus : city.getBusses().values()){
-//			g.drawImage(busImage, bus.getCurrCoordinate()[1] * dim + 1, bus.getCurrCoordinate()[0] * dim +2, dim-4, dim-4, null);
-//
-//		}
-//	}
-
-	public void drawPassengerInStations(){
-		Graphics g = this.getGraphics();
-		for (Station station : city.getBusStations().values()){
-			if(station.isArePassengersWaiting()){
-				g.drawImage(stationWithPeopleImage, station.getLocation()[0] * dim * 2, station.getLocation()[1] * dim * 2, null);
-			}
-
-			else{
-				g.drawImage(emptyStationImage, station.getLocation()[0] * dim * 2, station.getLocation()[1] * dim * 2, null);
-			}
-		}
-	}
-	
 	public void drawRoadsOutsideTheNeighborhoood(){
 		// draw the road between neighborhood and main station
 		draw_horizontal_road(city.getRoadBetweenCityAndMainStation().getStart(), city.getRoadBetweenCityAndMainStation().getEnd());
@@ -377,18 +366,6 @@ public class Board extends JFrame{
 		// draw the road between neighborhood and gas station
 		draw_horizontal_road(city.getRoadBetweenCityAndGasStation().getStart(), city.getRoadBetweenCityAndGasStation().getEnd());
 
-	}
-
-	private void draw_background(){
-		Graphics g = this.getGraphics();
-		int row;
-		int col;
-		g.setColor(Color.WHITE);
-		for (row = 0; row < x; row++) {
-			for (col = 0; col < y; col++) {
-				g.fillRect(col * dim, row * dim, dim, dim);
-			}
-		}
 	}
 	
 	public void checkStationsLocations(){
@@ -413,13 +390,10 @@ public class Board extends JFrame{
 	
 
 	public void paint() throws InterruptedException {
-		//draw_background(); //Tslil - no need for that
-		BusPainter busPainter = new BusPainter(this.getGraphics(), city, dim, busImageEastToWest,
-				busImageWestToEast, busImageNorthToSouth, busImageSouthToNorth, DELAY);
-
+		BusPainter busPainter = new BusPainter(this.getGraphics(), city, dim, DELAY);
 		draw_neighbourhood();
-		draw_borders("main_station");
-		draw_borders("gas_station");
+		draw_main_station();
+		draw_gas_station();
 		checkStationsLocations(); //TODO: Remove after!!!
 
 		for(int i=0; i<dim; i++){
@@ -427,7 +401,6 @@ public class Board extends JFrame{
 			Thread.sleep(DELAY/dim);
 		}
 		controlPanel.update();
-
 	}
 
 }
