@@ -25,11 +25,11 @@ public class StationsCheckBoxesPanel extends JPanel {
                 BorderFactory.createEtchedBorder(), TITLE, TitledBorder.CENTER, TitledBorder.TOP));
 
 //TODO: north and south wrong!!!
-        northStation = new JCheckBox("north");
-        southStation = new JCheckBox("south");
-        eastStation = new JCheckBox("east");
-        westStation = new JCheckBox("west");
-        mainStation = new JCheckBox("central station");
+        northStation = new JCheckBox("B1");
+        southStation = new JCheckBox("B2");
+        eastStation = new JCheckBox("A2");
+        westStation = new JCheckBox("A1");
+        mainStation = new JCheckBox("Central Station");
 
         checkbox2StationName.put(southStation, "b2");
         checkbox2StationName.put(northStation, "b1");
@@ -42,9 +42,12 @@ public class StationsCheckBoxesPanel extends JPanel {
 
         setEnabled(false);
 
-        for(JCheckBox checkBox : checkbox2StationName.keySet()){
-            this.add(checkBox);
-        }
+        //add stations check boxes
+        this.add(mainStation);
+        this.add(westStation);
+        this.add(eastStation);
+        this.add(northStation);
+        this.add(southStation);
     }
 
     public void setEnabledAllStationsWithPeople(){
@@ -66,7 +69,6 @@ public class StationsCheckBoxesPanel extends JPanel {
                 checkBox.setSelected(false);
             }
         }
-
 
 
 

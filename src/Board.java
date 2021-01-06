@@ -26,7 +26,7 @@ public class Board extends JFrame{
 	int width;
 	int height;
 
-	final int DELAY = 200;
+	final int DELAY = 400;
 
 	RightPanel rightPanel;
 

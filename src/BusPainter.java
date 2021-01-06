@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class BusPainter {
@@ -36,7 +37,6 @@ public class BusPainter {
         this.city = city;
         this.dim = dim;
         this.DELAY = DELAY;
-        this.busStationsDirections = initBusStationsDirections();
 
         initBussesImages();
     }
@@ -61,17 +61,38 @@ public class BusPainter {
         }
     }
 
-        public HashMap<int[], String> initBusStationsDirections(){
-        HashMap<int[], String> result = new HashMap<>();
+    public String getStationDirection(int[] location){
+        if (Arrays.equals(location, ((city.getBusStations().get("a1")).getLocationForTheBus()))){
+            System.out.println("In a1 !!!");
+            return northToSouth;
+        }
 
-        result.put((city.getBusStations().get("a1")).getLocation(), northToSouth);
-        result.put((city.getBusStations().get("a2")).getLocation(), southToNorth);
-        result.put((city.getBusStations().get("b1")).getLocation(), eastTowest);
-        result.put((city.getBusStations().get("b2")).getLocation(), westToEast);
-        result.put((city.getMainStation()).getLocation(), eastTowest);
-        result.put((city.getGasStation()).getLocation(), eastTowest);
+        else if (Arrays.equals(location, ((city.getBusStations().get("a2")).getLocationForTheBus()))){
+            System.out.println("In a2 !!!");
+            return southToNorth;
+        }
 
-        return result;
+        else if (Arrays.equals(location, ((city.getBusStations().get("b1")).getLocationForTheBus()))){
+            System.out.println("In b1 !!!");
+            return westToEast;
+        }
+
+        else if (Arrays.equals(location, ((city.getBusStations().get("b2")).getLocationForTheBus()))){
+            System.out.println("In b2 !!!");
+            return eastTowest;
+        }
+
+        else if (Arrays.equals(location, ((city.getMainStation()).getLocationForTheBus()))){
+            System.out.println("In main station !!!");
+            return eastTowest;
+        }
+
+        else if (Arrays.equals(location, ((city.getGasStation()).getLocationForTheBus()))){
+            System.out.println("In gas station !!!");
+            return eastTowest;
+        }
+
+        return null;
     }
 
     private String chooseDirection(Bus bus){
@@ -82,19 +103,21 @@ public class BusPainter {
             return southToNorth;
         }
 
-        if(prev[0] < curr[0]){
+        else if(prev[0] < curr[0]){
             return northToSouth;
         }
 
-        if(prev[1] > curr[1]){
+        else if(prev[1] > curr[1]){
             return eastTowest;
         }
-        if(prev[1] < curr[1]){
+        else if(prev[1] < curr[1]){
             return westToEast;
         }
 
-        if (busStationsDirections.containsKey(curr)){
-            return busStationsDirections.get(curr);
+        String stationDirection = getStationDirection(curr);
+
+        if (stationDirection != null){
+            return stationDirection;
         }
 
         return stay;
@@ -127,8 +150,16 @@ public class BusPainter {
                 x_offset = 0;
         }
 
-        newY = bus.getPrevCoordinate()[1] * dim  + y_offset;
-        newX = bus.getPrevCoordinate()[0] * dim + x_offset;
+        if (Arrays.equals(bus.getPrevCoordinate(), bus.getCurrCoordinate())){
+            newY = bus.getCurrCoordinate()[1] * dim  + y_offset;
+            newX = bus.getCurrCoordinate()[0] * dim + x_offset;
+        }
+
+        else{
+            newY = bus.getPrevCoordinate()[1] * dim  + y_offset;
+            newX = bus.getPrevCoordinate()[0] * dim + x_offset;
+        }
+
         return new int[] {newX, newY};
 
     }
@@ -138,36 +169,41 @@ public class BusPainter {
         isReserve = (bus.getId()==2 || bus.getId()==3);
 
         switch (direction){
-            case(eastTowest):
-                if (isReserve){
+            case(eastTowest): {
+                if (isReserve) {
                     return reserveBusEastToWest;
                 }
                 return this.regularBusEastToWest;
+            }
 
-            case (westToEast):
-                if (isReserve){
+            case (westToEast): {
+                if (isReserve) {
                     return reserveBusWestToEast;
                 }
                 return this.regularBusWestToEast;
+            }
 
-            case (northToSouth):
-                if (isReserve){
+            case (northToSouth): {
+                if (isReserve) {
                     return reserveBusNorthToSouth;
                 }
                 return this.regularBusNorthToSouth;
+            }
 
 
-            case (southToNorth):
-                if (isReserve){
+            case (southToNorth): {
+                if (isReserve) {
                     return reserveBusSouthToNorth;
                 }
                 return this.regularBusSouthToNorth;
+            }
 
-            case(stay):
-                if (isReserve){
+            case(stay): {
+                if (isReserve) {
                     return reserveBusSouthToNorth;
                 }
                 return this.regularBusSouthToNorth;
+            }
         }
         return null;
     }
@@ -179,8 +215,14 @@ public class BusPainter {
         for (Bus bus : city.getBusses().values()){
             direction = chooseDirection(bus);
             busImage = choosePicture(bus, direction);
-            int[] subCoor = getSubCoordinate(bus, direction, subIterationNumber);
-            g.drawImage(busImage, subCoor[1], subCoor[0] , dim-3, dim-3, null);
+
+            if (Arrays.equals(bus.getPrevCoordinate(), bus.getCurrCoordinate())){
+                g.drawImage(busImage, bus.getCurrCoordinate()[1]*dim, bus.getCurrCoordinate()[0]*dim, dim-3, dim-3, null);
+            }
+            else{
+                int[] subCoor = getSubCoordinate(bus, direction, subIterationNumber);
+                g.drawImage(busImage, subCoor[1], subCoor[0] , dim-3, dim-3, null);
+            }
         }
     }
 }
