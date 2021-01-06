@@ -238,7 +238,7 @@ public class Board extends JFrame{
 		draw_horizontal_road(top_left, top_right);
 
 		//draw gas station sign & painting
-		g.drawImage(gasStationPainting, top_left[1] * dim  + dim/6, top_left[0] * dim - dim + dim/6, dim-2*dim/6, dim-2*dim/6, null);
+		g.drawImage(gasStationPainting, top_left[1] * dim  + dim/6, top_left[0] * dim - dim, dim-2*dim/6, dim-2*dim/6, null);
 		g.drawImage(gasStationSign, top_left[1] * dim + dim, top_left[0] * dim - dim, dim*2, dim, null);
 	}
 
