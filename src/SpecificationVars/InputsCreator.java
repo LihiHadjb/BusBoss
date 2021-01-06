@@ -160,14 +160,6 @@ public class InputsCreator {
 		}
 
 
-
-
-
-
-
-
-
-
     }
     
     private void putAtDestinationStationForEachBus(boolean isInit) {
@@ -250,7 +242,7 @@ public class InputsCreator {
 
     private void putIsRaining() {
     	//TODO: this should come from GUI or something
-    	inputs.put("isRaining", Boolean.toString(false));
+    	inputs.put("isRaining", Boolean.toString(city.isRaining()));
     }
 
 

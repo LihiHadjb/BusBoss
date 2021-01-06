@@ -42,6 +42,11 @@ public class Board extends JFrame{
 	BufferedImage parkingSign;
 	BufferedImage gasStationSign;
 	BufferedImage gasStationPainting;
+	BufferedImage station_A1_sign;
+	BufferedImage station_A2_sign;
+	BufferedImage station_B1_sign;
+	BufferedImage station_B2_sign;
+
 
 	int[] top_left;
 	int[] top_right;
@@ -172,6 +177,10 @@ public class Board extends JFrame{
 			this.parkingSign = ImageIO.read(new File("images/parking.jpg"));
 			this.gasStationSign = ImageIO.read(new File("images/gas_station_sign.jpg"));
 			this.gasStationPainting = ImageIO.read(new File("images/gas_station_painting.jpg"));
+			this.station_A1_sign = ImageIO.read(new File("images/stations/station_A1_sign.jpg"));
+			this.station_A2_sign = ImageIO.read(new File("images/stations/station_A2_sign.jpg"));
+			this.station_B1_sign = ImageIO.read(new File("images/stations/station_B1_sign.jpg"));
+			this.station_B2_sign = ImageIO.read(new File("images/stations/station_B2_sign.jpg"));
 		}
 
 		catch (IOException e){
@@ -278,6 +287,8 @@ public class Board extends JFrame{
 		Station station2 = city.getBusStations().get("a2");
 		Graphics g = this.getGraphics();
 		//g.setColor(Color.PINK);
+
+		// station A1
 		if(station1.isArePassengersWaiting()){
 			g.drawImage(station_A_with_people, station1.getLocation()[1] * dim - dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
@@ -285,6 +296,11 @@ public class Board extends JFrame{
 			g.drawImage(station_A_empty, station1.getLocation()[1] * dim - dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
 
+		// draw A1 sign
+		g.drawImage(station_A1_sign, station1.getLocation()[1] * dim - dim + dim/2, station1.getLocation()[0] * dim - dim, dim, dim, null);
+
+
+		// station A2
 		if(station2.isArePassengersWaiting()){
 			g.drawImage(station_A_with_people, station2.getLocation()[1] * dim, station2.getLocation()[0] * dim, dim*2, dim*2, null);
 
@@ -292,6 +308,9 @@ public class Board extends JFrame{
 		else{
 			g.drawImage(station_A_empty, station2.getLocation()[1] * dim, station2.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
+		// draw A1 sign
+		g.drawImage(station_A2_sign, station2.getLocation()[1] * dim + dim/2, station2.getLocation()[0] * dim - dim, dim, dim, null);
+
 
 	}
 
@@ -299,7 +318,7 @@ public class Board extends JFrame{
 		Station station1 = city.getBusStations().get("b1");
 		Station station2 = city.getBusStations().get("b2");
 		Graphics g = this.getGraphics();
-		//g.setColor(Color.MAGENTA);
+		// station B1
 		if(station1.isArePassengersWaiting()){
 			g.drawImage(station_B_with_people, station1.getLocation()[1] * dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
@@ -307,6 +326,10 @@ public class Board extends JFrame{
 			g.drawImage(station_B_empty, station1.getLocation()[1] * dim, station1.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
 
+		// draw B1 sign
+		g.drawImage(station_B1_sign, station1.getLocation()[1] * dim - dim, station1.getLocation()[0] * dim, dim, dim, null);
+
+		// station B2
 		if(station2.isArePassengersWaiting()){
 			g.drawImage(station_B_with_people, station2.getLocation()[1] * dim - dim, station2.getLocation()[0] * dim - dim, dim*2, dim*2, null);
 
@@ -315,7 +338,8 @@ public class Board extends JFrame{
 			g.drawImage(station_B_empty, station2.getLocation()[1] * dim - dim, station2.getLocation()[0] * dim - dim, dim*2, dim*2, null);
 		}
 
-
+		// draw B2 sign
+		g.drawImage(station_B2_sign, station2.getLocation()[1] * dim - dim + dim/2, station2.getLocation()[0] * dim - 2*dim, dim, dim, null);
 
 	}
 
