@@ -15,6 +15,8 @@ import java.io.IOException;
 @SuppressWarnings("serial")
 public class Board extends JFrame{
 	City city;
+	BusPainter busPainter;
+
 
 	final int dim = 40;
 	int x;
@@ -89,7 +91,7 @@ public class Board extends JFrame{
 		this.setVisible(true);
 		this.paint(this.getGraphics());
 
-
+		this.busPainter = new BusPainter(this.getGraphics(), city, dim, DELAY);
 	}
 
 
@@ -389,7 +391,6 @@ public class Board extends JFrame{
 
 
 	public void paint() throws InterruptedException {
-		BusPainter busPainter = new BusPainter(this.getGraphics(), city, dim, DELAY);
 		draw_neighbourhood();
 		draw_main_station();
 		draw_gas_station();

@@ -31,8 +31,8 @@ public class StationsCheckBoxesPanel extends JPanel {
         westStation = new JCheckBox("west");
         mainStation = new JCheckBox("central station");
 
-        checkbox2StationName.put(southStation, "b1");
-        checkbox2StationName.put(northStation, "b2");
+        checkbox2StationName.put(southStation, "b2");
+        checkbox2StationName.put(northStation, "b1");
         checkbox2StationName.put(westStation, "a1");
         checkbox2StationName.put(eastStation, "a2");
         checkbox2StationName.put(mainStation, "main_station");
@@ -87,9 +87,9 @@ public class StationsCheckBoxesPanel extends JPanel {
                 return westStation.isSelected();
             case("a2"):
                return eastStation.isSelected();
-            case("b2"):
-                return northStation.isSelected();
             case("b1"):
+                return northStation.isSelected();
+            case("b2"):
                 return southStation.isSelected();
             case("main_station"):
                 return mainStation.isSelected();
