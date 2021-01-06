@@ -98,9 +98,9 @@ env boolean isRaining;
 gar G forall bus in Int(0..(NUM_BUSSES - 1)). isRaining & !shouldGoToGasStation[bus] -> next(stopAtNextStation[bus]) = true;
 
 
-asm G forall bus in Int(0..(NUM_BUSSES - 1)). isStopPressed[bus] & !atDestinationStation[bus] -> next(isStopPressed[bus])=true;
-asm G forall bus in Int(0..(NUM_BUSSES - 1)). isBusFull[bus] & !atDestinationStation[bus] -> next(isBusFull[bus])=true;
-asm G forall bus in Int(0..(NUM_BUSSES - 1)). arePassengersWaitingInNextStation[bus] & !atDestinationStation[bus] -> next(arePassengersWaitingInNextStation[bus])=true;
+//asm G forall bus in Int(0..(NUM_BUSSES - 1)). isStopPressed[bus] & !atDestinationStation[bus] -> next(isStopPressed[bus])=true;
+//asm G forall bus in Int(0..(NUM_BUSSES - 1)). isBusFull[bus] & !atDestinationStation[bus] -> next(isBusFull[bus])=true;
+//asm G forall bus in Int(0..(NUM_BUSSES - 1)). arePassengersWaitingInNextStation[bus] & !atDestinationStation[bus] -> next(arePassengersWaitingInNextStation[bus])=true;
 
 //TODO: Lihi: this is causing trouble!! maybe the problem is in inputs creator
 //asm G forall bus in Int(0..(NUM_BUSSES - 1)).

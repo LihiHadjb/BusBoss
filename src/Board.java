@@ -1,18 +1,16 @@
 import CityComponents.City;
 import CityComponents.Station;
-import Panels.ControlPanel;
+import Panels.RightPanel;
+import Panels.ManualMode.StationsCheckBoxesPanel;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
 
 @SuppressWarnings("serial")
 public class Board extends JFrame{
@@ -27,6 +25,8 @@ public class Board extends JFrame{
 	int height;
 
 	final int DELAY = 200;
+
+	RightPanel rightPanel;
 
 	//images
 	BufferedImage busImage;
@@ -48,13 +48,14 @@ public class Board extends JFrame{
 	BufferedImage station_B2_sign;
 
 
+	BufferedImage rainImage;
+	BufferedImage sunImage;
+	BufferedImage backgroundImage;
+
 	int[] top_left;
 	int[] top_right;
 	int[] bottom_left;
 	int[] bottom_right;
-
-	JPanel panel;
-	ControlPanel controlPanel;
 
 
 	public Board(City city){
@@ -62,7 +63,7 @@ public class Board extends JFrame{
 		this.x = city.getX();
 		this.y = city.getY();
 
-		frame_x = x + 1;
+		frame_x = x ;
 		frame_y = y + 12;
 
 		this.width = this.frame_y * dim;
@@ -75,91 +76,24 @@ public class Board extends JFrame{
 		
 		initImages();
 
+		BorderLayout layout = new BorderLayout();
+		this.getContentPane().setLayout(layout);
+		rightPanel = new RightPanel(city);
+		this.getContentPane().add(rightPanel, BorderLayout.EAST);
+
+
 		this.setTitle("BusBoss");
 		this.setSize(this.width, this.height);
 
-		initBtns();
-		initBussesPanel();
-
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.paint(this.getGraphics());
+
+
 	}
 
-	private void initBussesPanel(){
-		this.controlPanel = new ControlPanel(city);
-		this.getContentPane().add(this.controlPanel, BorderLayout.EAST);
-	}
 
-	private void initBtns() {
-		// Buttons-Container
-		this.panel = new JPanel();
-//		this.panel.setBounds(0, 0, this.width, this.height);
-//		this.setLayout(null);
-		
-		// Buttons
-		JButton rainBtn = new JButton("Rain Scenario");
-		JButton rushHourBtn = new JButton("Rush Hour Scenario");
-		JButton resetScenarioBtn = new JButton("Reset Scenario");
-		Color defaultBgColor = new JButton().getBackground();
-		
-		// Listeners
-		ActionListener rainBtnListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				city.toggleRaining();
-				if(city.isRaining()) {
-					rainBtn.setBackground(new Color(130, 216, 229));
-				}
-				else {
-					rainBtn.setBackground(defaultBgColor);
-				}
-			}
-		};
-		ActionListener rushBtnListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				city.toggleRushHour();
-				if(city.isRushHour()) {
-					rushHourBtn.setBackground(new Color(130, 216, 229));
-				}
-				else {
-					rushHourBtn.setBackground(defaultBgColor);
-				}
-			}
-		};
-		ActionListener resetScenarioBtnListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				city.setRaining(false);
-				city.setRushHour(false);
-				rainBtn.setBackground(defaultBgColor);
-				rushHourBtn.setBackground(defaultBgColor);
-			}
-		};
-		
-		// Register Listeners to buttons
-		rainBtn.addActionListener(rainBtnListener);
-		rushHourBtn.addActionListener(rushBtnListener);
-		resetScenarioBtn.addActionListener(resetScenarioBtnListener);
-		
-		// Register buttons to panel
-		this.panel.add(rainBtn);
-		this.panel.add(rushHourBtn);
-		this.panel.add(resetScenarioBtn);
-		
-		// Set panel location top-mid window
-		int panelHalfWid = this.panel.getWidth() / 2;
-		int windowHalfWid = this.width / 2;
-		int newX = windowHalfWid - panelHalfWid;
-		int newY = this.height - this.panel.getHeight();
-		this.panel.setLocation(newX, newY);
 
-		// Register panel
-		this.getContentPane().add(this.panel, BorderLayout.PAGE_START);
-		
-	}
-	
 	private void initImages() {
 		try{
 			this.busImage = ImageIO.read(new File("images/bus_with_background.jpg"));
@@ -181,6 +115,12 @@ public class Board extends JFrame{
 			this.station_A2_sign = ImageIO.read(new File("images/stations/station_A2_sign.jpg"));
 			this.station_B1_sign = ImageIO.read(new File("images/stations/station_B1_sign.jpg"));
 			this.station_B2_sign = ImageIO.read(new File("images/stations/station_B2_sign.jpg"));
+
+			//Weather
+			this.rainImage = ImageIO.read(new File("images/weather/rain.jpg"));
+			this.sunImage = ImageIO.read(new File("images/weather/sun.png"));
+			this.backgroundImage = ImageIO.read(new File("images/weather/background.png"));
+
 		}
 
 		catch (IOException e){
@@ -188,6 +128,14 @@ public class Board extends JFrame{
 			e.printStackTrace();
 		}	
 	}
+
+	public JTable getManualModeTable(){
+		return rightPanel.getManualModeTable();
+	}
+	public StationsCheckBoxesPanel getStationsCheckBoxesPanel(){
+		return rightPanel.getStationCheckBoxesPanel();
+	}
+
 
 	private void draw_main_station() {
 		int row, col;
@@ -308,7 +256,7 @@ public class Board extends JFrame{
 		else{
 			g.drawImage(station_A_empty, station2.getLocation()[1] * dim, station2.getLocation()[0] * dim, dim*2, dim*2, null);
 		}
-		// draw A1 sign
+		// draw A2 sign
 		g.drawImage(station_A2_sign, station2.getLocation()[1] * dim + dim/2, station2.getLocation()[0] * dim - dim, dim, dim, null);
 
 
@@ -411,20 +359,50 @@ public class Board extends JFrame{
 		row = city.getMainStation().getLocationForTheBus()[0];
 		g.fillRect(col * dim, row * dim, dim, dim);
 	}
-	
+
+	private void drawWeather(){
+		Graphics g = this.getGraphics();
+		int x = dim * 2;
+		int y = dim + 10;
+		int size = dim * 2 - 10;
+
+		//override previous weather
+		for(int i=0; i<4; i++){
+			g.drawImage(backgroundImage, x+i*3*dim, y, size, size, null);
+
+		}
+
+		if(city.isRaining()){
+			for(int i=0; i<4; i++){
+				g.drawImage(rainImage, x+i*3*dim, y, size, size, null);
+
+			}
+		}
+		else{
+			g.drawImage(sunImage, x, y, size, size, null);
+		}
+
+
+
+
+	}
+
 
 	public void paint() throws InterruptedException {
 		BusPainter busPainter = new BusPainter(this.getGraphics(), city, dim, DELAY);
 		draw_neighbourhood();
 		draw_main_station();
 		draw_gas_station();
-		checkStationsLocations(); //TODO: Remove after!!!
+		checkStationsLocations();
+		drawWeather();
 
 		for(int i=0; i<dim; i++){
 			busPainter.drawBusses(i);
 			Thread.sleep(DELAY/dim);
 		}
-		controlPanel.update();
+
+		rightPanel.updatePanels();
+
 	}
 
 }
