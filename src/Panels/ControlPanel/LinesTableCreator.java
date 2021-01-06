@@ -1,9 +1,9 @@
-package Panels;
+package Panels.ControlPanel;
 
 import CityComponents.City;
 import Lines.Line;
 
-public class LinesTableCreator extends TableCreator{
+public class LinesTableCreator extends TableCreator {
     final int LINE_NAME_INDEX = 0;
     final int NEED_ANOTHER_INDEX = 1;
     final int UNSTOPPED_COUNT_INDEX = 2;

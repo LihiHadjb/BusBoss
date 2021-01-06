@@ -1,4 +1,4 @@
-package Panels;
+package Panels.ControlPanel;
 
 import CityComponents.City;
 
@@ -27,6 +27,8 @@ public abstract class TableCreator {
         table.setGridColor(Color.magenta);
         table.setRowSelectionAllowed(false);
         table.setShowGrid(true);
+        table.setSize(table.getPreferredSize());
+
 
         //center the text inside cells
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();

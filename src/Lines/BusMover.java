@@ -237,7 +237,7 @@ public class BusMover {
 
 	public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses, boolean isRaining){
     	if(isRaining && !bus.isShouldStopAgainInRain() && !bus.isShouldGoToGasStation()){
-    		throw new RuntimeException("shoudlnt stop in rain!!!!");
+    		System.out.println("shoudlnt stop in rain!!!!");
 		}
     	if(bus.getId() == 0 || bus.getId() == 1){
     		moveNormalBus(bus, allBusses);

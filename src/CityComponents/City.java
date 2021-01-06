@@ -27,6 +27,7 @@ public class City {
     private BusMover busMover;
     private HashMap<Integer, int[]> parkingsLocations;
     private HashMap<Integer, Station> index2station;
+    private boolean isManualMode;
 
 
     public City(){
@@ -49,12 +50,17 @@ public class City {
 
         createBusMover();
         createLines();
-
         createBusses();
+
+        this.isManualMode = false;
     }
 
     public HashMap<Integer, Station> getIndex2station() {
         return index2station;
+    }
+
+    public boolean isManualMode(){
+        return this.isManualMode;
     }
 
     public int getMAX_ROUNDS_TO_GAS_STATION() {
@@ -102,6 +108,19 @@ public class City {
     public void createBusMover() {
     	this.busMover = new BusMover(gasStation, mainStation, busStations, parkingsLocations);
     }
+
+    public boolean existsBusThatStopsAtStation(Station station){
+        for(Bus bus : getBusses().values()){
+            if(bus.getId() == 0 || bus.getId() == 1 || bus.isInUse()){
+                if(busMover.isAtDestinationStation(bus) && bus.getDestination()==station && bus.isStopAtNextStation()){
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
 
     public void createLines() {
         RoutesCreation routesCreation = busMover.getRoutesCreation();
@@ -279,7 +298,6 @@ public class City {
         station2LocForBus[0] = station2Loc[0] + 1;
         station2LocForBus[1] = station2Loc[1];
 
-
         Station b1 = new Station(station1Loc, "b1", station1LocForBus, 2);
         Station b2 = new Station(station2Loc, "b2", station2LocForBus, 3);
 
@@ -330,6 +348,10 @@ public class City {
     	this.isRaining = !this.isRaining;
     }
 
+    public void toggleMode(){
+        this.isManualMode = !this.isManualMode;
+    }
+
     public boolean isRushHour() {
     	return this.isRushHour;
     }
@@ -352,10 +374,6 @@ public class City {
 
     public GasStation getGasStation() {
         return gasStation;
-    }
-
-    public void setGasStation(GasStation gasStation) {
-        this.gasStation = gasStation;
     }
 
     public Road getRoadBetweenCityAndMainStation() {

@@ -10,10 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OutputsParser {
-	//TODO: fields should not be public! its just for the test!!!
 
-	public Map<String, String> sysValues;
-	public City city;
+	Map<String, String> sysValues;
+	City city;
 	int NUM_BUSSES;
 	int NUM_RESERVE_BUSSES;
 	int NUM_LINES;
@@ -175,17 +174,5 @@ public class OutputsParser {
 		updateNumOfStopsPassedBus();
 	}
 
-
-//				lineOfReserveBus
-//				shouldGoToGasStation
-//				needExtraBusForLine[0]=false, //only need to visualize this
-//				extraBusSentLine[1]=true, //do nothing with this
-//				stopAtNextStation[0]=false, //visualize + gui should stop when arriving destinationStation
-//				inUse[1]=true, lineOfReserveBus[1]=1, // if not in main station, go there. otherwise do nothing
-//				unstoppedStationsLineA=0, // only need to visualize this
-//				numOfStopsPassedBus2=1, // only need to visualize this
-
-
-		
 	
 }
