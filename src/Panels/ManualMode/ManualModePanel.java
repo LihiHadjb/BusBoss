@@ -18,8 +18,6 @@ public class ManualModePanel extends JPanel {
     JButton rainBtn;
     City city;
 
-
-
     public ManualModePanel(City city){
         this.city = city;
         BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
@@ -42,7 +40,6 @@ public class ManualModePanel extends JPanel {
         this.add(stationsCheckboxes);
     }
 
-
     private void addBussesTable(){
         manualBussesPanel = new ManualBussesPanel(city);
         manualBussesPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -55,7 +52,6 @@ public class ManualModePanel extends JPanel {
         Color defaultBgColor = new JButton().getBackground();
         manualModeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.add(manualModeButton);
-
 
         ActionListener manualModeButtonListener = new ActionListener() {
             @Override
@@ -79,11 +75,11 @@ public class ManualModePanel extends JPanel {
 
     }
 
-
     private void addRainButton(){
         rainBtn = new JButton("Rain");
         Color defaultBgColor = new JButton().getBackground();
-        manualModeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rainBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+//        rainBtn.setBounds(0, 0, 3*40, 40);
         this.add(rainBtn);
 
         ActionListener rainBtnListener = new ActionListener() {
@@ -100,7 +96,6 @@ public class ManualModePanel extends JPanel {
         };
         rainBtn.addActionListener(rainBtnListener);
     }
-
 
     public JTable getTable(){
         return manualBussesPanel.getTable();
@@ -126,5 +121,4 @@ public class ManualModePanel extends JPanel {
         stationsCheckboxes.setEnabled(isEnabled);
 
     }
-
 }
