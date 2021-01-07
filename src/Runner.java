@@ -32,19 +32,6 @@ public class Runner{
     	outputsParser = new OutputsParser(city);
     }
 
-//    private void updateCity2() {
-//    	CityComponents.Bus bus0 = city.getBusses().get(0);
-//    	bus0.setCurrCoordinate(city.top_left());
-//    }
-//    private void updateCity1() {
-//    	CityComponents.Bus bus0 = city.getBusses().get(0);
-//    	int[] newLoc = new int[2];
-//    	
-//    	newLoc[0] = city.top_left()[0] + 1;
-//    	newLoc[1] = city.top_left()[1];
-//    	bus0.setCurrCoordinate(newLoc);
-//    }
-    
 	private void parseAndupdateCity(Map<String, String> sysValues) {
 		outputsParser.parseSysValues(sysValues);
 		city.updateCity();
@@ -64,7 +51,7 @@ public class Runner{
     public void run() throws Exception {
         createInputs(true);
         executor.initState(inputs);
-        System.out.println(inputs);
+        //System.out.println(inputs);
 
         sysValues = executor.getCurrOutputs();
         //System.out.println(sysValues.toString());
@@ -73,9 +60,9 @@ public class Runner{
 
         while (true) {
             createInputs(false);
-            System.out.println("______" + city.isManualMode() + "________");
-        	System.out.println(inputs);
-            printValuesForBus();
+            //System.out.println("______" + city.isManualMode() + "________");
+        	//System.out.println(inputs);
+            //printValuesForBus();
         	executor.updateState(inputs);
             sysValues = executor.getCurrOutputs();
             //printSysForBus();

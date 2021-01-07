@@ -32,18 +32,17 @@ public class BussesTableCreator extends TableCreator {
         for(Bus bus : city.getBusses().values()){
             Object[] row = new Object[5];
             row[ID_INDEX] = String.valueOf(bus.getId() + 1);
+            row[ROUNDS_TO_GAS_STATION_INDEX] = String.valueOf(city.getMAX_ROUNDS_TO_GAS_STATION() - bus.getNumOfStopsPassed());
+
             if(bus.isInUse() || bus.isRegular()){
                 row[LINE_INDEX] = bus.getLine().getLineName().name();
                 row[FULL_INDEX] = String.valueOf(bus.isFull());
                 row[STOP_PRESSED_INDEX] = String.valueOf(bus.isStopPressed());
-                row[ROUNDS_TO_GAS_STATION_INDEX] = String.valueOf(city.getMAX_ROUNDS_TO_GAS_STATION() - bus.getNumOfStopsPassed());
             }
             else{
                 row[LINE_INDEX] = NONE;
                 row[FULL_INDEX] = NONE;
                 row[STOP_PRESSED_INDEX] = NONE;
-                row[ROUNDS_TO_GAS_STATION_INDEX] = String.valueOf(city.getMAX_ROUNDS_TO_GAS_STATION());
-
             }
             result[bus.getId()] = row;
 

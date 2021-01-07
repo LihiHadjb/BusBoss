@@ -21,10 +21,12 @@ public class City {
     private GasStation gasStation;
     private HashMap<String, Station> busStations;
     private HashMap<Integer, Bus> busses;
+    private BusMover busMover;
     private Road roadBetweenNeighborhoodAndmMainStation;
     private Road roadBetweenNeighborhoodAndGasStation;
     private List<Line> lines;
-    private BusMover busMover;
+    private RegularBusUpdateCoordinate regularBusUpdateCoordinate;
+    private ReserveBusUpdateCoordinate reserveBusUpdateCoordinate;
     private HashMap<Integer, int[]> parkingsLocations;
     private HashMap<Integer, Station> index2station;
     private boolean isManualMode;
@@ -106,7 +108,9 @@ public class City {
 
     
     public void createBusMover() {
-    	this.busMover = new BusMover(gasStation, mainStation, busStations, parkingsLocations);
+        this.busMover =  new BusMover(gasStation, mainStation, busStations, parkingsLocations);
+    	this.regularBusUpdateCoordinate = new RegularBusUpdateCoordinate(busMover);
+    	this.reserveBusUpdateCoordinate = new ReserveBusUpdateCoordinate(busMover);
     }
 
     public boolean existsBusThatStopsAtStation(Station station){
@@ -390,9 +394,13 @@ public class City {
     
     public void updateCity() {
 		for(Bus bus : busses.values()) {
-            busMover.updateCoordinates(bus, busses, isRaining);
+		    if(bus.isReserve()){
+		        reserveBusUpdateCoordinate.updateCoordinates(bus, busses, isRaining);
+            }
+            else{
+                regularBusUpdateCoordinate.updateCoordinates(bus, busses, isRaining);
+            }
 		}
-		//do any other updates needed for the dashboard or whatever...(isExtraNeeded etc...) 
     }
 
 
