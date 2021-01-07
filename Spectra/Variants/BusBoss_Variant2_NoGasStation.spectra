@@ -1,6 +1,7 @@
-import "./imports/DwyerPatterns.spectra"
 
-spec BusBoss_sprint02
+// This variant is the same as the final specification but doesn't handle gas station driving (which happens after every 5 rounds for every bus)
+
+spec BusBoss_Variant2_NoGasStation
 
 define NUM_BUSSES := 4;  // 1 for each line (A and B) + 2 reserve
 define NUM_RESERVE_BUSSES := 2;
@@ -20,7 +21,6 @@ sys boolean[NUM_LINES] extraBusSentLine;
 
 
 
-
 //______Stations_______
 
 //Local Stations
@@ -32,7 +32,6 @@ define b2 := 3;
 
 //Other Stations
 define main_station := 4;
-define gas_station := 5;
 
 
 
@@ -43,14 +42,12 @@ type Bus = Int(0..(NUM_BUSSES - 1));
 
 env boolean [NUM_BUSSES] isBusFull;
 env boolean[NUM_BUSSES] isStopPressed;
-env boolean [NUM_BUSSES] atGasStation;  
 env boolean [NUM_BUSSES] atMainStation;
 env boolean[NUM_BUSSES] atDestinationStation;
 env boolean [NUM_RESERVE_BUSSES] isParking;
 env boolean [NUM_BUSSES] arePassengersWaitingInNextStation;
 
 sys boolean[NUM_BUSSES] stopAtNextStation;
-sys boolean[NUM_BUSSES] shouldGoToGasStation;
 sys Int(0..(NUM_LINES - 1))[NUM_RESERVE_BUSSES] lineOfReserveBus;
 
 
@@ -60,14 +57,10 @@ asm forall bus in Int(0..(NUM_BUSSES - 1)). isStopPressed[bus]=false;
 asm forall bus in Int(0..(NUM_BUSSES - 1)). isBusFull[bus]=false;
 asm forall bus in Int(0..(NUM_BUSSES - 1)). atDestinationStation[bus]=false;
 asm forall bus in Int(0..(NUM_BUSSES - 1)). arePassengersWaitingInNextStation[bus]=false;
-asm forall bus in Int(0..(NUM_BUSSES - 1)). atGasStation[bus]=false;
 asm forall bus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[bus]=true;
 
 
 // Initial Guarantees
-
-// Guarantee for each bus: at the beginning, the bus is at main station and shouldn't go to gas station.
-gar forall bus in Int(0..(NUM_BUSSES - 1)). shouldGoToGasStation[bus]=false;
 
 // Guarantee for each bus: at the beginning, reserve busses are not in use and other busses are in use.
 gar forall line in Int(0..(NUM_LINES-1)). extraBusSentLine[line] = false;
@@ -83,52 +76,11 @@ asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveB
 
 // Guarantees
 
-// Guarantee for each bus: while a the bus is on it's way to the gas station (meaning shouldGoToGasStation = true), it shouldn't stop (meaning next(shouldStop) = false),
-gar G forall bus in Int(0..(NUM_BUSSES - 1)). shouldGoToGasStation[bus] -> next(stopAtNextStation[bus])=false;
-
-// Guarantee for each bus: it will stop if there are people waiting or if stop button was pressed (unless it needs to go to the gas station)
-gar G forall bus in Int(0..(NUM_BUSSES - 1)). !shouldGoToGasStation[bus] & !(isBusFull[bus] & !isStopPressed[bus]) & (arePassengersWaitingInNextStation[bus] | isStopPressed[bus])  -> next(stopAtNextStation[bus])=true;
+// Guarantee for each bus: it will stop if there are people waiting or if stop button was pressed
+gar G forall bus in Int(0..(NUM_BUSSES - 1)). !(isBusFull[bus] & !isStopPressed[bus]) & (arePassengersWaitingInNextStation[bus] | isStopPressed[bus])  -> next(stopAtNextStation[bus])=true;
 
 // Guarantee for each bus: while it's not raining and no passenger pressed on the STOP button - if no passengers waiting at the next station OR the bus is full, the bus shouldn't stop.
 gar G forall bus in Int(0..(NUM_BUSSES - 1)). !isRaining & !isStopPressed[bus] & (!arePassengersWaitingInNextStation[bus] | isBusFull[bus]) -> next(stopAtNextStation[bus]) = false;
-
-
-// Counters for each bus: counts the number of rounds the bus has passed in order to know when it should go to the gas station
-counter numOfStopsPassedBus0 (0..MAX_ROUNDS_TO_GAS_STATION){
-	numOfStopsPassedBus0 = 0;
-	inc: atMainStation[0] & !atGasStation[0];
-	reset: atGasStation[0];
-	overflow: keep;
-}
-
-counter numOfStopsPassedBus1 (0..MAX_ROUNDS_TO_GAS_STATION){
-	numOfStopsPassedBus1 = 0;
-	inc: atMainStation[1] & !atGasStation[1];
-	reset: atGasStation[1];
-	overflow: keep;
-}
-
-counter numOfStopsPassedBus2 (0..MAX_ROUNDS_TO_GAS_STATION){
-	numOfStopsPassedBus2 = 0;
-	inc: atMainStation[2] & !atGasStation[2];
-	reset: atGasStation[2];
-	overflow: keep;
-}
-
-counter numOfStopsPassedBus3 (0..MAX_ROUNDS_TO_GAS_STATION){
-	numOfStopsPassedBus3 = 0;
-	inc: atMainStation[3]  & !atGasStation[3];
-	reset: atGasStation[3];
-	overflow: keep;
-}
-
-
-// Guarantee for each bus: numOfStopsPassedBus = MAX_STATIONS_TO_GAS_STATION <--> then the bus shouldGoToGasStation
-gar G !atGasStation[0] & numOfStopsPassedBus0 = MAX_ROUNDS_TO_GAS_STATION iff next(shouldGoToGasStation[0]) = true;
-gar G !atGasStation[1] & numOfStopsPassedBus1 = MAX_ROUNDS_TO_GAS_STATION iff next(shouldGoToGasStation[1]) = true;
-gar G !atGasStation[2] & numOfStopsPassedBus2 = MAX_ROUNDS_TO_GAS_STATION iff next(shouldGoToGasStation[2]) = true;
-gar G !atGasStation[3] & numOfStopsPassedBus3 = MAX_ROUNDS_TO_GAS_STATION iff next(shouldGoToGasStation[3]) = true;
-
 
 
 // Predicates
@@ -239,7 +191,7 @@ gar G forall bus in Int(0..(NUM_RESERVE_BUSSES - 1)).
 
 env boolean isRaining;
 
-// If it is raining, every bus should stop at every station, except busses that are on their way to the gas station.
-gar G forall bus in Int(0..(NUM_BUSSES - 1)). isRaining & !shouldGoToGasStation[bus] -> next(stopAtNextStation[bus]) = true;
+// If it is raining, every bus should stop at every station
+gar G forall bus in Int(0..(NUM_BUSSES - 1)). isRaining -> next(stopAtNextStation[bus]) = true;
 
 

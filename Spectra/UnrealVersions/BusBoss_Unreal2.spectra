@@ -1,6 +1,29 @@
-import "./imports/DwyerPatterns.spectra"
 
-spec BusBoss_sprint02
+// This specification is unrealizable because of the missing assumption: 'asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveBus];'
+// Explanation:
+// Let's take a look at the following guarantees:
+// 1. gar GF !waitingA;    (line 215)
+// 2. G ((unstoppedStationsLineA=MAX_UNSTOPPED_STATIONS | waitingA)) & !extraBusSentLine[A] <-> next(waitingA);     (line 205)
+// 3. gar G next(extraBusSentLine[A]) & next(extraBusSentLine[B]) -> BothCanBeUsed;      (line 220)
+// 4. gar G next(extraBusSentLine[A]) & !next(extraBusSentLine[B]) -> AtLeastOneCanBeUsed;      (line 222)
+//
+// Guarantee no. 1, which promises that each line will eventually get an extra bus when needed, implies that waitingA will be false an infinite number of times
+// Guarantee no. 2, (in the monitor 'waitingA') forces extraBusSentLine[A] to be true an infinite number of times.
+// Guarantees 3 and 4 forces that BothCanBeUsed OR AtLeastOneCanBeUsed to be true an infinite number of times.
+// 
+// The problem is that both BothCanBeUsed (line 158) and AtLeastOneCanBeUsed (line 170) are depend on the availability of the reserve busses (by using the predicate
+// 'reserveBusCanBeUsed'). Note that a reserve bus is available <-> it's parking (line 177). Which means - in order to promise that BothCanBeUsed OR AtLeastOneCanBeUsed 
+// will be true an infinite number of times, we need to promise that the reserve busses will be parking an infinite number of times.
+// This is why the following assumption is necessary:
+// asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveBus];
+//
+// Solution:
+// As we mentioned before, in order to solve this problem we added the following assumption:
+// asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveBus];
+
+
+spec BusBoss_Unreal2
+
 
 define NUM_BUSSES := 4;  // 1 for each line (A and B) + 2 reserve
 define NUM_RESERVE_BUSSES := 2;
@@ -77,8 +100,6 @@ gar forall line in Int(0..(NUM_LINES-1)). extraBusSentLine[line] = false;
 // Assumptions
 
 asm GF forall bus in Int(0..(NUM_BUSSES - 1)). atDestinationStation[bus];
-asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveBus];
-
 
 
 // Guarantees

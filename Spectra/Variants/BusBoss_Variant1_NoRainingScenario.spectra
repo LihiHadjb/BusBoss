@@ -1,6 +1,6 @@
-import "./imports/DwyerPatterns.spectra"
+//import "./imports/DwyerPatterns.spectra"
 
-spec BusBoss_sprint02
+spec BusBoss_variant1_noRainingScenario
 
 define NUM_BUSSES := 4;  // 1 for each line (A and B) + 2 reserve
 define NUM_RESERVE_BUSSES := 2;
@@ -89,8 +89,8 @@ gar G forall bus in Int(0..(NUM_BUSSES - 1)). shouldGoToGasStation[bus] -> next(
 // Guarantee for each bus: it will stop if there are people waiting or if stop button was pressed (unless it needs to go to the gas station)
 gar G forall bus in Int(0..(NUM_BUSSES - 1)). !shouldGoToGasStation[bus] & !(isBusFull[bus] & !isStopPressed[bus]) & (arePassengersWaitingInNextStation[bus] | isStopPressed[bus])  -> next(stopAtNextStation[bus])=true;
 
-// Guarantee for each bus: while it's not raining and no passenger pressed on the STOP button - if no passengers waiting at the next station OR the bus is full, the bus shouldn't stop.
-gar G forall bus in Int(0..(NUM_BUSSES - 1)). !isRaining & !isStopPressed[bus] & (!arePassengersWaitingInNextStation[bus] | isBusFull[bus]) -> next(stopAtNextStation[bus]) = false;
+// Guarantee for each bus: while no passenger pressed on the STOP button - if no passengers waiting at the next station OR the bus is full, the bus shouldn't stop.
+gar G forall bus in Int(0..(NUM_BUSSES - 1)). !isStopPressed[bus] & (!arePassengersWaitingInNextStation[bus] | isBusFull[bus]) -> next(stopAtNextStation[bus]) = false;
 
 
 // Counters for each bus: counts the number of rounds the bus has passed in order to know when it should go to the gas station
@@ -229,17 +229,5 @@ gar G !next(extraBusSentLine[A]) & next(extraBusSentLine[B]) & BothCanBeUsed -> 
 gar G forall bus in Int(0..(NUM_RESERVE_BUSSES - 1)).
 	!isParking[bus] ->
 	( next(lineOfReserveBus[bus]) = lineOfReserveBus[bus] );
-
-
-
-
-//_______Scenarios________ 
-
-// Rain Scenario
-
-env boolean isRaining;
-
-// If it is raining, every bus should stop at every station, except busses that are on their way to the gas station.
-gar G forall bus in Int(0..(NUM_BUSSES - 1)). isRaining & !shouldGoToGasStation[bus] -> next(stopAtNextStation[bus]) = true;
 
 
