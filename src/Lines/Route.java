@@ -17,7 +17,17 @@ public class Route {
 	}
 	
 	public int[] getNextCoordinate(int[] currCoordinate) {
-		int index = this.coordinates.indexOf(currCoordinate);
+		//int index = this.coordinates.indexOf(currCoordinate);
+		int index=-1;
+		for(int i=0; i<coordinates.size(); i++){
+			if(Arrays.equals(coordinates.get(i), currCoordinate)){
+				index = i;
+				break;
+			}
+		}
+
+		System.out.println("index found: " + index);
+
 		if (index < this.length) {
 			return coordinates.get(index+1);
 		}

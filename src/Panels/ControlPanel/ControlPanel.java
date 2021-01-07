@@ -29,8 +29,8 @@ public class ControlPanel extends JPanel{
         BoxLayout boxlayout = new BoxLayout(this, BoxLayout.Y_AXIS);
         this.setLayout(boxlayout);
 
-        createLinesTable();
         createBussesTable();
+        createLinesTable();
 
         this.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(Color.GRAY, Color.GRAY), TITLE, TitledBorder.CENTER, TitledBorder.TOP));
@@ -47,10 +47,10 @@ public class ControlPanel extends JPanel{
         bussesTable = bussesTableCreator.create(city);
 
         JScrollPane jScrollPane = new JScrollPane(bussesTable);
-        bussesTable.setPreferredScrollableViewportSize(
-                new Dimension(
-                        bussesTable.getPreferredSize().width,
-                        bussesTable.getRowHeight() * 4));
+//        bussesTable.setPreferredScrollableViewportSize(
+//                new Dimension(
+//                        bussesTable.getPreferredSize().width,
+//                        bussesTable.getRowHeight() * 4));
         this.add(jScrollPane);
 
     }

@@ -15,6 +15,9 @@ public class RoutesCreation {
     private HashMap<Integer, Route> routesFromParkingsToMainStation;
 
     private HashMap<Integer, Route> routesFromMainStationEntranceToResrvesParkings;
+
+    private Route routeFromMainAreaToGas;
+
     GasStation gasStation;
     MainStation mainStation;
     HashMap<String, Station> busStations;
@@ -31,6 +34,7 @@ public class RoutesCreation {
         createOriginRoutes();
         createRoutesFromParkingsToMainStation();
         createRoutesFromMainStationEntranceToResrvesParkings();
+        //createRouteFromMainAreaToGas();
     }
 
     public FullRoute createFullRoute(LineName lineName) {
@@ -76,23 +80,6 @@ public class RoutesCreation {
 
     public void createOriginRoutes(){
         originRoutes = new HashMap<>();
-        // stations are: a1, a2, b1, b2, main_station, gas_station
-
-//		// main_station -> a1
-//		List<int[]> parking0_to_main_station = new ArrayList();
-//
-//		parking0_to_main_station.add(parkings.getLocationForBus(0));
-//		int[] parking0_to_main_station_last = new int[]{parkings.getLocationForBus(0)[0], parkings.getLocationForBus(0)[1]};
-//		for (int i=1; i<=13; i++) {
-//			int x = main_station_to_a1_last[0];
-//			int y = main_station_to_a1_last[1] - 1;
-//			main_station_to_a1.add(new int[]{x,y});
-//			main_station_to_a1_last[0] = x;
-//			main_station_to_a1_last[1] = y;
-//		}
-//		Route main_station_to_a1_route = new Route(main_station_to_a1, 13+5);
-
-
 
         // main_station -> a1
         List<int[]> main_station_to_a1 = new ArrayList();
@@ -324,7 +311,7 @@ public class RoutesCreation {
         routes_from_b2.put("b1", b2_to_b1_route);
         originRoutes.put("b2", routes_from_b2);
 
-        // gas_station -> main_station //TODO - Tslil: think if this one is necessary, maybe from gas_station to a2 is enough?
+        // gas_station -> main_station
         List<int[]> gas_station_to_main_station = new ArrayList();
         gas_station_to_main_station.add(gasStation.getLocationForTheBus());
         int[] gas_station_to_main_station_last = new int[]{gasStation.getLocationForTheBus()[0], gasStation.getLocationForTheBus()[1]};
@@ -376,7 +363,6 @@ public class RoutesCreation {
         routesFromParkingsToMainStation = new HashMap<>();
         //0
         List<int[]> parking0_to_main_route = new ArrayList<>();
-        //parking0_to_main_route.add(parkingsLocations.get(0));
         parking0_to_main_route.add(new int[] {mainStation.getLocationForTheBus()[0], mainStation.getLocationForTheBus()[1]+1});
         parking0_to_main_route.add(mainStation.getLocationForTheBus());
         Route parking0_to_main = new Route(parking0_to_main_route, 2);
@@ -384,7 +370,6 @@ public class RoutesCreation {
 
         //1
         List<int[]> parking1_to_main_route = new ArrayList<>();
-        //parking1_to_main_route.add(parkingsLocations.get(1));
         parking1_to_main_route.add(parkingsLocations.get(0));
         parking1_to_main_route.addAll(parking0_to_main_route);
         Route parking1_to_main = new Route(parking1_to_main_route, 3);
@@ -392,7 +377,6 @@ public class RoutesCreation {
 
         //2
         List<int[]> parking2_to_main_route = new ArrayList<>();
-        //parking2_to_main_route.add(parkingsLocations.get(2));
         parking2_to_main_route.add(parkingsLocations.get(1));
         parking2_to_main_route.addAll(parking1_to_main_route);
         Route parking2_to_main = new Route(parking2_to_main_route, 4);
@@ -434,41 +418,38 @@ public class RoutesCreation {
 
     public void createRoutesFromMainStationEntranceToResrvesParkings(){
         routesFromMainStationEntranceToResrvesParkings = new HashMap<>();
-        int[] entrance = new int[]{mainStation.getLocationForTheBus()[0]+1, mainStation.getLocationForTheBus()[1]};
+        int[] entrance = new int[]{mainStation.getLocationForTheBus()[0]+1, mainStation.getLocationForTheBus()[1]-1};
+
 
         //bus 2
         List <int[]> entrance_to_parking2 = new ArrayList<>();
-        int[] first2 = new int[]{entrance[0], entrance[1]+1};
-        int[] second2 = new int[]{first2[0], first2[1]+1};
-        int[] third2 = new int[]{second2[0] + 1 , second2[1]};
+        int[] second2 = new int[]{entrance[0], entrance[1]+1};
+        int[] third2 = new int[]{second2[0], second2[1]+1};
+        int[] forth2 = new int[]{third2[0], third2[1]+1};
+        int[] fifth2 = new int[]{forth2[0] + 1 , forth2[1]};
 
-        int[] newEntrance = new int[]{mainStation.getLocationForTheBus()[0]+1, mainStation.getLocationForTheBus()[1]-1};
-        entrance_to_parking2.add(newEntrance);
-        entrance_to_parking2.add(first2);
         entrance_to_parking2.add(second2);
         entrance_to_parking2.add(third2);
-        Route entrance_to_parking2_route = new Route(entrance_to_parking2, 3);
+        entrance_to_parking2.add(forth2);
+        entrance_to_parking2.add(fifth2);
+        Route entrance_to_parking2_route = new Route(entrance_to_parking2, 4);
         routesFromMainStationEntranceToResrvesParkings.put(2, entrance_to_parking2_route);
 
 
         //bus 3
         List <int[]> entrance_to_parking3 = new ArrayList<>();
-        int[] first3 = new int[]{entrance[0], entrance[1]+1};
-        int[] second3 = new int[]{first3[0] + 1, first3[1]};
-        int[] third3 = new int[]{second3[0] + 1 , second3[1]};
-        int[] forth3 = new int[]{third3[0] , third3[1]+1};
-        entrance_to_parking3.add(newEntrance);
+        int[] second3 = new int[]{entrance[0], entrance[1]+1};
+        int[] third3 = new int[]{second3[0], second3[1]+1};
+        int[] forth3 = new int[]{third3[0] + 1, third3[1]};
+        int[] fifth3 = new int[]{forth3[0] + 1 , forth3[1]};
+        int[] sixth3 = new int[]{fifth3[0], fifth3[1]+1};
 
-        entrance_to_parking3.add(first3);
         entrance_to_parking3.add(second3);
         entrance_to_parking3.add(third3);
         entrance_to_parking3.add(forth3);
-        Route entrance_to_parking3_route = new Route(entrance_to_parking3, 4);
+        entrance_to_parking3.add(fifth3);
+        entrance_to_parking3.add(sixth3);
+        Route entrance_to_parking3_route = new Route(entrance_to_parking3, 5);
         routesFromMainStationEntranceToResrvesParkings.put(3, entrance_to_parking3_route);
     }
-
-
-
-
-
 }
