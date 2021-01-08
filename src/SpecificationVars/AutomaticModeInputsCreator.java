@@ -5,11 +5,7 @@ import CityComponents.City;
 import CityComponents.Station;
 import Lines.BusMover;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-
-//import GUI.IBus;
 
 public class AutomaticModeInputsCreator extends InputsCreator{
 
@@ -32,9 +28,8 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 		// Rush hour scenario
 		if (city.isRushHour()){
 			this.isBusFullProb = 0.7;
-			this.arePassengersWaitingProb = 0.8;
 			this.isStopPressedProb = 0.015;
-
+			this.arePassengersWaitingProb = 0.8;
 		}
 		else{
 			this.isBusFullProb = 0.005;
@@ -54,7 +49,6 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 			else {
 				result = Math.random() < prob;
 			}
-
 
 			//update the bus object so that control panel can be updted correctly, and dont put the random value if its already
 			//true and the bus did not arrive to the station yet
@@ -76,8 +70,6 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 
 		}
 	}
-
-
 
 
 	private boolean[] randomizeBooleanForEachStation(boolean isInit, double prob){
@@ -158,8 +150,5 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 		updateProbabilities();
 		super.createEnvVars(isInit);
 	}
-
-
-
 
 }

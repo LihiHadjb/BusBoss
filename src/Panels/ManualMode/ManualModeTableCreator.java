@@ -2,12 +2,13 @@ package Panels.ManualMode;
 
 import CityComponents.Bus;
 import CityComponents.City;
-import CityComponents.Station;
 import Lines.BusMover;
 import Panels.ControlPanel.BussesTableCreator;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 
@@ -26,7 +27,6 @@ public class ManualModeTableCreator {
         this.values = bussesTableCreator.createValues(city);
 
     }
-
 
     public JTable overrideValuesWithCheckBoxes(){
         for(int i=0; i<values.length; i++) {
@@ -78,12 +78,35 @@ public class ManualModeTableCreator {
                 return true;
 
             }
+
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column)
+            {
+                Component comp=super.prepareRenderer(renderer,row, column);
+                if(column==4 && "0".equals(model.getValueAt(row, 4).toString())){
+                    comp.setBackground(Color.PINK);
+                }
+                else{
+                    comp.setBackground(Color.WHITE);
+                }
+
+                comp.setForeground(Color.BLACK);
+                return comp;
+            }
         };
 
-
-        table.setGridColor(Color.magenta);
+        table.setGridColor(Color.black);
         table.setRowSelectionAllowed(false);
         table.setShowGrid(true);
+        table.setSize(table.getPreferredSize());
+
+        //center the text inside cells
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+        for(int i=0; i<headers.length; i++){
+            if ( (i != BussesTableCreator.FULL_INDEX) && (i != BussesTableCreator.STOP_PRESSED_INDEX)){
+                table.getColumnModel().getColumn(i).setCellRenderer( centerRenderer );
+            }
+        }
 
         return table;
 

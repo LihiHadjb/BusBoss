@@ -65,8 +65,8 @@ public class Board extends JFrame{
 		this.x = city.getX();
 		this.y = city.getY();
 
-		frame_x = x ;
-		frame_y = y + 12;
+		frame_x = x + 2 ;
+		frame_y = y + 12 + 1;
 
 		this.width = this.frame_y * dim;
 		this.height = this.frame_x * dim;
@@ -344,7 +344,7 @@ public class Board extends JFrame{
 	
 	public void checkStationsLocations(){
 		Graphics g = this.getGraphics();
-		g.setColor(Color.RED);
+		g.setColor(Color.lightGray);
 		int row;
 		int col;
 		for (Station station : this.city.getBusStations().values()) {
