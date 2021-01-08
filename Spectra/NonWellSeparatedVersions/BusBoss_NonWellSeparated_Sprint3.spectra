@@ -8,7 +8,6 @@ define MAX_ROUNDS_TO_GAS_STATION := 10;
 define MAX_UNSTOPPED_STATIONS := 4;
 define NUM_STATIONS := 6;
 define NUM_LINES := 2;
-define NUM_ROUNDS_TO_FREE_RESERVE_BUS := 20;
 
 // ____scenarios_____
 //TODO: If it is raining, than the bus should wait 2 steps in each station it stops at in order to help passengers get settled
