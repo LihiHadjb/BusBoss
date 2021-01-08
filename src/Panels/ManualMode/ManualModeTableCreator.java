@@ -8,6 +8,7 @@ import Panels.ControlPanel.BussesTableCreator;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 
 public class ManualModeTableCreator {
@@ -86,6 +87,18 @@ public class ManualModeTableCreator {
 
         return table;
 
+    }
+
+    public void updateValues(City city){
+        Object[][] newValues = bussesTableCreator.createValues(city);
+        TableModel dtm = table.getModel();
+        int num_rows = newValues.length;
+
+        for(int i=0; i<num_rows; i++){
+            dtm.setValueAt(newValues[i][BussesTableCreator.LINE_INDEX], i, BussesTableCreator.LINE_INDEX);
+            dtm.setValueAt(newValues[i][BussesTableCreator.ROUNDS_TO_GAS_STATION_INDEX], i, BussesTableCreator.ROUNDS_TO_GAS_STATION_INDEX);
+
+        }
     }
 
 }

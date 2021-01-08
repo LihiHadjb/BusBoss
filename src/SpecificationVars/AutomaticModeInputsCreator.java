@@ -33,7 +33,8 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 		if (city.isRushHour()){
 			this.isBusFullProb = 0.7;
 			this.arePassengersWaitingProb = 0.8;
-			this.isStopPressedProb = 0.5;
+			this.isStopPressedProb = 0.015;
+
 		}
 		else{
 			this.isBusFullProb = 0.005;

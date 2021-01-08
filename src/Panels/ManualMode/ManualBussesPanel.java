@@ -23,7 +23,6 @@ public class ManualBussesPanel extends JPanel {
         this.city = city;
         manualModeTableCreator = new ManualModeTableCreator(city);
         manualModeTable = manualModeTableCreator.overrideValuesWithCheckBoxes();
-        manualModeTable.setFillsViewportHeight(true);
 
         bussesPanel = new JPanel();
 
@@ -50,17 +49,6 @@ public class ManualBussesPanel extends JPanel {
         bussesPanel.setEnabled(enabled);
         jScrollPane.setEnabled(enabled);
         manualModeTable.setEnabled(enabled);
-
-//        if (enabled) {
-//            manualModeTable.setRowSelectionAllowed(true);
-//            manualModeTable.setForeground(Color.black);
-//            manualModeTable.setBackground(Color.white);
-//        } else {
-//            manualModeTable.setRowSelectionAllowed(false);
-//            manualModeTable.setForeground(Color.gray);
-//            manualModeTable.setBackground(Color.lightGray);
-//        }
-
     }
 
     public void uncheckForBussesStoopingInDestinationStation(){
@@ -74,6 +62,12 @@ public class ManualBussesPanel extends JPanel {
 
             }
         }
+    }
+
+    public void updatePanel(){
+        manualModeTableCreator.updateValues(city);
+
+
     }
 
 

@@ -64,10 +64,6 @@ public class ManualModePanel extends JPanel {
                 }
                 else {
                     manualModeButton.setBackground(defaultBgColor);
-//                    stationsCheckboxes.setEnabled(false);
-//                    manualBussesPanel.setEnabled(false);
-
-
                 }
             }
         };
@@ -109,6 +105,7 @@ public class ManualModePanel extends JPanel {
         this.setEnabled(city.isManualMode());
         if(city.isManualMode()){
             manualBussesPanel.uncheckForBussesStoopingInDestinationStation();
+            manualBussesPanel.updatePanel();
             stationsCheckboxes.setEnabledAllStationsWithPeople();
         }
     }

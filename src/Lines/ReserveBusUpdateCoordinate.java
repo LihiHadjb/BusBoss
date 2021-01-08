@@ -37,7 +37,7 @@ public class ReserveBusUpdateCoordinate implements BusUpdateCoordinate{
         //!inUse (currently parking OR going back to park)
         else{
             if(busMover.isAtPrivateParking(bus)){
-                //do nothing
+                bus.setCurrCoordinate(bus.getCurrCoordinate());
                 return;
             }
 
