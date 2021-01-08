@@ -3,62 +3,35 @@ package CityComponents;//import GUI.IBus;
 import Lines.FullRoute;
 import Lines.Line;
 
+//This class keeps the state of a bus in every step, including its location on the board, whether it should go to the gas station,
+//the line it currently serves, whether it should stop in the next station etc.
+//Also keeps the destination and origin station of the bus, so that it can know how to update its next coordinate.
+
 public class Bus{
     private int id;
     private int[] currCoordinate;
     private int[] prevCoordinate;
-
     private Line line;
     private boolean shouldGoToGasStation;
     private int numOfStopsPassed;
-    private int numUnstoppedStations;
     private boolean isStopPressed;
     private boolean isFull;
     private boolean shouldStopAtNextStation;
     private Station destination;
     private Station origin;
-    private boolean shouldStopAgainInRain;
-
-    private boolean isParking;
     private boolean inUse;
-    //private int[] parkingLocation;
+
     public Bus(int id, int[] initialCoordinate) {
         this.id = id;
         this.currCoordinate = initialCoordinate;
         this.prevCoordinate = initialCoordinate;
-        //this.parkingLocation = initialCoordinate;
-        this.isStopPressed = false;//TODO: initial guarantee
-        this.isFull = false;//TODO: initial guarantee
-
-
-    }
-
-    public boolean isParking() {
-        return isParking;
-    }
-
-    public void setParking(boolean parking) {
-        isParking = parking;
-    }
-    //public int[] getParkingLocation() {
-//        return parkingLocation;
-//    }
-    public boolean isShouldStopAgainInRain() {
-        return shouldStopAgainInRain;
-    }
-
-    public void setShouldStopAgainInRain(boolean shouldStopAgainInRain) {
-        this.shouldStopAgainInRain = shouldStopAgainInRain;
+        this.isStopPressed = false;
+        this.isFull = false;
     }
 
     public int[] getPrevCoordinate() {
         return prevCoordinate;
     }
-
-    public void setPrevCoordinate(int[] prevCoordinate) {
-        this.prevCoordinate = prevCoordinate;
-    }
-
 
     public Station getDestination() {
         return destination;
@@ -105,13 +78,10 @@ public class Bus{
         Station originStation = busFullRoute.getName2Station().get(originName);
         this.setOrigin(originStation);
 
-
         String destinationName = busFullRoute.getStationAtIndex(1);
         Station destinationStation = busFullRoute.getName2Station().get(destinationName);
         this.setDestination(destinationStation);
-
     }
-
 
     public boolean isStopPressed() {
         return isStopPressed;
@@ -145,7 +115,6 @@ public class Bus{
         this.shouldStopAtNextStation = shouldStop;
     }
 
-
     public boolean isShouldGoToGasStation() {
         return shouldGoToGasStation;
     }
@@ -162,25 +131,15 @@ public class Bus{
         this.numOfStopsPassed = numOfStopsPassed;
     }
 
-    public int getNumUnstoppedStations() {
-        return numUnstoppedStations;
-    }
-
-    public void setNumUnstoppedStations(int numUnstoppedStations) {
-        this.numUnstoppedStations = numUnstoppedStations;
-    }
-
-
-
-
 	public void setInUse(boolean inUse) {
 		this.inUse = inUse;
 
 	}
-	
+
+	//auxiliary field to indicate if this bus is currently in service of some line, or if its currently parking or
+    //on its way in/out of parking.
 	public boolean isInUse() {
 		return this.inUse;
-
 	}
 
 

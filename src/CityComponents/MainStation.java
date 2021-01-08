@@ -1,5 +1,6 @@
 package CityComponents;
 
+//This class creates the central station object, according to the corners locations provided the the constructor
 public class MainStation extends Station {
     private int[] top_left;
     private int[] top_right;

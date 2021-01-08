@@ -1,5 +1,6 @@
 package CityComponents;
 
+//This class creates the gas station object, according to the corners locations provided the the constructor
 public class GasStation extends Station{
     private int[] top_left;
     private int[] top_right;
@@ -13,8 +14,6 @@ public class GasStation extends Station{
         this.bottom_left = bottom_left;
         this.bottom_right = bottom_right;
     }
-
-
 
     public int[] getTop_left() {
         return top_left;
@@ -47,7 +46,8 @@ public class GasStation extends Station{
     public void setBottom_right(int[] bottom_right) {
         this.bottom_right = bottom_right;
     }
-    
+
+    //returns the coordiante to which the bus arrives to get gas
     public int[] getLocation() {
         return location;
     }
