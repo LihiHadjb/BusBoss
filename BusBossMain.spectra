@@ -8,8 +8,6 @@ define MAX_ROUNDS_TO_GAS_STATION := 5;
 define MAX_UNSTOPPED_STATIONS := 3;
 define NUM_STATIONS := 6;
 define NUM_LINES := 2;
-define NUM_ROUNDS_TO_FREE_RESERVE_BUS := 2;
-
 
 
 //_______Lines________
