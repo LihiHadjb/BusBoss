@@ -22,10 +22,15 @@ public class BusPainter {
     final String southToNorth = "southToNorth";
     final String stay = "stay";
 
-    BufferedImage regularBusEastToWest;
-    BufferedImage regularBusWestToEast;
-    BufferedImage regularBusNorthToSouth;
-    BufferedImage regularBusSouthToNorth;
+    BufferedImage regularBus0EastToWest;
+    BufferedImage regularBus0WestToEast;
+    BufferedImage regularBus0NorthToSouth;
+    BufferedImage regularBus0SouthToNorth;
+
+    BufferedImage regularBus1EastToWest;
+    BufferedImage regularBus1WestToEast;
+    BufferedImage regularBus1NorthToSouth;
+    BufferedImage regularBus1SouthToNorth;
 
     BufferedImage reserveBusEastToWest;
     BufferedImage reserveBusWestToEast;
@@ -44,10 +49,16 @@ public class BusPainter {
     private void initBussesImages() {
         try{
             //regular busses
-            this.regularBusEastToWest = ImageIO.read(new File("images/Regular/regular_bus_east_to_west.jpg"));
-            this.regularBusWestToEast = ImageIO.read(new File("images/Regular/regular_bus_west_to_east.jpg"));
-            this.regularBusNorthToSouth = ImageIO.read(new File("images/Regular/regular_bus_north_to_south.jpg"));
-            this.regularBusSouthToNorth = ImageIO.read(new File("images/Regular/regular_bus_south_to_north.jpg"));
+            this.regularBus0EastToWest = ImageIO.read(new File("images/Regular/regular_bus_0_east_to_west.jpg"));
+            this.regularBus0WestToEast = ImageIO.read(new File("images/Regular/regular_bus_0_west_to_east.jpg"));
+            this.regularBus0NorthToSouth = ImageIO.read(new File("images/Regular/regular_bus_0_north_to_south.jpg"));
+            this.regularBus0SouthToNorth = ImageIO.read(new File("images/Regular/regular_bus_0_south_to_north.jpg"));
+
+            this.regularBus1EastToWest = ImageIO.read(new File("images/Regular/regular_bus_1_east_to_west.jpg"));
+            this.regularBus1WestToEast = ImageIO.read(new File("images/Regular/regular_bus_1_west_to_east.jpg"));
+            this.regularBus1NorthToSouth = ImageIO.read(new File("images/Regular/regular_bus_1_north_to_south.jpg"));
+            this.regularBus1SouthToNorth = ImageIO.read(new File("images/Regular/regular_bus_1_south_to_north.jpg"));
+
 
             //reserve busses
             this.reserveBusEastToWest = ImageIO.read(new File("images/Reserve/reserve_bus_east_to_west.jpg"));
@@ -173,21 +184,36 @@ public class BusPainter {
                 if (isReserve) {
                     return reserveBusEastToWest;
                 }
-                return this.regularBusEastToWest;
+                else{
+                    if (bus.getId() == 0){
+                        return this.regularBus0EastToWest;}
+                    if (bus.getId() == 1){
+                        return this.regularBus1EastToWest;}
+                }
             }
 
             case (westToEast): {
                 if (isReserve) {
                     return reserveBusWestToEast;
                 }
-                return this.regularBusWestToEast;
+                else{
+                    if (bus.getId() == 0){
+                        return this.regularBus0WestToEast;}
+                    if (bus.getId() == 1){
+                        return this.regularBus1WestToEast;}
+                }
             }
 
             case (northToSouth): {
                 if (isReserve) {
                     return reserveBusNorthToSouth;
                 }
-                return this.regularBusNorthToSouth;
+                else{
+                    if (bus.getId() == 0){
+                        return this.regularBus0NorthToSouth;}
+                    if (bus.getId() == 1){
+                        return this.regularBus1NorthToSouth;}
+                }
             }
 
 
@@ -195,14 +221,24 @@ public class BusPainter {
                 if (isReserve) {
                     return reserveBusSouthToNorth;
                 }
-                return this.regularBusSouthToNorth;
+                else{
+                    if (bus.getId() == 0){
+                        return this.regularBus0SouthToNorth;}
+                    if (bus.getId() == 1){
+                        return this.regularBus1SouthToNorth;}
+                }
             }
 
             case(stay): {
                 if (isReserve) {
                     return reserveBusSouthToNorth;
                 }
-                return this.regularBusSouthToNorth;
+                else{
+                    if (bus.getId() == 0){
+                        return this.regularBus0SouthToNorth;}
+                    if (bus.getId() == 1){
+                        return this.regularBus1SouthToNorth;}
+                }
             }
         }
         return null;

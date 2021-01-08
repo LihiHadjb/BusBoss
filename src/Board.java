@@ -122,7 +122,6 @@ public class Board extends JFrame{
 			this.rainImage = ImageIO.read(new File("images/weather/rain.jpg"));
 			this.sunImage = ImageIO.read(new File("images/weather/sun.png"));
 			this.backgroundImage = ImageIO.read(new File("images/weather/background.png"));
-
 		}
 
 		catch (IOException e){
