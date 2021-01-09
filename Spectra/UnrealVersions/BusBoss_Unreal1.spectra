@@ -1,32 +1,15 @@
-
-// This specification is unrealizable because of the missing assumption: 'asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveBus];'
-// Explanation:
-// Let's take a look at the following guarantees:
-// 1. gar GF !waitingA; (line 207)
-// 2. G ((unstoppedStationsLineA=MAX_UNSTOPPED_STATIONS | waitingA)) & !extraBusSentLine[A] <-> next(waitingA);     (line 208)
-// 3. gar G next(extraBusSentLine[A]) & next(extraBusSentLine[B]) -> BothCanBeUsed;      (line 223)
-// 4. gar G next(extraBusSentLine[A]) & !next(extraBusSentLine[B]) -> AtLeastOneCanBeUsed;      (line 225)
-//
-// Guarantee no. 1, which promises that each line will eventually get an extra bus when needed, implies that waitingA will be false an infinite number of times
-// Guarantee no. 2, (in the monitor 'waitingA') forces extraBusSentLine[A] to be true an infinite number of times.
-// Guarantees 3 and 4 forces that BothCanBeUsed OR AtLeastOneCanBeUsed to be true an infinite number of times.
-// 
-// The problem is that both BothCanBeUsed (line 161) and AtLeastOneCanBeUsed (line 173) depend on the availability of the reserve busses (by using the predicate
-// 'reserveBusCanBeUsed'). Note that a reserve bus is available <-> it is parking (line 180). Which means - in order to promise that BothCanBeUsed OR AtLeastOneCanBeUsed 
-// will be true an infinite number of times, we need to promise that the reserve busses will be parking an infinite number of times.
-// This is why the following assumption is necessary:
-// asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveBus];
-
-// Intuitively, we promise to eventually provide an extra bus that requires help, but we only have a limited amount of reserve busses, 
-// so we have to promise that whenever a reserve bus is sent, it will eventually be available for use again sometime. 
-//
+// This specification is unrealizable because of the inc lines of the counters 'numOfStopsPassedBusX' (lines: 106, 113, 120, 127)
+// Explanation: 
+// The inc line in the counter numOfStopsPassedBusX is when 'atDestinationStation[X]', the counter resets when 'atGasStation(X)'.
+// In our opinion, Spectra was confused because if for some bus the destination is gas station and it is currently atGasStation, 
+// it means both inc condition and reset condition happen at the same time. 
 // Solution:
-// As we mentioned before, in order to solve this problem we added the following assumption:
-// asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveBus];
+// In order to solve this problem we changed the inc condition to : 'atDestinationStation[X] & !atGasStation', then inc and reset conditions can not contradict each other.
+// Another possible solution for this problem is to add for each of the busses an assumptions of the form: "asm G !(atMainStation[bus] & atGasStation[bus]);",
+//	which states that a bus can not be at both locations at the same time 
 
 
-spec BusBoss_Unreal2
-
+spec BusBoss_sprint02
 
 define NUM_BUSSES := 4;  // 1 for each line (A and B) + 2 reserve
 define NUM_RESERVE_BUSSES := 2;
@@ -34,8 +17,6 @@ define MAX_ROUNDS_TO_GAS_STATION := 5;
 define MAX_UNSTOPPED_STATIONS := 3;
 define NUM_STATIONS := 6;
 define NUM_LINES := 2;
-define NUM_ROUNDS_TO_FREE_RESERVE_BUS := 2;
-
 
 
 //_______Lines________
@@ -103,6 +84,8 @@ gar forall line in Int(0..(NUM_LINES-1)). extraBusSentLine[line] = false;
 // Assumptions
 
 asm GF forall bus in Int(0..(NUM_BUSSES - 1)). atDestinationStation[bus];
+asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveBus];
+
 
 
 // Guarantees
@@ -120,28 +103,28 @@ gar G forall bus in Int(0..(NUM_BUSSES - 1)). !isRaining & !isStopPressed[bus] &
 // Counters for each bus: counts the number of rounds the bus has passed in order to know when it should go to the gas station
 counter numOfStopsPassedBus0 (0..MAX_ROUNDS_TO_GAS_STATION){
 	numOfStopsPassedBus0 = 0;
-	inc: atMainStation[0] & !atGasStation[0];
+	inc: atMainStation[0];
 	reset: atGasStation[0];
 	overflow: keep;
 }
 
 counter numOfStopsPassedBus1 (0..MAX_ROUNDS_TO_GAS_STATION){
 	numOfStopsPassedBus1 = 0;
-	inc: atMainStation[1] & !atGasStation[1];
+	inc: atMainStation[1];
 	reset: atGasStation[1];
 	overflow: keep;
 }
 
 counter numOfStopsPassedBus2 (0..MAX_ROUNDS_TO_GAS_STATION){
 	numOfStopsPassedBus2 = 0;
-	inc: atMainStation[2] & !atGasStation[2];
+	inc: atMainStation[2];
 	reset: atGasStation[2];
 	overflow: keep;
 }
 
 counter numOfStopsPassedBus3 (0..MAX_ROUNDS_TO_GAS_STATION){
 	numOfStopsPassedBus3 = 0;
-	inc: atMainStation[3]  & !atGasStation[3];
+	inc: atMainStation[3];
 	reset: atGasStation[3];
 	overflow: keep;
 }
@@ -189,7 +172,9 @@ predicate reserveBusCanBeUsed(Bus reserveBus):
 // If an extra bus is sent to help to the particular line, the counter resets 
 counter unstoppedStationsLineA (0..(MAX_UNSTOPPED_STATIONS)){
 	unstoppedStationsLineA = 0;
-	inc: !extraBusSentLine[A] & (atStationAndPassengersDidNotHaveSeats(0) | (atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=A) | ( atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=A));
+	inc: !extraBusSentLine[A] & (atStationAndPassengersDidNotHaveSeats(0) | 
+		(atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=A) | 
+		( atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=A));
 	reset: extraBusSentLine[A];
 	overflow: keep;
 }
