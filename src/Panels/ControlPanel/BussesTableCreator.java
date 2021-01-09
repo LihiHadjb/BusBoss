@@ -3,6 +3,7 @@ package Panels.ControlPanel;
 import CityComponents.Bus;
 import CityComponents.City;
 
+//Define and create the content displayed in the Busses table, according to the state of the city
 public class BussesTableCreator extends TableCreator {
     public static final int ID_INDEX = 0;
     public static final int LINE_INDEX = 1;

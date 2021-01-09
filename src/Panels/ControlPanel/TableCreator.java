@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 
+//Create a JTable to store and display values in
 public abstract class TableCreator {
     public DefaultTableModel dtm;
 

@@ -3,6 +3,7 @@ package Panels.ControlPanel;
 import CityComponents.City;
 import Lines.Line;
 
+//Define and create the content displayed in the Lines table, according to the state of the city
 public class LinesTableCreator extends TableCreator {
     final int LINE_NAME_INDEX = 0;
     final int NEED_ANOTHER_INDEX = 1;

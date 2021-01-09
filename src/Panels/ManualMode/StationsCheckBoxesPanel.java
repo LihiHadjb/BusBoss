@@ -8,6 +8,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.HashMap;
 
+//Check boxes panel in the Manual mode section of the RightPanel
 public class StationsCheckBoxesPanel extends JPanel {
     JCheckBox northStation;
     JCheckBox southStation;
@@ -24,7 +25,6 @@ public class StationsCheckBoxesPanel extends JPanel {
         this.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), TITLE, TitledBorder.CENTER, TitledBorder.TOP));
 
-//TODO: north and south wrong!!!
         northStation = new JCheckBox("B1");
         southStation = new JCheckBox("B2");
         eastStation = new JCheckBox("A2");
@@ -50,6 +50,8 @@ public class StationsCheckBoxesPanel extends JPanel {
         this.add(southStation);
     }
 
+    //Once checked (i.e. passengers are waiting), there will keep be passengers in this station, so the user
+    //can not uncheck this station until some bus stops in it to pick up passengers
     public void setEnabledAllStationsWithPeople(){
         Station station;
         for(JCheckBox checkBox : checkbox2StationName.keySet()){
@@ -69,9 +71,6 @@ public class StationsCheckBoxesPanel extends JPanel {
                 checkBox.setSelected(false);
             }
         }
-
-
-
     }
 
     @Override
@@ -83,6 +82,7 @@ public class StationsCheckBoxesPanel extends JPanel {
 
     }
 
+    //Return true iff the checkbox of the station with stationName was checked by the user
     public boolean isChecked(String stationName){
         switch (stationName){
             case("a1"):

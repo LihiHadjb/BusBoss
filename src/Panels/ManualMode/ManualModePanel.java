@@ -8,6 +8,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+//Create and update all the components in the Manual mode section of the right panel.
+// The panel comprises 3 sections:
+//1. A button fir turning on/off the Manual mode
+//2. A table that displays and controls the busses's state
+//3. Checkboxes to control the state of each station
 public class ManualModePanel extends JPanel {
     final String TITLE="Manual Mode";
 
@@ -101,6 +106,7 @@ public class ManualModePanel extends JPanel {
         return stationsCheckboxes;
     }
 
+    //Update the information displayed in all the sub-panels according to the new state of the city
     public void updatePanel(){
         this.setEnabled(city.isManualMode());
         if(city.isManualMode()){

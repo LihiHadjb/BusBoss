@@ -14,6 +14,10 @@ import java.awt.*;
 
 import static javax.swing.JTable.AUTO_RESIZE_OFF;
 
+//Create and update the top section of the right panel. This panel comprises 2 sections:
+//1. Busses - the state of each bus
+//2. Lines - the state of each line
+
 public class ControlPanel extends JPanel{
     final String TITLE = "Control Panel";
     City city;
@@ -23,9 +27,6 @@ public class ControlPanel extends JPanel{
 
     JTable bussesTable;
     JTable linesTable;
-    ManualModePanel manualModePanel;
-
-
 
     public ControlPanel(City city) {
         this.city = city;
@@ -43,17 +44,11 @@ public class ControlPanel extends JPanel{
 
     }
 
-
-
     private void createBussesTable(){
         bussesTableCreator = new BussesTableCreator();
         bussesTable = bussesTableCreator.create(city);
 
         JScrollPane jScrollPane = new JScrollPane(bussesTable);
-//        bussesTable.setPreferredScrollableViewportSize(
-//                new Dimension(
-//                        bussesTable.getPreferredSize().width,
-//                        bussesTable.getRowHeight() * 4));
         this.add(jScrollPane);
 
     }
@@ -61,21 +56,14 @@ public class ControlPanel extends JPanel{
     private void createLinesTable(){
         linesTableCreator = new LinesTableCreator();
         linesTable = linesTableCreator.create(city);
-        //linesTable.setFillsViewportHeight(true);
 
         JScrollPane jScrollPane = new JScrollPane(linesTable);
         this.add(jScrollPane);
-        //jScrollPane.setSize(linesTable.getSize());
-
     }
 
-
-
-
+    //Update the information displayed in all the sub-panels according to the new state of the city
     public void updatePanel(){
         linesTableCreator.updateValues(city);
         bussesTableCreator.updateValues(city);
     }
-
-
 }

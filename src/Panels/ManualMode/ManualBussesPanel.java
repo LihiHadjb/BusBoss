@@ -11,6 +11,8 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
+//Display the current state of each bus, and let the user control the env variables isBusFull and isStopPressed
+//of each bus
 public class ManualBussesPanel extends JPanel {
     ManualModeTableCreator manualModeTableCreator;
     JTable manualModeTable;
@@ -51,6 +53,7 @@ public class ManualBussesPanel extends JPanel {
         manualModeTable.setEnabled(enabled);
     }
 
+    //Once the user checked some checkbox of some bus, it will remain checked until the bus stops in a station
     public void uncheckForBussesStoopingInDestinationStation(){
         BusMover busMover = city.getBusMover();
         int row;
@@ -66,8 +69,6 @@ public class ManualBussesPanel extends JPanel {
 
     public void updatePanel(){
         manualModeTableCreator.updateValues(city);
-
-
     }
 
 

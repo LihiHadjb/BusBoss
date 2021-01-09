@@ -9,6 +9,11 @@ import Panels.Scenarios.ScenariosPanel;
 import javax.swing.*;
 import java.awt.*;
 
+//Create and update all the components in the right part of the frame. The panel comprises 3 sections:
+//1. Control Panel (which reflect the state of each bus and each line)
+//2. Scenarios buttons
+//3. Manual mode panel
+
 public class RightPanel extends JPanel {
     ScenariosPanel scenariosPanel;
     ControlPanel controlPanel;
@@ -42,6 +47,7 @@ public class RightPanel extends JPanel {
         return manualModePanel.getStationsCheckBoxesPanel();
     }
 
+    //Update the information displayed in all the sub-panels according to the new state of the city
     public void updatePanels() {
         controlPanel.updatePanel();
         if(city.isManualMode()){

@@ -2,10 +2,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import CityComponents.Bus;
 import CityComponents.City;
 import SpecificationVars.AutomaticModeInputsCreator;
-import SpecificationVars.InputsCreator;
 import SpecificationVars.ManualModeInputCreator;
 import SpecificationVars.OutputsParser;
 import tau.smlab.syntech.controller.executor.ControllerExecutor;
@@ -51,22 +49,15 @@ public class Runner{
     public void run() throws Exception {
         createInputs(true);
         executor.initState(inputs);
-        //System.out.println(inputs);
 
         sysValues = executor.getCurrOutputs();
-        //System.out.println(sysValues.toString());
         parseAndupdateCity(sysValues);
         this.board.paint();
 
         while (true) {
             createInputs(false);
-            //System.out.println("______" + city.isManualMode() + "________");
-        	//System.out.println(inputs);
-            //printValuesForBus();
         	executor.updateState(inputs);
             sysValues = executor.getCurrOutputs();
-            //printSysForBus();
-            //System.out.println(sysValues.toString());
             parseAndupdateCity(sysValues);
             this.board.paint();
         }

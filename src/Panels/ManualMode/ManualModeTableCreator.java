@@ -12,6 +12,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 
+//Define and create the content displayed in the Busses table in the Manual mode section,
+// according to the state of the city
 public class ManualModeTableCreator {
     BussesTableCreator bussesTableCreator;
     Object[] headers;
@@ -28,6 +30,7 @@ public class ManualModeTableCreator {
 
     }
 
+    //Replace the string displayes in the "full" and "stop request" column with user-controlled checkboxes
     public JTable overrideValuesWithCheckBoxes(){
         for(int i=0; i<values.length; i++) {
             values[i][BussesTableCreator.FULL_INDEX] = Boolean.FALSE;
@@ -112,6 +115,7 @@ public class ManualModeTableCreator {
 
     }
 
+    //Update the information displayed in the busses's table according to the new state of the city
     public void updateValues(City city){
         Object[][] newValues = bussesTableCreator.createValues(city);
         TableModel dtm = table.getModel();
