@@ -7,6 +7,9 @@ import com.sun.xml.internal.ws.wsdl.writer.document.soap.Body;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 
 import static javax.swing.JTable.AUTO_RESIZE_OFF;

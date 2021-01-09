@@ -9,14 +9,22 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+//This class provides methods to build and create the Route objects between pairs of stations and between
+// the parking locations and the main station, which are used to navigate the bus on the Board
 public class RoutesCreation {
+
+    //This map is used to find a Route between a pair of stations.
+    //The String in the "first level" of this map is the name of the desired origin station, and using it
+    //we can retrieve a "second level" map, in which the key is the name of the desired destination station, and
+    //the value is the Route between this origin station and destination station.
     private HashMap<String, HashMap<String, Route>> originRoutes;
 
+    //Maps the id's of busses to the Route between this bus's parking spot to the main station
     private HashMap<Integer, Route> routesFromParkingsToMainStation;
 
+    //Maps the id's of busses to the Route between the main staion entrance (when coming back
+    // from a round) to this bus's parking spot
     private HashMap<Integer, Route> routesFromMainStationEntranceToResrvesParkings;
-
-    private Route routeFromMainAreaToGas;
 
     GasStation gasStation;
     MainStation mainStation;
@@ -34,12 +42,9 @@ public class RoutesCreation {
         createOriginRoutes();
         createRoutesFromParkingsToMainStation();
         createRoutesFromMainStationEntranceToResrvesParkings();
-        //createRouteFromMainAreaToGas();
     }
 
     public FullRoute createFullRoute(LineName lineName) {
-
-        FullRoute result = null;
         switch (lineName.toString()) {
             case ("A"):
                 // Lines.Line A route
@@ -56,27 +61,9 @@ public class RoutesCreation {
                 List<String> main_station_to_gas_station_route = Arrays.asList("main_station", "a1", "gas_station");
                 FullRoute main_station_to_gas_station = new FullRoute("main_station_to_gas_station", main_station_to_gas_station_route, this.originRoutes, 3, name2station);
                 return main_station_to_gas_station;
-//		case("parking0_to_main_station"):
-//			List<String> parking0_to_main_station_route = Arrays.asList("parking0", "main_station");
-//			FullRoute parking0_to_main_station = new FullRoute("parking0_to_main_station", parking0_to_main_station_route, this.originRoutes, 3, name2station);
-//			return parking0_to_main_station;
-//		case("parking1_to_main_station"):
-//			List<String> parking1_to_main_station_route = Arrays.asList("parking1", "main_station");
-//			FullRoute parking1_to_main_station = new FullRoute("parking1_to_main_station", parking1_to_main_station_route, this.originRoutes, 3, name2station);
-//			return parking1_to_main_station;
-//		case("parking2_to_main_station"):
-//			List<String> parking2_to_main_station_route = Arrays.asList("parking2", "main_station");
-//			FullRoute parking2_to_main_station = new FullRoute("parking2_to_main_station", parking2_to_main_station_route, this.originRoutes, 3, name2station);
-//			return parking2_to_main_station;
-//		case("parking3_to_main_station"):
-//			List<String> parking3_to_main_station_route = Arrays.asList("parking3", "main_station");
-//			FullRoute parking3_to_main_station = new FullRoute("parking3_to_main_station", parking3_to_main_station_route, this.originRoutes, 3, name2station);
-//			return parking3_to_main_station;
-
         }
         return null;
     }
-
 
     public void createOriginRoutes(){
         originRoutes = new HashMap<>();
@@ -166,9 +153,6 @@ public class RoutesCreation {
         Route a1_to_a2_route = new Route(a1_to_a2, 5+8+5);
 
 
-
-
-
         //a1 -> gas station
         List<int[]> a1_to_gas_station = new ArrayList();
 
@@ -197,11 +181,6 @@ public class RoutesCreation {
         }
         a1_to_gas_station.remove(0);
         Route a1_to_gas_station_route = new Route(a1_to_gas_station, 5+13+1);
-
-
-
-
-
 
 
         HashMap<String, Route> routes_from_a1 = new HashMap<>();
@@ -357,8 +336,6 @@ public class RoutesCreation {
         originRoutes.put("gas_station", routes_from_gas_station);
     }
 
-
-
     public void createRoutesFromParkingsToMainStation(){
         routesFromParkingsToMainStation = new HashMap<>();
         //0
@@ -412,9 +389,6 @@ public class RoutesCreation {
     public HashMap<Integer, Route> getRoutesFromMainStationEntranceToResrvesParkings() {
         return routesFromMainStationEntranceToResrvesParkings;
     }
-
-
-
 
     public void createRoutesFromMainStationEntranceToResrvesParkings(){
         routesFromMainStationEntranceToResrvesParkings = new HashMap<>();

@@ -3,13 +3,17 @@ package Lines;
 import CityComponents.Bus;
 import java.util.HashMap;
 
-public class ReserveBusUpdateCoordinate implements BusUpdateCoordinate{
-    BusMover busMover;
+//This class implements the logic of how to update to next coordinate of a reserve bus
+public class ReserveBusUpdateCoordinate extends BusUpdateCoordinate{
 
     public ReserveBusUpdateCoordinate(BusMover busMover) {
-        this.busMover = busMover;
+        super(busMover);
     }
 
+    //A reserve bus leaves its parking every time it is sent as an extra bus to help one of the lines, in which case
+    //it is currently marked as isUse=false.
+    // Once it it set to be inUse=true it should behave like a normal bus (keeps moving on the route
+    //of its current line OR go to the gas station and than back to the main station
     @Override
     public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses, boolean isRaining) {
         int[] nextCoor;
@@ -28,7 +32,7 @@ public class ReserveBusUpdateCoordinate implements BusUpdateCoordinate{
         //going out of parking OR in the middle of a round
         if(bus.isInUse()){
             if(busMover.isParkingOrOnWayToMain(bus)){
-                leaveParkingReserveBus(bus, allBusses);
+                leaveParking(bus, allBusses);
                 return;
             }
             busMover.moveInsideCity(bus, allBusses);
@@ -48,7 +52,8 @@ public class ReserveBusUpdateCoordinate implements BusUpdateCoordinate{
         }
     }
 
-    public void leaveParkingReserveBus(Bus bus, HashMap<Integer, Bus> allBusses) {
+    @Override
+    public void leaveParking(Bus bus, HashMap<Integer, Bus> allBusses) {
         int[] nextCoor;
         if (!busMover.isAtMainStation(bus)) {
             nextCoor = busMover.moveFromParkingToMain(bus);

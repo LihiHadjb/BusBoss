@@ -72,35 +72,6 @@ public class Runner{
         }
     }
 
-    private void printValuesForBus(){
-
-        System.out.println("________________");
-        System.out.println("raining" + Boolean.toString(city.isRaining()));
-
-        for(int i=0; i<city.getNumBusses(); i++){
-//            if(i==0 || i==2){
-
-                Bus bus = city.getBusses().get(i);
-                String destName = String.format("atDestinationStation[%d]", i);
-                String arePassengers = String.format("arePassengersWaitingInNextStation[%d]", i);
-                System.out.println(String.format("bus %d: atDest: %s, full: %b, STOP: %b, passengers: %s",i, inputs.get(destName), bus.isFull(), bus.isStopPressed(), inputs.get(arePassengers)) );
-            //}
-        }
-    }
-
-    private void printSysForBus(){
-        System.out.println("________________");
-        for(int i=0; i<city.getNumBusses(); i++){
-//            if(i==0 || i==2){
-
-                Bus bus = city.getBusses().get(i);
-                String shouldStopName = String.format("stopAtNextStation[%d]", i);
-                String shouldGas = String.format("shouldGoToGasStation[%d]", i);
-                System.out.println(String.format("bus %d:, shouldStop: %s, GAS: %s",i, sysValues.get(shouldStopName), sysValues.get(shouldGas) ));
-            //}
-        }
-    }
-
     public static void main(String args[]) throws Exception {
         City city = new City();
         Board board = new Board(city);

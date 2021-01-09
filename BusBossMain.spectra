@@ -163,7 +163,9 @@ predicate reserveBusCanBeUsed(Bus reserveBus):
 // If an extra bus is sent to help to the particular line, the counter resets 
 counter unstoppedStationsLineA (0..(MAX_UNSTOPPED_STATIONS)){
 	unstoppedStationsLineA = 0;
-	inc: !extraBusSentLine[A] & (atStationAndPassengersDidNotHaveSeats(0) | (atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=A) | ( atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=A));
+	inc: !extraBusSentLine[A] & (atStationAndPassengersDidNotHaveSeats(0) | 
+		(atStationAndPassengersDidNotHaveSeats(2) & lineOfReserveBus[0]=A) | 
+		( atStationAndPassengersDidNotHaveSeats(3) & lineOfReserveBus[1]=A));
 	reset: extraBusSentLine[A];
 	overflow: keep;
 }

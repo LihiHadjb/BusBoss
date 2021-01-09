@@ -9,8 +9,8 @@ public class LinesTableCreator extends TableCreator {
     final int UNSTOPPED_COUNT_INDEX = 2;
 
     final String LINE_NAME_HEADER = "Line";
-    final String NEED_ANOTHER_HEADER = "Need Another Bus";
-    final String UNSTOPPED_COUNT_HEADER = "Stations Unstopped";
+    final String NEED_ANOTHER_HEADER = "Backup Request";
+    final String UNSTOPPED_COUNT_HEADER = "Missed Pickups";
 
 
     @Override

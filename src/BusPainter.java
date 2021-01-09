@@ -74,32 +74,26 @@ public class BusPainter {
 
     public String getStationDirection(int[] location){
         if (Arrays.equals(location, ((city.getBusStations().get("a1")).getLocationForTheBus()))){
-            System.out.println("In a1 !!!");
             return northToSouth;
         }
 
         else if (Arrays.equals(location, ((city.getBusStations().get("a2")).getLocationForTheBus()))){
-            System.out.println("In a2 !!!");
             return southToNorth;
         }
 
         else if (Arrays.equals(location, ((city.getBusStations().get("b1")).getLocationForTheBus()))){
-            System.out.println("In b1 !!!");
             return westToEast;
         }
 
         else if (Arrays.equals(location, ((city.getBusStations().get("b2")).getLocationForTheBus()))){
-            System.out.println("In b2 !!!");
             return eastTowest;
         }
 
         else if (Arrays.equals(location, ((city.getMainStation()).getLocationForTheBus()))){
-            System.out.println("In main station !!!");
             return eastTowest;
         }
 
         else if (Arrays.equals(location, ((city.getGasStation()).getLocationForTheBus()))){
-            System.out.println("In gas station !!!");
             return eastTowest;
         }
 
