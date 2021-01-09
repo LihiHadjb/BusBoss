@@ -9,6 +9,7 @@ import SpecificationVars.OutputsParser;
 import tau.smlab.syntech.controller.executor.ControllerExecutor;
 import tau.smlab.syntech.controller.jit.BasicJitController;
 
+
 public class Runner{
     Board board;
     City city;
@@ -34,7 +35,8 @@ public class Runner{
 		outputsParser.parseSysValues(sysValues);
 		city.updateCity();
 	}
-    
+
+	//Create a new set (map) of inputs, using a creator class that matches the current mode
     private void createInputs(boolean isInit){
         if(city.isManualMode()){
             manualModeInputCreator.createEnvVars(isInit);
@@ -46,6 +48,7 @@ public class Runner{
     }
 
 
+    //Start the controller, provide inputs, get its outputs and update the state of the city and the UI accordingly
     public void run() throws Exception {
         createInputs(true);
         executor.initState(inputs);
@@ -63,6 +66,7 @@ public class Runner{
         }
     }
 
+    //Create the and initialize the City, GUI and Controller to start the simulation
     public static void main(String args[]) throws Exception {
         City city = new City();
         Board board = new Board(city);

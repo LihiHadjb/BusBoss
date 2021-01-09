@@ -11,6 +11,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+//Create the main frame of the application:
+//1. Draw the city and all of its components (stations, roads etc.)
+//2. Add the right panel
+//3. Use the paint() method to redraw the city according to the new state of the components, and update the
+//UI panels
 
 @SuppressWarnings("serial")
 public class Board extends JFrame{
@@ -292,7 +297,6 @@ public class Board extends JFrame{
 
 	}
 
-	//TODO: make the roads a field of the city??
 	private void draw_roads(){
 		int[] start = new int[2];
 		int[] end = new int[2];
@@ -323,7 +327,6 @@ public class Board extends JFrame{
 		draw_horizontal_road(start, end);
 
 		drawRoadsOutsideTheNeighborhoood();
-
 	}
 
 	private void draw_neighbourhood() {
@@ -332,16 +335,15 @@ public class Board extends JFrame{
 		draw_B_stations();
 	}
 
-	public void drawRoadsOutsideTheNeighborhoood(){
+	private void drawRoadsOutsideTheNeighborhoood(){
 		// draw the road between neighborhood and main station
 		draw_horizontal_road(city.getRoadBetweenCityAndMainStation().getStart(), city.getRoadBetweenCityAndMainStation().getEnd());
 		
 		// draw the road between neighborhood and gas station
 		draw_horizontal_road(city.getRoadBetweenCityAndGasStation().getStart(), city.getRoadBetweenCityAndGasStation().getEnd());
-
 	}
 	
-	public void checkStationsLocations(){
+	private void checkStationsLocations(){
 		Graphics g = this.getGraphics();
 		g.setColor(Color.lightGray);
 		int row;
@@ -382,12 +384,7 @@ public class Board extends JFrame{
 		else{
 			g.drawImage(sunImage, x, y, size, size, null);
 		}
-
-
-
-
 	}
-
 
 	public void paint() throws InterruptedException {
 		draw_neighbourhood();
@@ -402,7 +399,6 @@ public class Board extends JFrame{
 		}
 
 		rightPanel.updatePanels();
-
 	}
 
 }

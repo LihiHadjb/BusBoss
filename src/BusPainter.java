@@ -72,6 +72,7 @@ public class BusPainter {
         }
     }
 
+    //Return the direction that matches a station that is located in the coordiante provided in "location"
     public String getStationDirection(int[] location){
         if (Arrays.equals(location, ((city.getBusStations().get("a1")).getLocationForTheBus()))){
             return northToSouth;
@@ -100,6 +101,8 @@ public class BusPainter {
         return null;
     }
 
+    //Return the direction that matches this bus's current coordinate, according to the current and
+    //previous coordinates of this bus.
     private String chooseDirection(Bus bus){
         int[] prev = bus.getPrevCoordinate();
         int[] curr = bus.getCurrCoordinate();
@@ -128,6 +131,10 @@ public class BusPainter {
         return stay;
     }
 
+    //Calculate the new location where the bus should next be drawn.
+    // To create the illusion that the bus moves continuously, each controller step is divided to #dim "subIteration"s,
+    //so that each bus can be drawn #dim times in every controller step, in a corresponding "subCoordinate" inside
+    //the square that represents a coordinate
     private int[] getSubCoordinate(Bus bus, String direction, int subIterationNumber){
         int y_offset = 0;
         int x_offset = 0;
@@ -169,6 +176,7 @@ public class BusPainter {
 
     }
 
+    //Return the image that matches this bus's coordiante and direction
     private BufferedImage choosePicture(Bus bus, String direction){
         boolean isReserve;
         isReserve = (bus.getId()==2 || bus.getId()==3);
@@ -239,6 +247,7 @@ public class BusPainter {
     }
 
 
+    //Draw each bus in the calculated subCoordinate, using a picture that matches this bus's ID and direction
     public void drawBusses(int subIterationNumber){
         String direction;
         BufferedImage busImage;
