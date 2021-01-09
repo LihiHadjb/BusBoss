@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 //This class provides methods to build and create the Route objects between pairs of stations and between
-// the parking locations and the main station, which are used to navigate the bus on the Board
+// the parking locations and the main station, which are used to navigate the bus on the UI.Board
 public class RoutesCreation {
 
     //This map is used to find a Route between a pair of stations.

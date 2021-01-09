@@ -1,9 +1,9 @@
-package Panels.ManualMode;
+package UI.Panels.ManualMode;
 
 import CityComponents.Bus;
 import CityComponents.City;
 import Lines.BusMover;
-import Panels.ControlPanel.BussesTableCreator;
+import UI.Panels.ControlPanel.BussesTableCreator;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

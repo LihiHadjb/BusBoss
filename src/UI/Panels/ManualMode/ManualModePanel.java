@@ -1,4 +1,4 @@
-package Panels.ManualMode;
+package UI.Panels.ManualMode;
 
 import CityComponents.City;
 

@@ -1,11 +1,10 @@
-package Panels.ManualMode;
+package UI.Panels.ManualMode;
 
 import CityComponents.City;
 import CityComponents.Station;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import java.awt.*;
 import java.util.HashMap;
 
 //Check boxes panel in the Manual mode section of the RightPanel

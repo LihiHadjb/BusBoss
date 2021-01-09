@@ -1,3 +1,5 @@
+package Main;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +8,7 @@ import CityComponents.City;
 import SpecificationVars.AutomaticModeInputsCreator;
 import SpecificationVars.ManualModeInputCreator;
 import SpecificationVars.OutputsParser;
+import UI.Board;
 import tau.smlab.syntech.controller.executor.ControllerExecutor;
 import tau.smlab.syntech.controller.jit.BasicJitController;
 

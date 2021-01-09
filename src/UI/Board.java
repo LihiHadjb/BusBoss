@@ -1,7 +1,9 @@
+package UI;
+
 import CityComponents.City;
 import CityComponents.Station;
-import Panels.RightPanel;
-import Panels.ManualMode.StationsCheckBoxesPanel;
+import UI.Panels.RightPanel;
+import UI.Panels.ManualMode.StationsCheckBoxesPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

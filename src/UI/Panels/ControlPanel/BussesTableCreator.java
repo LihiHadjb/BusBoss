@@ -1,4 +1,4 @@
-package Panels.ControlPanel;
+package UI.Panels.ControlPanel;
 
 import CityComponents.Bus;
 import CityComponents.City;

@@ -4,8 +4,8 @@ import CityComponents.Bus;
 import CityComponents.City;
 import CityComponents.Station;
 import Lines.BusMover;
-import Panels.ControlPanel.BussesTableCreator;
-import Panels.ManualMode.StationsCheckBoxesPanel;
+import UI.Panels.ControlPanel.BussesTableCreator;
+import UI.Panels.ManualMode.StationsCheckBoxesPanel;
 
 import javax.swing.*;
 import java.util.Map;

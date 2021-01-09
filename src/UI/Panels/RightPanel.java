@@ -1,10 +1,10 @@
-package Panels;
+package UI.Panels;
 
 import CityComponents.City;
-import Panels.ControlPanel.ControlPanel;
-import Panels.ManualMode.ManualModePanel;
-import Panels.ManualMode.StationsCheckBoxesPanel;
-import Panels.Scenarios.ScenariosPanel;
+import UI.Panels.ControlPanel.ControlPanel;
+import UI.Panels.ManualMode.ManualModePanel;
+import UI.Panels.ManualMode.StationsCheckBoxesPanel;
+import UI.Panels.Scenarios.ScenariosPanel;
 
 import javax.swing.*;
 import java.awt.*;

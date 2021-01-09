@@ -1,4 +1,4 @@
-package Panels.Scenarios;
+package UI.Panels.Scenarios;
 
 import CityComponents.City;
 
