@@ -10,6 +10,8 @@ import Panels.ManualMode.StationsCheckBoxesPanel;
 import javax.swing.*;
 import java.util.Map;
 
+//Create the map of value passed to the controller as the new environment variables, using the values provided by
+//the user for the relevant variables
 public class ManualModeInputCreator extends InputsCreator{
     JTable manualModeTable;
     BussesTableCreator bussesTableCreator;
@@ -22,7 +24,6 @@ public class ManualModeInputCreator extends InputsCreator{
         this.stationsCheckBoxesPanel = stationsCheckBoxesPanel;
 
     }
-
 
     public void updatePassengersInStations() {
         for (Station station : city.getBusStations().values()) {
@@ -62,12 +63,6 @@ public class ManualModeInputCreator extends InputsCreator{
         }
 
     }
-
-
-
-
-
-
 
     @Override
     public void putIsStopPressed(boolean isInit) {

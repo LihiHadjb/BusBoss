@@ -7,6 +7,8 @@ import Lines.BusMover;
 
 import java.util.Map;
 
+//Create the map of value passed to the controller as the new environment variables, using random values, which are
+//drawn with a predefined probability according to the mode (Rush-Hour or regular mode)
 public class AutomaticModeInputsCreator extends InputsCreator{
 
 	double isBusFullProb;
@@ -25,7 +27,6 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 	}
 
 	public void updateProbabilities(){
-		// Rush hour scenario
 		if (city.isRushHour()){
 			this.isBusFullProb = 0.7;
 			this.isStopPressedProb = 0.015;
@@ -38,7 +39,7 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 		}
 	}
 
-	//TODO: if already true, should remain true unltil reaching the station
+	//If the value for a certain bus is already true, should remain true until reaching the station
 	private void randomizeBooleanForEachBus(String envVarName, boolean isInit, double prob) {
 		boolean result;
 		for(int i=0; i<NUM_BUSSES; i++) {
@@ -50,7 +51,7 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 				result = Math.random() < prob;
 			}
 
-			//update the bus object so that control panel can be updted correctly, and dont put the random value if its already
+			//update the bus object so that control panel can be updated correctly, and dont put the random value if its already
 			//true and the bus did not arrive to the station yet
 			Bus bus = city.getBusses().get(i);
 			BusMover busMover = city.getBusMover();
@@ -67,7 +68,6 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 					bus.setStopPressed(result);
 			}
 			inputs.put(name, Boolean.toString(result));
-
 		}
 	}
 
@@ -91,9 +91,8 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 		return result;
 	}
 
-
-	//TODO: bug in inputs
-    public void arePassengersWaitingInNextStationForEachBus(String envVarName, boolean isInit, double prob) {
+	//If the value for a certain station is already true, should remain true until some bus stops at this station
+	private void arePassengersWaitingInNextStationForEachBus(String envVarName, boolean isInit, double prob) {
 		boolean[] valuesForStations = randomizeBooleanForEachStation(isInit, prob);
 		Bus bus;
 		Station nextStation;
@@ -126,7 +125,6 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 
     }
 
-
 	@Override
 	public void putArePassengersWaitingInNextStation(boolean isInit) {
 		arePassengersWaitingInNextStationForEachBus("arePassengersWaitingInNextStation", isInit, arePassengersWaitingProb);
@@ -143,7 +141,6 @@ public class AutomaticModeInputsCreator extends InputsCreator{
 		randomizeBooleanForEachBus("isBusFull", isInit, isBusFullProb);
 
 	}
-
 
 	@Override
 	public void createEnvVars(boolean isInit) {

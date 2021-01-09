@@ -2,13 +2,16 @@ package SpecificationVars;
 
 import CityComponents.Bus;
 import CityComponents.City;
-import CityComponents.Station;
 import Lines.BusMover;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract  class InputsCreator {
+
+//An abstract class to create the map of value passed to the controller as the new environment variables
+//values map. Using the createEnvVars method, we put in the new map values for each of the environment variables.
+//There are 2 implementations provided for the class: AutomaticModeInputsCreator and ManualModeInputCreator
+public abstract class InputsCreator {
     Map<String, String> inputs;
     City city;
     int NUM_BUSSES;
@@ -32,10 +35,6 @@ public abstract  class InputsCreator {
     public abstract void putArePassengersWaitingInNextStation(boolean isInit);
     public abstract void putIsStopPressed(boolean isInit);
     public abstract void putIsBusFull(boolean isInit);
-
-
-
-
 
     public void createEnvVars(boolean isInit) {
         putIsBusFull(isInit);
@@ -96,8 +95,6 @@ public abstract  class InputsCreator {
 
     }
 
-
-
     public void putIsParking() {
         String envVarName = "isParking";
         HashMap<Integer, Bus> busses = city.getBusses();
@@ -131,9 +128,4 @@ public abstract  class InputsCreator {
         }
 
     }
-
-
-
-
-
 }
