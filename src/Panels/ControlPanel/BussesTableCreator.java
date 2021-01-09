@@ -13,8 +13,8 @@ public class BussesTableCreator extends TableCreator {
     public static final String ID_HEADER = "Bus Number";
     public static final String LINE_HEADER = "Line";
     public static final String FULL_HEADER = "Full";
-    public static final String STOP_PRESSED_HEADER = "Drop Off Request";
-    public static final String ROUNDS_TO_GAS_STATION_HEADER = "Rounds Until Refuel";
+    public static final String STOP_PRESSED_HEADER = "Stop Request";
+    public static final String ROUNDS_TO_GAS_STATION_HEADER = "Left to Refuel";
 
     public static final String NONE = "-";
 
