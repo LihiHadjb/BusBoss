@@ -10,9 +10,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-//This class provides methods to help update the next coordinate where a bus should be at, using the route
-//of each line and the "sub-routes" between each 2 stations
-
 public class BusMover {
 	private GasStation gasStation;
     private MainStation mainStation;
@@ -21,7 +18,10 @@ public class BusMover {
 	private HashMap<Integer, Route> routesFromParkingsToMainStation;
 	private HashMap<Integer, Route> routesFromMainStationEntranceToResrvesParkings;
 	private RoutesCreation routesCreation;
+
+
 	HashMap<Integer, int[]> parkingsLocations;
+
 	HashMap<String, Station> name2station;
 
     public BusMover(GasStation gasStation, MainStation mainStation, HashMap<String, Station> busStations, HashMap<Integer, int[]> parkingsLocations) {
@@ -38,7 +38,6 @@ public class BusMover {
 
 	}
 
-	//create the routes between stations and the routes of each line
 	private void initRoutes(){
 		routesCreation = new RoutesCreation(gasStation, mainStation, busStations, name2station, parkingsLocations);
 		originRoutes = routesCreation.getOriginRoutes();
@@ -46,35 +45,10 @@ public class BusMover {
 		routesFromMainStationEntranceToResrvesParkings = routesCreation.getRoutesFromMainStationEntranceToResrvesParkings();
 	}
 
-	//update the coordinates of a bus according to its current state
-	// (in station/should stop/should go to gas station etc.)
-	public void moveInsideCity(Bus bus,  HashMap<Integer, Bus> allBusses){
-		int [] nextCoor;
-		if(isAtDestinationStation(bus)){
-			//at station for the first time
-			//pick up passengers in station + stay is place for one more step + update next dest
-			if(bus.isStopAtNextStation()) {
-				bus.getDestination().setArePassengersWaiting(false);
-				nextCoor = bus.getCurrCoordinate();
-				updateNextDesitinationAndOriginStations(bus);
-			}
-
-			else {//in station but shouldnt stop
-				updateNextDesitinationAndOriginStations(bus);
-				nextCoor = getNextCoorBetweenStations(bus);
-			}
-		}
-
-		//not in destination station yet
-		else {
-			nextCoor = getNextCoorBetweenStations(bus);
-		}
-
-		moveOrAvoidCollision(bus, nextCoor, allBusses);
-	}
 
 
-	//Update the origin and destination stations of a bus, assuming it now arrived to its destination station
+
+
 	//if should go to gas station, set it as the destination.
 	//else, check if atDestinationStation, and if true, set the next destination and origin according to the current line route
 	public void updateNextDesitinationAndOriginStations(Bus bus) {
@@ -105,35 +79,185 @@ public class BusMover {
 			}
 	}
 
-	//Return the next coordinate of the bus, assuming it is currently leaving its parking towards the cenreal station
-	public int[] moveFromParkingToMain(Bus bus){
+//	public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses, boolean isRaining) {
+//    	if(bus.isInUse() || bus.getId()==0 || bus.getId()==1){
+//			int [] oldEntrance = new int[]{mainStation.getLocationForTheBus()[0]+1, mainStation.getLocationForTheBus()[1]+1};
+//			boolean atOldEntrance = Arrays.equals(oldEntrance, bus.getCurrCoordinate());
+////			if ((bus.getId()==2 || bus.getId() == 3) && atOldEntrance && bus.isShouldGoToGasStation()){
+////				System.out.println("bus " + bus.getId() + "inside if");
+////			}
+////			else{
+////				System.out.println("bus " + bus.getId() + "nottttttt inside if");
+////			}
+//
+//			if ((bus.getId()==2 || bus.getId() == 3) && atOldEntrance){
+//				System.out.println("bus " + bus.getId() + " coordinates are: " + Arrays.toString(bus.getCurrCoordinate()));
+//				moveFromMainStationEntranceToMainStation(bus, allBusses);
+//			}
+//
+//    		//reserve bus going back to parking
+//			if((bus.getId()==2 || bus.getId() == 3) && isAtMainStationEntrance(bus) && !bus.isShouldGoToGasStation()){
+//				bus.setInUse(false);
+//				Route routeFromEntranceToParking = routesFromMainStationEntranceToResrvesParkings.get(bus.getId());
+//				int[] nextCoor = routeFromEntranceToParking.getNextCoordinate(bus.getCurrCoordinate());
+//				moveOrAvoidCollision(bus, nextCoor, allBusses);
+//			}
+//
+//			//bus going out of parking
+//			else if(isAtParkingArea(bus) && !isAtMainStation(bus)){
+//				Route routeFromParkingToMain = routesFromParkingsToMainStation.get(bus.getId());
+//				int[] nextCoor = routeFromParkingToMain.getNextCoordinate(bus.getCurrCoordinate());
+//				System.out.println("bus "+ bus.getId() + "goint to town!");
+//
+//				moveOrAvoidCollision(bus, nextCoor, allBusses);
+//			}
+//
+//			//bus stopping at station
+//			else if(isAtDestinationStation(bus) && bus.isStopAtNextStation()){
+//				bus.getDestination().setArePassengersWaiting(false);
+//				//if(isAtDestinationStation(bus) && bus.isStopAtNextStation()){
+//				if(isRaining){
+//					bus.setShouldStopAgainInRain(true);
+//				}
+//				else{
+//					updateNextDesitinationAndOriginStations(bus);
+//				}
+//				moveOrAvoidCollision(bus, bus.getCurrCoordinate(), allBusses);
+//			}
+//
+//			//bus in station in second step in rain
+//			else if(isAtDestinationStation(bus) && isRaining && !bus.isShouldStopAgainInRain()){
+//				bus.setShouldStopAgainInRain(false);
+//				updateNextDesitinationAndOriginStations(bus);
+//			}
+//
+//
+//			else {
+//				//in station but shouldnt stop
+//				if(isAtDestinationStation(bus)) {
+//					updateNextDesitinationAndOriginStations(bus);
+//					System.out.println("updated next origin and destination");
+//				}
+//
+//				//between stations
+//				Station origin = bus.getOrigin();
+//				Station dest = bus.getDestination();
+//				Route route = originRoutes.get(origin.getName()).get(dest.getName());
+//
+//				if(route == null){
+//					System.out.println("bus: " + bus.getId());
+//					System.out.println("should go to gas: " + bus.isShouldGoToGasStation());
+//					System.out.println("line: " + bus.getLine().getLineName().name());
+//					System.out.println("curr coord: " + Arrays.toString(bus.getCurrCoordinate()));
+//					System.out.println("no root from " + origin.getName() + "to " + dest.getName());
+//				}
+//
+//				int[] nextCoor = route.getNextCoordinate(bus.getCurrCoordinate());
+//				moveOrAvoidCollision(bus, nextCoor, allBusses);
+//			}
+//		}
+//
+//    	//reserve bus staying parking
+//		else if((bus.getId()==2 || bus.getId() == 3) && !bus.isInUse() && !isAtPrivateParking(bus)){
+//			Route routeFromEntranceToParking = routesFromMainStationEntranceToResrvesParkings.get(bus.getId());
+//			int[] nextCoor = routeFromEntranceToParking.getNextCoordinate(bus.getCurrCoordinate());
+//			moveOrAvoidCollision(bus, nextCoor, allBusses);
+//		}
+//	}
+
+
+
+	private int[] moveFromParkingToMain(Bus bus, HashMap<Integer, Bus> allBusses){
 		Route routeFromParkingToMain = routesFromParkingsToMainStation.get(bus.getId());
 		int[] nextCoor = routeFromParkingToMain.getNextCoordinate(bus.getCurrCoordinate());
+		//System.out.println("bus "+ bus.getId() + "goint to town!");
+
 		return nextCoor;
+
 	}
 
-	//Return the next coordinate of the bus, assuming it is currently entering the central station, or moving inside
-	//this area towards its parking location
-	public int[] moveFromMainEntranceToParking(Bus bus){
-		Route routeFromMainToParking = routesFromMainStationEntranceToResrvesParkings.get(bus.getId());
-		int[] nextCoor = routeFromMainToParking.getNextCoordinate(bus.getCurrCoordinate());
-		return nextCoor;
-	}
-
-	//Return the next coordiante of a bus, assuming it is currently in between 2 stations
-	public int[] getNextCoorBetweenStations(Bus bus){
+	private int[] getNextCoorBetweenStations(Bus bus){
 		int[] nextCoor;
 		Station origin = bus.getOrigin();
 		Station dest = bus.getDestination();
 		Route route = originRoutes.get(origin.getName()).get(dest.getName());
 		nextCoor = route.getNextCoordinate(bus.getCurrCoordinate());
 		return nextCoor;
+
 	}
 
-	//Move the bus to the provided next coordiante if no other bus is already attempting to move to the
-	//same coordinate, otherwise keep the bus in its current location
-	//(go through all the busses with smaller indices (which means that their coordiante was already updated!), and see if this bus is about to go to the same coordiante.
-	//if it does, than curr bus should not move)
+	public void moveNormalBus(Bus bus, HashMap<Integer, Bus> allBusses){
+		int[] nextCoor;
+		//going out of private parking to red
+		if(isAtParkingArea(bus) && !isAtMainStation(bus)){
+			nextCoor = moveFromParkingToMain(bus, allBusses);
+		}
+
+		//should stop at the current station
+		else if(isAtDestinationStation(bus)){
+			//at station for the first time
+			if(bus.isStopAtNextStation()) {
+				bus.getDestination().setArePassengersWaiting(false);
+				nextCoor = bus.getCurrCoordinate();
+				updateNextDesitinationAndOriginStations(bus);
+			}
+
+			else {
+				updateNextDesitinationAndOriginStations(bus);
+				nextCoor = getNextCoorBetweenStations(bus);
+			}
+		}
+		else {
+			nextCoor = getNextCoorBetweenStations(bus);
+		}
+
+		moveOrAvoidCollision(bus, nextCoor, allBusses);
+
+
+	}
+
+
+
+	private void moveFromMainStationEntranceToResrvesParkings(Bus bus, HashMap<Integer, Bus> allBusses){
+		Route routeFromEntranceToParking = routesFromMainStationEntranceToResrvesParkings.get(bus.getId());
+		int[] nextCoor = routeFromEntranceToParking.getNextCoordinate(bus.getCurrCoordinate());
+		moveOrAvoidCollision(bus, nextCoor, allBusses);
+	}
+
+
+	public void moveReserveBus(Bus bus, HashMap<Integer, Bus> allBusses) {
+		if (bus.isInUse() || bus.isShouldGoToGasStation()) {
+			moveNormalBus(bus, allBusses);
+		} else if (!isAtPrivateParking(bus)) {
+			bus.setInUse(false);
+			moveFromMainStationEntranceToResrvesParkings(bus, allBusses);
+		}
+	}
+
+
+	public void updateCoordinates(Bus bus, HashMap<Integer, Bus> allBusses, boolean isRaining){
+    	if(isRaining && !bus.isShouldStopAgainInRain() && !bus.isShouldGoToGasStation()){
+    		throw new RuntimeException("shoudlnt stop in rain!!!!");
+		}
+    	if(bus.getId() == 0 || bus.getId() == 1){
+    		moveNormalBus(bus, allBusses);
+		}
+    	else{
+    		moveReserveBus(bus, allBusses);
+		}
+	}
+
+
+	public RoutesCreation getRoutesCreation(){
+    	return routesCreation;
+	}
+	private void moveFromMainStationEntranceToMainStation(Bus bus, HashMap<Integer, Bus> allBusses){
+		int[] nextCoor = mainStation.getLocationForTheBus();
+		moveOrAvoidCollision(bus, nextCoor, allBusses);
+	}
+
+	//go through all the busses with smaller indices (which means that their coordiante was already updated!), and see if this bus is about to go to the same coordiante.
+	//if it does, than curr bus should not move
 	public void moveOrAvoidCollision(Bus bus, int[] nextCoor, HashMap<Integer, Bus> allBusses){
     	for(int i=0; i<bus.getId(); i++){
 			Bus prevBus = allBusses.get(i);
@@ -142,41 +266,47 @@ public class BusMover {
 			}
 		}
 		bus.setCurrCoordinate(nextCoor);
+
 	}
+
+
+
 
 	public boolean isAtMainStation(Bus bus) {
     	return Arrays.equals(bus.getCurrCoordinate(), mainStation.getLocationForTheBus());
 	}
 
 	public boolean isAtMainStationEntrance(Bus bus) {
-		int[] entrance = new int[]{mainStation.getLocationForTheBus()[0]+1, mainStation.getLocationForTheBus()[1]-1};
+    	int[] entrance = new int[]{mainStation.getLocationForTheBus()[0]+1, mainStation.getLocationForTheBus()[1]-1};
 		return Arrays.equals(bus.getCurrCoordinate(), entrance);
 	}
+
 
 	public boolean isAtGasStation(Bus bus) {
     	return  Arrays.equals(bus.getCurrCoordinate(), gasStation.getLocationForTheBus());
 	}
 
+
 	public boolean isAtDestinationStation(Bus bus) {
 		return Arrays.equals(bus.getCurrCoordinate(), (bus.getDestination().getLocationForTheBus()));
 	}
 
-	//Returns true iff the bus is currently in its designated parking spot.
+
+	public boolean isAtParkingArea(Bus bus){
+        Route routeFromParkingToMain = routesFromParkingsToMainStation.get(bus.getId());
+
+        //TODO: Stopped here, added next line:
+        //Route routeFromEntranceToParking = routesFromMainStationEntranceToResrvesParkings.get(bus.getId());
+		return routeFromParkingToMain.isOnRoute(bus.getCurrCoordinate()) || isAtPrivateParking(bus);
+
+		//return routeFromParkingToMain.isOnRoute(bus.getCurrCoordinate()) ||routeFromEntranceToParking.isOnRoute(bus.getCurrCoordinate())|| isAtPrivateParking(bus);
+
+	}
+
 	public boolean isAtPrivateParking(Bus bus){
-		int[] currLocation = bus.getCurrCoordinate();
-		int[] privateParking = parkingsLocations.get(bus.getId());
-		return Arrays.equals(currLocation, privateParking);
+    	int[] currLocation = bus.getCurrCoordinate();
+    	int[] privateParking = parkingsLocations.get(bus.getId());
+    	return Arrays.equals(currLocation, privateParking);
 	}
 
-	//Returns true iff the bus is currently in its designated parking spot or leaving it towards the
-	//main station
-	public boolean isParkingOrOnWayToMain(Bus bus){
-		Route routeFromParkingToMain = routesFromParkingsToMainStation.get(bus.getId());
-		boolean isOnWay = routeFromParkingToMain.isOnRoute(bus.getCurrCoordinate());
-		return isAtPrivateParking(bus) || isOnWay;
-	}
-
-	public RoutesCreation getRoutesCreation(){
-		return routesCreation;
-	}
 }

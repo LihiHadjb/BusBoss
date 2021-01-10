@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//This class creates the city by calculating and setting the locations of every component (stations,
-//roads, main station, gas station, parkings etc.).
-//In addition it creates and initialises the lines and busses.
 
 public class City {
     final int x = 16;
@@ -20,8 +17,6 @@ public class City {
 
     private boolean isRaining;
     private boolean isRushHour;
-    private boolean isManualMode;
-
     private MainStation mainStation;
     private GasStation gasStation;
     private HashMap<String, Station> busStations;
@@ -29,11 +24,7 @@ public class City {
     private Road roadBetweenNeighborhoodAndmMainStation;
     private Road roadBetweenNeighborhoodAndGasStation;
     private List<Line> lines;
-
     private BusMover busMover;
-    private RegularBusUpdateCoordinate regularBusUpdateCoordinate;
-    private ReserveBusUpdateCoordinate reserveBusUpdateCoordinate;
-
     private HashMap<Integer, int[]> parkingsLocations;
     private HashMap<Integer, Station> index2station;
 
@@ -58,17 +49,12 @@ public class City {
 
         createBusMover();
         createLines();
-        createBusses();
 
-        this.isManualMode = false;
+        createBusses();
     }
 
     public HashMap<Integer, Station> getIndex2station() {
         return index2station;
-    }
-
-    public boolean isManualMode(){
-        return this.isManualMode;
     }
 
     public int getMAX_ROUNDS_TO_GAS_STATION() {
@@ -114,23 +100,8 @@ public class City {
 
     
     public void createBusMover() {
-        this.busMover =  new BusMover(gasStation, mainStation, busStations, parkingsLocations);
-    	this.regularBusUpdateCoordinate = new RegularBusUpdateCoordinate(busMover);
-    	this.reserveBusUpdateCoordinate = new ReserveBusUpdateCoordinate(busMover);
+    	this.busMover = new BusMover(gasStation, mainStation, busStations, parkingsLocations);
     }
-
-    public boolean existsBusThatStopsAtStation(Station station){
-        for(Bus bus : getBusses().values()){
-            if(bus.getId() == 0 || bus.getId() == 1 || bus.isInUse()){
-                if(busMover.isAtDestinationStation(bus) && bus.getDestination()==station && bus.isStopAtNextStation()){
-                    return true;
-                }
-            }
-
-        }
-        return false;
-    }
-
 
     public void createLines() {
         RoutesCreation routesCreation = busMover.getRoutesCreation();
@@ -139,6 +110,9 @@ public class City {
         Line lineB = new Line(LineName.valueOf("B"), routesCreation.createFullRoute(LineName.valueOf("B")));
         lines.add(lineA);
         lines.add(lineB);
+
+
+    	
     }
 
 
@@ -173,7 +147,29 @@ public class City {
     
     public void createBusses() {
     	for(int i=0; i<NUM_BUSSES; i++) {
-    		Bus bus = new Bus(i, parkingsLocations.get(i));
+//    	    int [] main_station_loc = mainStation.getLocationForTheBus();
+//            int[] initLoc=null;
+//    	    switch (i){
+//            case(0):
+//                initLoc = new int[]{main_station_loc[0]+1, main_station_loc[1]};
+//                parkingsLocations.put(0, initLoc);
+//                break;
+//            case(1):
+//                initLoc = new int[]{main_station_loc[0], main_station_loc[1]+1};
+//                parkingsLocations.put(1, initLoc);
+//                break;
+//            case(2):
+//                initLoc = new int[]{main_station_loc[0], main_station_loc[1]+2};
+//                parkingsLocations.put(2, initLoc);
+//                break;
+//            case(3):
+//                initLoc = new int[]{main_station_loc[0]+1, main_station_loc[1]+2};
+//                parkingsLocations.put(3, initLoc);
+//            }
+
+    		Bus bus = new Bus((Integer)i, parkingsLocations.get(i));
+            //Bus bus = new Bus((Integer)i, main_station_loc);
+    		//bus.setOrigin(mainStation);
     		busses.put(i, bus);
     	}
 
@@ -191,6 +187,7 @@ public class City {
     }
 
     private void createGasStation(){
+        //gas station
         int[] top_left_gs = {7*x/8-2, 8*y/10};
         int [] top_right_gs = {7*x/8-2, 9*y/10};
         int [] bottom_left_gs = {7*x/8-1, 8*y/10};
@@ -204,6 +201,7 @@ public class City {
     }
 
     private void createCentralStation(){
+        // main station
         int[] top_left_cs = {x/8+1, 8*y/10};
         int [] top_right_cs = {x/8+1, 9*y/10};
         int [] bottom_left_cs = {x/8+2, 8*y/10};
@@ -281,6 +279,7 @@ public class City {
         station2LocForBus[0] = station2Loc[0] + 1;
         station2LocForBus[1] = station2Loc[1];
 
+
         Station b1 = new Station(station1Loc, "b1", station1LocForBus, 2);
         Station b2 = new Station(station2Loc, "b2", station2LocForBus, 3);
 
@@ -326,12 +325,9 @@ public class City {
         isRaining = raining;
     }
 
+
     public void toggleRaining() {
     	this.isRaining = !this.isRaining;
-    }
-
-    public void toggleMode(){
-        this.isManualMode = !this.isManualMode;
     }
 
     public boolean isRushHour() {
@@ -350,8 +346,16 @@ public class City {
         return mainStation;
     }
 
+    public void setMainStation(MainStation mainStation) {
+        this.mainStation = mainStation;
+    }
+
     public GasStation getGasStation() {
         return gasStation;
+    }
+
+    public void setGasStation(GasStation gasStation) {
+        this.gasStation = gasStation;
     }
 
     public Road getRoadBetweenCityAndMainStation() {
@@ -365,17 +369,12 @@ public class City {
     public BusMover getBusMover() {
     	return this.busMover;
     }
-
-    //update the location of every bus according to its current state (i.e. whether it should stop/go to gas station etc.
+    
     public void updateCity() {
 		for(Bus bus : busses.values()) {
-		    if(bus.isReserve()){
-		        reserveBusUpdateCoordinate.updateCoordinates(bus, busses, isRaining);
-            }
-            else{
-                regularBusUpdateCoordinate.updateCoordinates(bus, busses, isRaining);
-            }
+            busMover.updateCoordinates(bus, busses, isRaining);
 		}
+		//do any other updates needed for the dashboard or whatever...(isExtraNeeded etc...) 
     }
 
 

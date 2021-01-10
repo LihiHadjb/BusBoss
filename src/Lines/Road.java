@@ -1,7 +1,5 @@
 package Lines;
 
-
-//This class representes a road inside the city, including its location
 public class Road {
 	private int[] start;
 	private int[] end;

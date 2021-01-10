@@ -1,17 +1,14 @@
 package CityComponents;
 
-//This class creates and updates the state of a bus stations, whether or not passengers are currently
-// waiting in it for a bus to pick them up)
-
 public class Station {
     boolean arePassengersWaiting;
-    int[] location;//location of the actual station
-    int[] locationForTheBus;//location on the road, where the bus actually stops
+    int[] location;
     String name;
+    int[] locationForTheBus;
     int id;
 
     public Station(int[] location, String name, int[] locationForTheBus, int id) {
-        this.arePassengersWaiting = false;
+        this.arePassengersWaiting = false; //TODO: do we want to make this initial guarantee?
         this.location = location;
         this.name = name;
         this.locationForTheBus = locationForTheBus;
@@ -42,6 +39,11 @@ public class Station {
     public int[] getLocation() {
         return location;
     }
+
+    public void setLocation(int[] location) {
+        this.location = location;
+    }
+
 
 
 
