@@ -1,37 +1,40 @@
 Guarantees:
 -----------
-- If it is raining, than the bus should wait 2 steps in each station it stops at in order to help passengers get settled.
-- Add a guarantee that the system will not change a bus's line in the middle of a route.
-- Add a guarantee that there is always at least one bus in each line
-- Add a guarantee that if the bus stopped at MAX_STATIONS_TO_GAS_STATION, than the bus shouldGoToGasStationBus will be true.
-- Add a guarantee that if the bus should go to the gas station, than the bus must go to the gas station and will not be in service (doesn't stop for passengers on it's way).
-- Add a guarantee that sends one of the available busses when needed.
 - Add initial guarantees
-  - Guarantee for each bus: at the beginning, the bus is at main station and shouldn't go to gas station.
-  - Guarantee for each reserve bus: at the beginning, they are not in use.
-  - Guarantee for each bus which isn't reserve bus: at the beginning, they are in use.
-  - Guarantee for bus0: at the beginning, the bus is allocated to line A.
-  - Guarantee for bus1: at the beginning, the bus is allocated to line B.
-- Add guarantee for each bus: if atDestinantionStation and shouldn't go to gas station(!), set new destination to be next station of line route and origin to be old destination. 
-- Add a guarantee for each station: if a bus at destinationStation and should go to gas station, set new destination to be next station 
-  of from_destination_Station_to_gas_station route and origin to be old destination.
-- Add a guarantee for each bus: if the bus should go to gas station and the bus is at gas station, set shouldGoToGasStation to false and go back to main station.
-- Add a guarantee for each bus: as long as the bus is in use and in the middle of a round (i.e not in main station which represents finishing of a full round), don't change the bus's line
-- Add a guarantee for each bus: while a the bus is on it's way to the gas station (meaning shouldGoToGasStation = true), it shouldn't stop (meaning stopAtNextStation = false);
-- Add a guarantee for each bus: if numOfStopsPassedBus = MAX_STATIONS_TO_GAS_STATION, then the bus shouldGoToGasStation
-- Add a guarantee for each line: there is always at least one bus for each line
-- Add a guarantee for each reserve bus: after X steps the reserve bus returns to the main station and to be !inUse
-- Add a guarantee for each bus: if unstoppedStationsBus counter = MAX_UNSTOPPED_STATIONS, try to get extra bus
-- Add a guarantee for each line: if extra bus is needed for the this line, go through the reserve busses, if it's free allocate it to this line
-	- Think how to make sure that not both busses will turn to be in use in case there is only one line which need extra bus.
-	- Check how spectra works when inUse gets updated - in the middle of the loop or only at the end? (in order to make sure multiple busses will not allocate the same bus)
-- Add a guarantee for each reserve bus: if there are free busses and some line needs extra bus, one of them should turn to be in use
-- Add a guarantee for each line: if an extra bus was sent to this line, needExtraBusForLine = false
+    - Guarantee for each bus: at the beginning, the bus is at main station and shouldn't go to gas station.
+    - Guarantee for each bus: at the beginning, reserve busses are not in use and other busses are in use.
+- Guarantee for each bus: while a the bus is on it's way to the gas station (meaning shouldGoToGasStation = true), it shouldn't stop (meaning next(shouldStop) = false),
+- Guarantee for each bus: it will stop if there are people waiting or if stop button was pressed (unless it needs to go to the gas station)
+- Guarantee for each bus: while it's not raining and no passenger pressed on the STOP button - if no passengers waiting at the next station OR the bus is full, the bus shouldn't stop.
+- Counters for each bus: counts the number of rounds the bus has passed in order to know when it should go to the gas station
+- Guarantee for each bus: numOfStopsPassedBus = MAX_STATIONS_TO_GAS_STATION <--> then the bus shouldGoToGasStation
+- A counter for each line: counts the number of stations where passengers were waiting for the bus (of the particular line) but it was full and couldn't pick them up
+  If an extra bus is sent to help to the particular line, the counter resets
+- A monitor for each line: monitors whether the counter of the line has reached to MAX_UNSTOPPED_STATIONS and no extra bus was sent,
+  in order to keep the waitingA flag on and signal that an extra bus is needed
+- Guarantee for each line: eventually, every line will not need an extra bus - that is in order to promise that each line will get an extra bus when needed
+- If both lines received an extra bus for help, then the two reserve busses were available at the step before
+- If only line A received an extra bus for help, then the at least one reserve bus was available at the step before
+- If only line B received an extra bus for help, then the at least one reserve bus was available at the step before
+- If an extra bus was sent to help a particular line, then this line was waiting for extra bus at the step before
+- If both lines received an extra bus for help, each reserve bus was sent to help different line
+- If only line A received an extra bus for help and only the first reserve bus was available, then the first reserve bus was sent to help line A
+- If only line A received an extra bus for help and only the second reserve bus was available, then the second reserve bus was sent to help line A
+- If only line A received an extra bus for help and both reserve busses were available, then one of them was sent to help line A
+- If only line B received an extra bus for help and only the first reserve bus was available, then the first reserve bus was sent to help line B
+- If only line B received an extra bus for help and only the second reserve bus was available, then the second reserve bus was sent to help line B
+- If only line B received an extra bus for help and both reserve busses were available, then one of them was sent to help line B
+- As long as the bus is in use (i.e. not parking) and in the middle of a round (i.e. not in main station which represents finishing a full round), don't change the bus's line
+- If it is raining, every bus should stop at every station, except busses that are on their way to the gas station.
 
 
 Assumptions:
 -----------
-- Add an assumption for each station: If there are people waiting at a station and the bus didn't stop, than in next there will still be people waiting.
-- Add an assumption for each bus: if the bus was not full, and the bus did not stop at some station, than it remains not full.
-- Add an assumption for each bus - if some bus needs to wait at current station and not at destination station yet, next(atDestinationStation) = atDestinationStation
+- Add initial assumptions:
+    - Each bus is initially:
+        not full, not at destination station, not at gas station, passengers are not waiting at its next station.
+    - Each bus is initially:
+        parking (meaning, initially not in use).
+- Each bus should be at destination station an infinite number of times.
+- Each reserve bus should park an infinite number of times.
 

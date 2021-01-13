@@ -30,4 +30,20 @@ Changes from Sprint 2 to Sprint 3:
 5. Added buttons to different scenarios
 6. GUI now interacts with the controller: busses move according to their line/ to gas station
 
+Delivered in Final Submission
+---------------------------------
+- Java:
+    1. Add directions to the picture of the bus (for each road coordiante)
+    2. Visualize the raining scenario (with clouds or something similar)
+    3. Improve visualization of main station and gas station
+    3. Bug in the route when arriving back to main station
+    4. Randomize the boolean for people in station with higher probability when rushHour scenario in on
+    5. Change the probabilities of the randomized env variables to something more realistic (for example, bus should not become full so quickly)
+    6. Check the visualization when extra busses are sent
+    7. Visualize when bus is full
+    8. Visualize when a line needs an extra bus
+
+- Spectra:
+    1. Add gar's for the rain and rush scenario
+
 

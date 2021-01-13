@@ -2,7 +2,7 @@
 // This specification is unrealizable because of the missing assumption: 'asm GF forall reserveBus in Int(0..(NUM_RESERVE_BUSSES - 1)). isParking[reserveBus];'
 // Explanation:
 // Let's take a look at the following guarantees:
-// 1. gar GF !waitingA; (line 207)
+// 1. gar GF !waitingA; (line 218)
 // 2. G ((unstoppedStationsLineA=MAX_UNSTOPPED_STATIONS | waitingA)) & !extraBusSentLine[A] <-> next(waitingA);     (line 208)
 // 3. gar G next(extraBusSentLine[A]) & next(extraBusSentLine[B]) -> BothCanBeUsed;      (line 223)
 // 4. gar G next(extraBusSentLine[A]) & !next(extraBusSentLine[B]) -> AtLeastOneCanBeUsed;      (line 225)
