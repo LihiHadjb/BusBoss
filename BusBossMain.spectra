@@ -1,6 +1,6 @@
 import "./imports/DwyerPatterns.spectra"
 
-spec BusBoss_sprint02
+spec BusBossMain
 
 define NUM_BUSSES := 4;  // 1 for each line (A and B) + 2 reserve
 define NUM_RESERVE_BUSSES := 2;
